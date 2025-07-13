@@ -6,33 +6,33 @@
     <div class="add-todo">
       <input
         v-model="newTodo"
-        @keyup.enter="addTodo"
         placeholder="输入新的待办事项..."
         class="todo-input"
+        @keyup.enter="addTodo"
       />
-      <button @click="addTodo" class="add-btn">添加</button>
+      <button class="add-btn" @click="addTodo">添加</button>
     </div>
 
     <!-- 过滤器 -->
     <div class="filters">
       <button
-        @click="filter = 'all'"
         :class="{ active: filter === 'all' }"
         class="filter-btn"
+        @click="filter = 'all'"
       >
         全部
       </button>
       <button
-        @click="filter = 'active'"
         :class="{ active: filter === 'active' }"
         class="filter-btn"
+        @click="filter = 'active'"
       >
         进行中
       </button>
       <button
-        @click="filter = 'completed'"
         :class="{ active: filter === 'completed' }"
         class="filter-btn"
+        @click="filter = 'completed'"
       >
         已完成
       </button>
@@ -49,11 +49,11 @@
         <input
           type="checkbox"
           :checked="todo.completed"
-          @change="toggleTodo(todo.id)"
           class="todo-checkbox"
+          @change="toggleTodo(todo.id)"
         />
         <span class="todo-text">{{ todo.text }}</span>
-        <button @click="removeTodo(todo.id)" class="delete-btn">删除</button>
+        <button class="delete-btn" @click="removeTodo(todo.id)">删除</button>
       </li>
     </ul>
 
@@ -67,7 +67,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed } from "vue";
 
 interface Todo {
   id: number;
@@ -76,8 +76,8 @@ interface Todo {
 }
 
 const todos = ref<Todo[]>([]);
-const newTodo = ref('');
-const filter = ref<'all' | 'active' | 'completed'>('all');
+const newTodo = ref("");
+const filter = ref<"all" | "active" | "completed">("all");
 
 const addTodo = () => {
   if (newTodo.value.trim()) {
@@ -86,38 +86,38 @@ const addTodo = () => {
       text: newTodo.value.trim(),
       completed: false,
     });
-    newTodo.value = '';
+    newTodo.value = "";
   }
 };
 
 const toggleTodo = (id: number) => {
-  const todo = todos.value.find(t => t.id === id);
+  const todo = todos.value.find((t) => t.id === id);
   if (todo) {
     todo.completed = !todo.completed;
   }
 };
 
 const removeTodo = (id: number) => {
-  todos.value = todos.value.filter(t => t.id !== id);
+  todos.value = todos.value.filter((t) => t.id !== id);
 };
 
 const filteredTodos = computed(() => {
   switch (filter.value) {
-    case 'active':
-      return todos.value.filter(t => !t.completed);
-    case 'completed':
-      return todos.value.filter(t => t.completed);
+    case "active":
+      return todos.value.filter((t) => !t.completed);
+    case "completed":
+      return todos.value.filter((t) => t.completed);
     default:
       return todos.value;
   }
 });
 
 const completedCount = computed(
-  () => todos.value.filter(t => t.completed).length,
+  () => todos.value.filter((t) => t.completed).length,
 );
 
 const activeCount = computed(
-  () => todos.value.filter(t => !t.completed).length,
+  () => todos.value.filter((t) => !t.completed).length,
 );
 </script>
 

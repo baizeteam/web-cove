@@ -1,15 +1,15 @@
 <template>
   <div class="counter">
     <h2>计数器: {{ count }}</h2>
-    <button @click="increment" class="btn">增加</button>
-    <button @click="decrement" class="btn">减少</button>
-    <button @click="reset" class="btn">重置</button>
+    <button class="btn" @click="increment">增加</button>
+    <button class="btn" @click="decrement">减少</button>
+    <button class="btn" @click="reset">重置</button>
     <p v-if="count > 10" class="message">数字很大了！</p>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref } from "vue";
 
 const count = ref(0);
 
@@ -24,10 +24,6 @@ const decrement = () => {
 const reset = () => {
   count.value = 0;
 };
-
-// 计算属性示例
-const isPositive = computed(() => count.value > 0);
-const isLarge = computed(() => count.value > 10);
 </script>
 
 <style scoped>

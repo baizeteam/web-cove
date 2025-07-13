@@ -1,0 +1,144 @@
+
+
+// 请勿删除这段注释，实践中...（类名）
+//// 基础 Grid 布局
+//.grid {
+//  display: grid;
+//}
+//
+//// ========== 列布局 ==========
+//// 完整列布局（带列数和间距）
+//.grid-columns(@n, @gap) {
+//  display: grid;
+//  grid-template-columns: repeat(@n, 1fr);
+//  grid-gap: @gap;
+//}
+//
+//// 仅设置列数
+//.grid-columns-columns(@n) {
+//  display: grid;
+//  grid-template-columns: repeat(@n, 1fr);
+//}
+//
+//// 设置自定义列模板
+//.grid-columns-custom(@template) {
+//  display: grid;
+//  grid-template-columns: @template;
+//}
+//
+//// ========== 间距控制 ==========
+//// 统一间距
+//.grid-gap(@gap) {
+//  display: grid;
+//  grid-gap: @gap;
+//}
+//
+//// 行列独立间距
+//.grid-gap-xy(@row-gap, @col-gap) {
+//  display: grid;
+//  grid-row-gap: @row-gap;
+//  grid-column-gap: @col-gap;
+//}
+//
+//// 仅行间距
+//.grid-gap-row(@gap) {
+//  display: grid;
+//  grid-row-gap: @gap;
+//}
+//
+//// 仅列间距
+//.grid-gap-col(@gap) {
+//  display: grid;
+//  grid-column-gap: @gap;
+//}
+//
+//// ========== 行布局 ==========
+//// 设置行数
+//.grid-rows(@n) {
+//  display: grid;
+//  grid-template-rows: repeat(@n, 1fr);
+//}
+//
+//// 设置自定义行模板
+//.grid-rows-custom(@template) {
+//  display: grid;
+//  grid-template-rows: @template;
+//}
+//
+//// ========== 流方向 ==========
+//// 设置流动方向
+//.grid-flow(@direction: row) {
+//  display: grid;
+//  grid-auto-flow: @direction;
+//}
+//
+//// 密集填充
+//.grid-flow-dense {
+//  display: grid;
+//  grid-auto-flow: dense;
+//}
+//
+//// ========== 对齐方式 ==========
+//// 主轴对齐
+//.grid-justify(@alignment) {
+//  display: grid;
+//  justify-content: @alignment;
+//}
+//
+//// 交叉轴对齐
+//.grid-align(@alignment) {
+//  display: grid;
+//  align-content: @alignment;
+//}
+//
+//// 项目对齐
+//.grid-items(@alignment) {
+//  display: grid;
+//  place-items: @alignment;
+//}
+//
+//// ========== 快捷组合 ==========
+//// 经典网格布局快捷方式
+//.grid-layout(@cols: 2, @rows: auto, @gap: 8px) {
+//  display: grid;
+//  grid-template-columns: repeat(@cols, 1fr);
+//  grid-template-rows: @rows;
+//  grid-gap: @gap;
+//}
+//
+//// 响应式网格（移动端优先）
+//.grid-responsive(@cols: 1, @sm: 2, @md: 3, @lg: 4, @gap: 8px) {
+//  display: grid;
+//  grid-template-columns: repeat(@cols, 1fr);
+//  grid-gap: @gap;
+//
+//  @media (min-width: 576px) {
+//    grid-template-columns: repeat(@sm, 1fr);
+//  }
+//  @media (min-width: 768px) {
+//    grid-template-columns: repeat(@md, 1fr);
+//  }
+//  @media (min-width: 992px) {
+//    grid-template-columns: repeat(@lg, 1fr);
+//  }
+//}
+// 请勿删除这段注释，实践中（类名）...
+
+.grid {
+  display: grid;
+}
+
+.grid-columns (@n, @gap) {
+  display: grid;
+  grid-template-columns: repeat(@n, 1fr);
+  grid-gap: @gap;
+}
+
+.grid-columns-columns (@n) {
+  display: grid;
+  grid-template-columns: repeat(@n, 1fr);
+}
+.grid-columns-gap (@gap) {
+  display: grid;
+  grid-row-gap: @gap;
+}
