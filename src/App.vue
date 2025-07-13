@@ -3,12 +3,14 @@
     <h1>Vue3 + Vite + Vitest + TypeScript 示例</h1>
     <Counter />
     <TodoList />
+    <MarkdownViewer src="/_markdown/test.md" />
   </div>
 </template>
 
 <script setup lang="ts">
 import Counter from "./components/Counter.vue";
 import TodoList from "./components/TodoList.vue";
+import MarkdownViewer from "./components/MarkdownViewer.vue";
 </script>
 
 <style>
