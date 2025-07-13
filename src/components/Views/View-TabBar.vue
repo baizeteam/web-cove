@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, toRefs, watch } from "vue";
+import { ref, toRefs } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import moodCodeIcon from "@/assets/images/tab-bar/moodCode.png";
 import moodCodeActiveIcon from "@/assets/images/tab-bar/moodCode-active.png";
@@ -10,10 +10,6 @@ import TalkActiveIcon from "@/assets/images/tab-bar/talk-active.png";
 import UserIcon from "@/assets/images/tab-bar/user.png";
 import UserActiveIcon from "@/assets/images/tab-bar/user-active.png";
 import { useLayoutStore } from "@/stores/layout.store";
-import { getUserinfo } from "@/utils/utils";
-import { useWarnStore } from "@/stores/warn.store";
-import ViewTabbarCount from "@/components/views/View-Tabbar-Count.vue";
-import { useTalkStore } from "@/stores/talk.store";
 
 const router = useRouter();
 const route = useRoute();
@@ -62,47 +58,6 @@ const tabbarList = ref<ITabbarItem[]>([
   },
 ]);
 
-const userInfo = ref(getUserinfo());
-const warnStore = useWarnStore();
-const talkStore = useTalkStore();
-const warnCount = ref(0);
-const talkCount = ref(0);
-
-warnStore.setCount();
-talkStore.setCount();
-
-watch(
-  () => warnStore.count,
-  (newValue) => {
-    if (newValue) warnCount.value = newValue;
-    // immediate: true 是为了 开发环境热更新，防止数量响应式丢失
-  },
-  { immediate: true },
-);
-
-watch(
-  () => talkStore.count,
-  (newValue) => {
-    talkCount.value = newValue;
-  },
-  { immediate: true },
-);
-
-watch(
-  userInfo,
-  (info) => {
-    // console.log('tabbar首次获取 userinfo：', info)
-    if (info.roleSign !== "psychology") {
-      // console.log('非心理老师，是隐藏红码的')
-      // 非心理老师，是隐藏红码的
-      tabbarList.value = tabbarList.value.filter(
-        (item) => item.name !== promiseEnum.moodCode,
-      );
-    }
-  },
-  { immediate: true, deep: true },
-);
-
 const layoutStore = useLayoutStore();
 const { footer } = toRefs(layoutStore);
 
@@ -113,7 +68,7 @@ function getCurrentTab() {
 const activeIdx = ref(getCurrentTab());
 
 function onRoute(item: ITabbarItem) {
-  talkStore.setTabActive("0");
+  // talkStore.setTabActive("0");
   router.replace(item.path);
 }
 </script>
@@ -139,20 +94,7 @@ function onRoute(item: ITabbarItem) {
             :style="{
               backgroundImage: `url(${activeIdx === idx ? tab.activeIcon : tab.icon})`,
             }"
-          >
-            <ViewTabbarCount
-              v-if="
-                tab.name === promiseEnum.warning && warnCount && warnCount !== 0
-              "
-              :count="warnCount"
-            />
-            <ViewTabbarCount
-              v-if="
-                tab.name === promiseEnum.talk && talkCount && talkCount !== 0
-              "
-              :count="talkCount"
-            />
-          </div>
+          ></div>
           <div class="tab-text" :class="{ active: activeIdx === idx }">
             {{ tab.title }}
           </div>
@@ -163,7 +105,7 @@ function onRoute(item: ITabbarItem) {
 </template>
 
 <style lang="less" scoped>
-@import url("@/styles/mixins/safe-area.less");
+@import url("@/assets/styles/modules/safe-area.less");
 
 .tab-bar-wrap {
   position: fixed;

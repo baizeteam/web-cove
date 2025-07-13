@@ -17,7 +17,7 @@ export default defineConfig({
     preprocessorOptions: {
       less: {
         // 这里可以全局引入 less 变量、mixin
-        additionalData: `@import "@/styles/index.less";`,
+        additionalData: `@import "@/assets/styles/index.less";`,
         // 也可以加 less 的其他配置
         // javascriptEnabled: true
       },

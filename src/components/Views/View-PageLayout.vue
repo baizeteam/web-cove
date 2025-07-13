@@ -56,7 +56,7 @@ defineProps({
 </template>
 
 <style lang="less" scoped>
-@import url("@/styles/mixins/safe-area.less");
+@import url("@/assets/styles/modules/safe-area.less");
 
 .page-layout {
   display: flex;
