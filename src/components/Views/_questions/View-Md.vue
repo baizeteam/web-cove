@@ -1,4 +1,5 @@
 <template>
+  <!--  eslint 提示 v-html 可能会受到 xss 攻击-->
   <div class="markdown-viewer" v-html="renderedHtml"></div>
 </template>
 
