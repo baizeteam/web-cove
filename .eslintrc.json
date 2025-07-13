@@ -9,6 +9,7 @@
     "eslint:recommended",
     "plugin:vue/vue3-recommended",
     "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended",
     "prettier"
   ],
   "parser": "vue-eslint-parser",
@@ -19,11 +20,19 @@
   },
   "plugins": [
     "vue",
-    "@typescript-eslint"
+    "@typescript-eslint",
+    "prettier",
+    "unused-imports"
   ],
   "rules": {
     "vue/multi-word-component-names": 0,
     "@typescript-eslint/no-explicit-any": 0,
-    "@typescript-eslint/ban-ts-comment": 0
+    "@typescript-eslint/ban-ts-comment": 0,
+    "prettier/prettier": ["error"],
+    "unused-imports/no-unused-imports": "error",
+    "unused-imports/no-unused-vars": [
+      "error",
+      { "vars": "all", "varsIgnorePattern": "^_", "args": "after-used", "argsIgnorePattern": "^_" }
+    ]
   }
 } 

@@ -7,14 +7,14 @@
 </template>
 
 <script setup lang="ts">
-import Counter from './components/Counter.vue';
-import TodoList from './components/TodoList.vue';
-
-
+import Counter from "./components/Counter.vue";
+import TodoList from "./components/TodoList.vue";
 
 const obj = {
-  a:                   ''
-}
+  a: "",
+};
+
+console.log(obj);
 </script>
 
 <style>
