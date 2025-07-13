@@ -23,6 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 
+
 # Coverage directory used by tools like istanbul
 coverage
 *.lcov
@@ -80,4 +81,4 @@ tmp/
 temp/
 
 # Vitest
-vitest.config.ts.timestamp-* 
+vitest.config.ts.timestamp-*

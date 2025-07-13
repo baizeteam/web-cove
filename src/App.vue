@@ -9,12 +9,6 @@
 <script setup lang="ts">
 import Counter from "./components/Counter.vue";
 import TodoList from "./components/TodoList.vue";
-
-const obj = {
-  a: "",
-};
-
-console.log(obj);
 </script>
 
 <style>
