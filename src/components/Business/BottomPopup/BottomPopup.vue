@@ -43,7 +43,6 @@
 
 <script setup>
 import { ref } from "vue";
-import { VanPopup, VanIcon } from "vant";
 
 const showPopup = ref(false);
 const codeContent = ref(`x = 0

@@ -6,10 +6,6 @@
   </div>
 </template>
 
-<script setup>
-import { VanIcon } from "vant";
-</script>
-
 <style scoped>
 .bottom-icon-bar {
   display: flex;

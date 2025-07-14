@@ -19,7 +19,6 @@
 
 <script setup>
 import { ref } from "vue";
-import { VanIcon, VanProgress } from "vant";
 
 const progressPercent = ref((4 / 9) * 100); // 这里根据实际页数计算进度，4是当前页，9是总页数，可传参修改
 
