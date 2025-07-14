@@ -1,15 +1,10 @@
 /* shims-vue.d.ts */
 // 该文件在 src 目录下才管用
+// 只保留推荐的 .vue 文件类型声明，避免类型冲突
+
 declare module '*.vue' {
     import type { DefineComponent } from 'vue'
     const component: DefineComponent<{}, {}, any>
-    export default component
-}
-
-// 支持TS识别Vue文件中的自定义块（如 <docs>）
-declare module '*.vue' {
-    import type { ComponentOptions } from 'vue'
-    const component: ComponentOptions
     export default component
 }
 

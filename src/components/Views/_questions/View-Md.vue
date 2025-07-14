@@ -64,7 +64,12 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped>
+<style lang="less" scoped>
+:deep(.hljs) {
+  padding: 20px;
+  border-radius: 5px;
+  line-height: 20px;
+}
 .markdown-viewer {
   padding: 16px;
   background: #fff;

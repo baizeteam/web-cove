@@ -4,7 +4,7 @@
 
 python 特点
 
-###### 易学
+易学
 
 打印文本
 
@@ -13,6 +13,8 @@ python 特点
 可以使用 **\n (换行符)** 给文本换行，也可以使用多个 **print()** 函数输出多行。
 
 ```python
-print('hello')
-print('good\nlock')
+def my_func():
+  print('hello')
+  print('good\nlock')
+my_func();
 ```
