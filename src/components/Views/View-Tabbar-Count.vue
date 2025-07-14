@@ -6,7 +6,8 @@ defineOptions({
 defineProps<IProps>();
 
 function isCountSingleDigit(count: number): boolean {
-  return count && String(count).length > 1;
+  if (!count) return false;
+  else return String(count).length > 1;
 }
 
 const maxCount = 99;

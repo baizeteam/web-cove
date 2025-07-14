@@ -3,10 +3,6 @@ import { ref, toRefs } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import moodCodeIcon from "@/assets/images/tab-bar/moodCode.png";
 import moodCodeActiveIcon from "@/assets/images/tab-bar/moodCode-active.png";
-import WarningIcon from "@/assets/images/tab-bar/warning.png";
-import WarningActiveIcon from "@/assets/images/tab-bar/warning-active.png";
-import TalkIcon from "@/assets/images/tab-bar/talk.png";
-import TalkActiveIcon from "@/assets/images/tab-bar/talk-active.png";
 import UserIcon from "@/assets/images/tab-bar/user.png";
 import UserActiveIcon from "@/assets/images/tab-bar/user-active.png";
 import { useLayoutStore } from "@/stores/layout.store";
@@ -14,8 +10,6 @@ import { useLayoutStore } from "@/stores/layout.store";
 const router = useRouter();
 const route = useRoute();
 enum promiseEnum {
-  warning = "warning",
-  talk = "talk",
   moodCode = "moodCode",
   user = "user",
 }
@@ -29,31 +23,17 @@ interface ITabbarItem {
 }
 const tabbarList = ref<ITabbarItem[]>([
   {
-    title: "预警",
-    icon: WarningIcon,
-    activeIcon: WarningActiveIcon,
-    path: "/warning",
-    name: promiseEnum.warning,
-  },
-  {
-    title: "谈话",
-    icon: TalkIcon,
-    activeIcon: TalkActiveIcon,
-    path: "/talk",
-    name: promiseEnum.talk,
-  },
-  {
-    title: "红码",
+    title: "发现",
     icon: moodCodeIcon,
     activeIcon: moodCodeActiveIcon,
-    path: "/moodCode",
+    path: "/friends",
     name: promiseEnum.moodCode,
   },
   {
-    title: "我的",
+    title: "学习",
     icon: UserIcon,
     activeIcon: UserActiveIcon,
-    path: "/user",
+    path: "/study",
     name: promiseEnum.user,
   },
 ]);
@@ -106,7 +86,10 @@ function onRoute(item: ITabbarItem) {
 
 <style lang="less" scoped>
 @import url("@/assets/styles/modules/safe-area.less");
-
+.background-image-no-repeat {
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
 .tab-bar-wrap {
   position: fixed;
   right: 0;
