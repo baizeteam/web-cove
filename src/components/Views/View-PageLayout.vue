@@ -1,5 +1,7 @@
 <script setup>
 import ViewTabBar from "@/components/views/View-TabBar.vue";
+import { useLayoutStore } from "@/stores/layout.store.ts";
+import { ref } from "vue";
 
 defineProps({
   footer: {
@@ -15,6 +17,9 @@ defineProps({
     default: () => false,
   },
 });
+
+const layoutStore = useLayoutStore();
+const footerHeight = ref(layoutStore.footer.height);
 </script>
 
 <template>
@@ -22,7 +27,7 @@ defineProps({
     <div class="page-header">
       <slot name="header" />
     </div>
-    <div class="page-body">
+    <div class="page-body" :style="{ paddingBottom: footerHeight }">
       <div class="page-content">
         <template v-if="!loading">
           <slot />

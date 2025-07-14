@@ -1,36 +1,43 @@
 <template>
-  <!--  eslint 提示 v-html 可能会受到 xss 攻击-->
   <div class="markdown-viewer" v-html="renderedHtml"></div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-// @ts-ignore
-import { marked } from "marked";
-// @ts-ignore
-import hljs from "highlight.js";
-import "highlight.js/styles/github.css";
+import { ref, onMounted } from 'vue';
+import MarkdownIt from 'markdown-it';
+import hljs from 'highlight.js';
+import 'highlight.js/styles/atom-one-dark.css';
 
 const props = defineProps<{ src: string }>();
-const renderedHtml = ref("");
-(marked as any).setOptions({
-  highlight: function (code: string, lang: string) {
+const renderedHtml = ref('');
+
+const md: MarkdownIt = new MarkdownIt({
+  highlight: function (str: string, lang: string): string {
     if (lang && hljs.getLanguage(lang)) {
-      return hljs.highlight(code, { language: lang }).value;
+      try {
+        return (
+          '<pre class="hljs"><code>' +
+          hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
+          '</code></pre>'
+        );
+      } catch (__) {
+        console.error(__)
+      }
     }
-    return hljs.highlightAuto(code).value;
+    return (
+      '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>'
+    );
   },
 });
 
 onMounted(async () => {
   const res = await fetch(props.src);
-  const md = await res.text();
-  renderedHtml.value = (marked as any).parse(md);
+  const mdText = await res.text();
+  renderedHtml.value = md.render(mdText);
 });
 </script>
 
 <style scoped>
-@import "highlight.js/styles/github.css";
 .markdown-viewer {
   padding: 16px;
   background: #fff;
@@ -46,19 +53,27 @@ onMounted(async () => {
   margin-bottom: 0.5em;
 }
 .markdown-viewer pre {
-  background: #f6f8fa;
+  background: #282c34;
+  color: #fff;
   padding: 12px;
-  border-radius: 4px;
+  border-radius: 6px;
   overflow-x: auto;
+  font-size: 15px;
+  line-height: 1.7;
+  margin: 16px 0;
 }
 .markdown-viewer code {
-  background: #f6f8fa;
+  background: #282c34;
+  color: #fff;
   padding: 2px 4px;
   border-radius: 3px;
   font-size: 0.95em;
 }
 .markdown-viewer img {
   max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 12px auto;
   border-radius: 4px;
 }
 </style>
