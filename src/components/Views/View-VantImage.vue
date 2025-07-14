@@ -2,7 +2,7 @@
 import { ref, watch } from "vue";
 import { showImagePreview } from "vant";
 
-import LogoImage from "@/assets/images/icon/logo.png";
+// import LogoImage from "@/assets/images/icon/logo.png";
 
 interface Props {
   src?: string | null;
@@ -10,9 +10,13 @@ interface Props {
   previewable?: boolean;
 }
 
+defineOptions({
+  name: "ViewVantImage",
+});
+
 const props = withDefaults(defineProps<Props>(), {
   src: "",
-  defaultSrc: LogoImage,
+  defaultSrc: "",
   previewable: false,
 });
 
