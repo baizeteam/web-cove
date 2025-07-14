@@ -57,7 +57,11 @@ function onBack() {
 </script>
 
 <template>
-  <div v-if="showHeader" :style="{ height: header.height }" class="page-header">
+  <div
+    v-if="showHeader"
+    :style="{ height: header.height, background: header.backgroundColor }"
+    class="page-header"
+  >
     <div class="left-btn">
       <div v-if="headerConfig.showBackBtn" class="back-btn" @click="onBack" />
       <div
@@ -97,8 +101,6 @@ function onBack() {
 <style lang="less" scoped>
 .page-header {
   display: flex;
-  //height: 44px;
-  background: #ffffff;
   backdrop-filter: blur(10px);
   align-items: center;
 

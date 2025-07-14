@@ -28,7 +28,10 @@ const footerHeight = ref(layoutStore.footer.height);
       <slot name="header" />
     </div>
     <div class="page-body" :style="{ paddingBottom: footerHeight }">
-      <div class="page-content">
+      <div
+        class="page-content"
+        :style="{ background: layoutStore.header.backgroundColor }"
+      >
         <template v-if="!loading">
           <slot />
         </template>
@@ -77,7 +80,6 @@ const footerHeight = ref(layoutStore.footer.height);
       width: 100vw;
       overflow-x: hidden;
       overflow-y: auto;
-      background-color: #ffffff; // 最新的 ui 稿 95%页面都 是白底
       .safe-bottom-area();
       .loading-container {
         height: 30%;

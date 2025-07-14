@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 
 interface LayoutComponent {
   height: string;
+  backgroundColor?: string;
   [key: string]: any; // Allow for additional properties
 }
 
@@ -15,6 +16,7 @@ export const useLayoutStore = defineStore("layout", {
   state: (): LayoutState => {
     const header: LayoutComponent = {
       height: "44px",
+      backgroundColor: "#f5f5f5",
     };
     const footer: LayoutComponent = {
       height: "55px",
