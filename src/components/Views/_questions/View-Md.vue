@@ -7,6 +7,7 @@ import { ref, onMounted, nextTick } from 'vue';
 import MarkdownIt from 'markdown-it';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/atom-one-dark.css';
+import { showImagePreview } from 'vant'; // 注意这里是 showImagePreview 而不是 ImagePreview
 
 const props = defineProps<{ src: string }>();
 const renderedHtml = ref('');
@@ -28,38 +29,27 @@ const setupImagePreview = () => {
   if (!markdownContainer.value) return;
 
   const images = markdownContainer.value.querySelectorAll('img');
-  images.forEach(img => {
-    // 添加预览样式
+  const imageList: string[] = [];
+  const imageMap = new Map<HTMLImageElement, number>();
+
+  images.forEach((img, index) => {
     img.style.cursor = 'zoom-in';
     img.style.maxWidth = '100%';
     img.style.borderRadius = '4px';
     img.style.transition = 'transform 0.2s';
 
-    // 添加点击事件
+    if (img.src) {
+      imageList.push(img.src);
+      imageMap.set(img, index);
+    }
+
     img.onclick = () => {
-      const overlay = document.createElement('div');
-      overlay.style.position = 'fixed';
-      overlay.style.top = '0';
-      overlay.style.left = '0';
-      overlay.style.width = '100vw';
-      overlay.style.height = '100vh';
-      overlay.style.backgroundColor = 'rgba(0,0,0,0.8)';
-      overlay.style.display = 'flex';
-      overlay.style.justifyContent = 'center';
-      overlay.style.alignItems = 'center';
-      overlay.style.zIndex = '9999';
-      overlay.style.cursor = 'zoom-out';
-
-      const previewImg = document.createElement('img');
-      previewImg.src = img.src;
-      previewImg.style.maxHeight = '90vh';
-      previewImg.style.maxWidth = '90vw';
-      previewImg.style.objectFit = 'contain';
-
-      overlay.appendChild(previewImg);
-      overlay.onclick = () => document.body.removeChild(overlay);
-
-      document.body.appendChild(overlay);
+      const currentIndex = imageMap.get(img) || 0;
+      showImagePreview({
+        images: imageList,
+        startPosition: currentIndex,
+        closeable: true,
+      });
     };
   });
 };
@@ -67,13 +57,8 @@ const setupImagePreview = () => {
 onMounted(async () => {
   const res = await fetch(props.src);
   const mdText = await res.text();
-
-  // 可选：提前替换img标签添加自定义属性
-  // const processedText = mdText.replace(/<img/g, '<img data-previewable="true"');
-
   renderedHtml.value = md.render(mdText);
 
-  // 等待DOM更新后处理图片
   await nextTick();
   setupImagePreview();
 });
@@ -110,5 +95,27 @@ onMounted(async () => {
   padding: 2px 4px;
   border-radius: 3px;
   font-size: 0.95em;
+}
+
+/* 保留原有样式 */
+.markdown-viewer {
+  padding: 16px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.markdown-viewer img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  cursor: zoom-in;
+  transition: transform 0.2s;
+}
+
+.markdown-viewer img:hover {
+  transform: scale(1.02);
 }
 </style>
