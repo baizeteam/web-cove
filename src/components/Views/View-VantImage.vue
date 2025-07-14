@@ -2,33 +2,31 @@
 import { ref, watch } from "vue";
 import { showImagePreview } from "vant";
 
-// import LogoImage from "@/assets/images/icon/logo.png";
+import LogoImage from "@/assets/images/icon/logo.png";
 
 interface Props {
   src?: string | null;
   defaultSrc?: string;
   previewable?: boolean;
+  width?: string | number;
+  height?: string | number;
 }
-
-defineOptions({
-  name: "ViewVantImage",
-});
 
 const props = withDefaults(defineProps<Props>(), {
   src: "",
-  defaultSrc: "",
+  defaultSrc: LogoImage,
   previewable: false,
+  width: "90vw",
+  height: "200px",
 });
 
-const displayImage = ref("");
+const displayImage = ref(props.src || props.defaultSrc);
 
 function handlePreview() {
   if (!props.previewable) return;
-
   showImagePreview({
     images: [displayImage.value],
     closeable: true,
-    // onClose: () => console.log('Preview closed'),
   });
 }
 watch(
@@ -36,13 +34,28 @@ watch(
   (newSrc) => {
     displayImage.value = newSrc || props.defaultSrc;
   },
-  { deep: true, immediate: true },
+  { immediate: true },
 );
 </script>
 
 <template>
   <div class="image-container" @click="handlePreview">
-    <van-image :src="displayImage" fit="cover" :error-icon="defaultSrc" />
+    <img
+      :src="displayImage"
+      :alt="''"
+      :width="width"
+      :height="height"
+      class="native-img"
+      style="
+        object-fit: contain;
+        display: block;
+        margin: 12px auto;
+        border-radius: 8px;
+        cursor: pointer;
+        max-width: 100%;
+        max-height: 100%;
+      "
+    />
     <slot name="badge" />
   </div>
 </template>
@@ -52,9 +65,14 @@ watch(
   position: relative;
   display: inline-block;
   cursor: pointer;
+  width: 100%;
+  max-width: 100vw;
 }
-:deep(.van-image) {
+.native-img {
   width: 100%;
   height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+  background: #f6f8fa;
 }
 </style>
