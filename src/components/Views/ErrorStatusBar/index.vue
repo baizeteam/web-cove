@@ -26,6 +26,9 @@
 </template>
 
 <script lang="ts" setup>
+defineOptions({
+  name: "ErrorStatusBar",
+});
 const openErrorLibrary = () => {
   console.log("打开错题库");
   // 实际项目中可使用路由跳转或弹出层
