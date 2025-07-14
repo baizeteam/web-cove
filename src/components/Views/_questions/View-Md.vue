@@ -1,167 +1,81 @@
 <template>
-  <div class="markdown-viewer">
-    <template v-for="(node, idx) in ast" :key="idx">
-      <!-- 图片渲染 -->
-      <ViewVantImage
-          v-if="node.type === 'image'"
-          :src="node.src"
-          :alt="node.alt"
-          previewable
-          style="width:90vw;height:200px;margin:12px auto;border-radius:8px;"
-      />
-
-      <!-- 标题渲染 -->
-      <component
-          v-else-if="node.type === 'heading'"
-          :is="node.tag"
-          :class="`heading-${node.level}`"
-      >
-        <template v-for="(child, cidx) in node.children" :key="cidx">
-          <Test :node="child" />
-        </template>
-      </component>
-
-      <!-- 段落渲染 -->
-      <p v-else-if="node.type === 'paragraph'">
-        <template v-for="(child, cidx) in node.children" :key="cidx">
-          <Test :node="child" />
-        </template>
-      </p>
-
-      <!-- 代码块渲染 -->
-      <pre v-else-if="node.type === 'code'" :class="node.attrs?.class">
-        <code :class="`language-${node.lang}`">{{ node.content }}</code>
-      </pre>
-
-      <!-- 默认文本渲染 -->
-      <template v-else>
-        {{ node.content }}
-      </template>
-    </template>
-  </div>
+  <div class="markdown-viewer" ref="markdownContainer" v-html="renderedHtml"></div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, nextTick } from 'vue';
 import MarkdownIt from 'markdown-it';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/atom-one-dark.css';
-import ViewVantImage from '../View-VantImage.vue';
-import Test from "@/components/Views/_questions/Test.vue";
 
 const props = defineProps<{ src: string }>();
-const ast = ref<any[]>([]);
+const renderedHtml = ref('');
+const markdownContainer = ref<HTMLElement>();
 
 const md = new MarkdownIt({
-  highlight: function (str: string, lang: string): string {
+  highlight: (str, lang) => {
     if (lang && hljs.getLanguage(lang)) {
       try {
-        return (
-          '<pre class="hljs"><code>' +
-          hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
-          '</code></pre>'
-        );
-      } catch (__) {}
+        return `<pre class="hljs"><code>${hljs.highlight(str, { language: lang }).value}</code></pre>`;
+      } catch (e) {}
     }
-    return (
-      '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>'
-    );
+    return `<pre class="hljs"><code>${md.utils.escapeHtml(str)}</code></pre>`;
   },
 });
-function tokensToAst(tokens: any[]): any[] {
-  const ast: any[] = [];
-  let i = 0;
 
-  while (i < tokens.length) {
-    const token = tokens[i];
+// 处理图片点击预览
+const setupImagePreview = () => {
+  if (!markdownContainer.value) return;
 
-    // 处理图片
-    if (token.type === 'image') {
-      ast.push({
-        type: 'image',
-        tag: ViewVantImage,
-        src: token.attrGet('src'),
-        alt: token.content,
-      });
-      i++;
-      continue;
-    }
+  const images = markdownContainer.value.querySelectorAll('img');
+  images.forEach(img => {
+    // 添加预览样式
+    img.style.cursor = 'zoom-in';
+    img.style.maxWidth = '100%';
+    img.style.borderRadius = '4px';
+    img.style.transition = 'transform 0.2s';
 
-    // 处理标题 (h1-h6)
-    if (token.type.startsWith('heading_')) {
-      const level = parseInt(token.type.replace('heading_', ''));
-      const tag = `h${level}`;
-      const children = tokens[i+1].children
-          ? tokensToAst(tokens[i+1].children)
-          : [];
+    // 添加点击事件
+    img.onclick = () => {
+      const overlay = document.createElement('div');
+      overlay.style.position = 'fixed';
+      overlay.style.top = '0';
+      overlay.style.left = '0';
+      overlay.style.width = '100vw';
+      overlay.style.height = '100vh';
+      overlay.style.backgroundColor = 'rgba(0,0,0,0.8)';
+      overlay.style.display = 'flex';
+      overlay.style.justifyContent = 'center';
+      overlay.style.alignItems = 'center';
+      overlay.style.zIndex = '9999';
+      overlay.style.cursor = 'zoom-out';
 
-      ast.push({
-        type: 'heading',
-        tag,
-        children,
-        level
-      });
-      i += 3; // skip open + inline + close
-      continue;
-    }
+      const previewImg = document.createElement('img');
+      previewImg.src = img.src;
+      previewImg.style.maxHeight = '90vh';
+      previewImg.style.maxWidth = '90vw';
+      previewImg.style.objectFit = 'contain';
 
-    // 处理段落
-    if (token.type === 'paragraph_open') {
-      const children = tokens[i+1].children
-          ? tokensToAst(tokens[i+1].children)
-          : [];
+      overlay.appendChild(previewImg);
+      overlay.onclick = () => document.body.removeChild(overlay);
 
-      ast.push({
-        type: 'paragraph',
-        tag: 'p',
-        children
-      });
-      i += 3; // skip open + inline + close
-      continue;
-    }
-
-    // 处理代码块
-    if (token.type === 'fence') {
-      ast.push({
-        type: 'code',
-        tag: 'pre',
-        content: token.content,
-        attrs: { class: 'hljs' },
-        lang: token.info
-      });
-      i++;
-      continue;
-    }
-
-    // 处理内联文本
-    if (token.type === 'inline' && token.children) {
-      ast.push(...tokensToAst(token.children));
-      i++;
-      continue;
-    }
-
-    // 处理文本节点
-    if (token.type === 'text') {
-      ast.push({
-        type: 'text',
-        content: token.content
-      });
-      i++;
-      continue;
-    }
-
-    // 默认情况
-    i++;
-  }
-
-  return ast;
-}
+      document.body.appendChild(overlay);
+    };
+  });
+};
 
 onMounted(async () => {
   const res = await fetch(props.src);
   const mdText = await res.text();
-  const tokens = md.parse(mdText, {});
-  ast.value = tokensToAst(tokens);
+
+  // 可选：提前替换img标签添加自定义属性
+  // const processedText = mdText.replace(/<img/g, '<img data-previewable="true"');
+
+  renderedHtml.value = md.render(mdText);
+
+  // 等待DOM更新后处理图片
+  await nextTick();
+  setupImagePreview();
 });
 </script>
 
