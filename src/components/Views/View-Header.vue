@@ -22,24 +22,10 @@ defineProps({
 const emit = defineEmits(["back", "file", "edit", "upload", "home"]);
 const layoutStore = useLayoutStore();
 const { header } = toRefs(layoutStore);
-// 测试用例
-
-// (() => {
-//   layoutStore.setLayout('header', {
-//     height: '45px',
-//   })
-//   layoutStore.setLayout('a', {
-//     height: '1',
-//   })
-//   layoutStore.setLayout('header', {
-//     a: '1',
-//   })
-//   console.log(header.value)
-// })()
 
 const router = useRouter();
 const isCanEmit = ref(true);
-function emitEvent(type, data = {}) {
+function emitEvent(type: any, data = {}) {
   if (!isCanEmit.value) return;
   emit(type, data);
   isCanEmit.value = false;
@@ -60,7 +46,7 @@ function onBack() {
   <div
     v-if="showHeader"
     :style="{ height: header.height, background: header.backgroundColor }"
-    class="page-header"
+    class="header-container"
   >
     <div class="left-btn">
       <div v-if="headerConfig.showBackBtn" class="back-btn" @click="onBack" />
@@ -75,7 +61,7 @@ function onBack() {
         @click="emitEvent('file')"
       />
     </div>
-    <div class="title">
+    <div class="title flex-center">
       {{ headerConfig.title }}
     </div>
     <div class="right-btn">
@@ -99,19 +85,20 @@ function onBack() {
 </template>
 
 <style lang="less" scoped>
-.page-header {
+.header-container {
   display: flex;
   backdrop-filter: blur(10px);
   align-items: center;
 
   .left-btn {
     flex: 1;
+    height: 100%;
     display: flex;
     justify-content: flex-start;
     .back-btn {
       width: 32px;
       height: 32px;
-      background-image: url("@/assets/header/back-btn.png");
+      background-image: url("@/assets/images/header/back-btn.png");
       background-size: 9px 17px;
       background-position: center center;
       background-repeat: no-repeat;
@@ -121,13 +108,14 @@ function onBack() {
     .file-btn {
       width: 32px;
       height: 32px;
-      background-image: url("@/assets/header/file-btn.png");
+      background-image: url("@/assets/images/header/file-btn.png");
       background-size: 100% 100%;
       margin-left: 16px;
     }
   }
 
   .right-btn {
+    height: 100%;
     flex: 1;
     display: flex;
     justify-content: flex-end;
@@ -135,7 +123,7 @@ function onBack() {
     .edit-btn {
       width: 32px;
       height: 32px;
-      background-image: url("@/assets/header/edit-btn.png");
+      background-image: url("@/assets/images/header/edit-btn.png");
       background-size: 100% 100%;
       margin-right: 16px;
     }
@@ -143,7 +131,7 @@ function onBack() {
     .upload-btn {
       width: 32px;
       height: 32px;
-      background-image: url("@/assets/header/upload-btn.png");
+      background-image: url("@/assets/images/header/upload-btn.png");
       background-size: 100% 100%;
       margin-right: 16px;
     }
@@ -151,7 +139,7 @@ function onBack() {
     .home-btn {
       width: 32px;
       height: 32px;
-      background-image: url("@/assets/header/home-btn.png");
+      background-image: url("@/assets/images/header/home-btn.png");
       background-size: 100% 100%;
       margin-right: 16px;
     }
@@ -162,13 +150,10 @@ function onBack() {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    font-family:
-      PingFangSC,
-      PingFang SC;
+    height: 100%;
     font-weight: 400;
     font-size: 17px;
     color: #000000;
-    //line-height: 44px;
     text-align: center;
     font-style: normal;
   }

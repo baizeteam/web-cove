@@ -14,6 +14,6 @@ import { useRoute } from "vue-router";
 import ViewMd from "@/components/Views/_questions/View-Md.vue";
 
 const {
-  query: { title },
+  meta: { title },
 } = useRoute();
 </script>
