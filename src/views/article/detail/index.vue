@@ -3,7 +3,7 @@
     <template #header>
       <ViewHeader :header-config="{ title }" />
     </template>
-    <div>detail</div>
+    文章详情
     <template #footer />
   </ViewPageLayout>
 </template>
@@ -13,6 +13,6 @@ import ViewHeader from "@/components/Views/View-Header.vue";
 import { useRoute } from "vue-router";
 
 const {
-  query: { title },
+  meta: { title },
 } = useRoute();
 </script>

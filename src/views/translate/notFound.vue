@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from "vue-router";
-import ViewPageLayout from "@/components/views/View-PageLayout.vue";
-import ViewHeader from "@/components/views/View-Header.vue";
+import ViewPageLayout from "@/components/Views/View-PageLayout.vue";
+import ViewHeader from "@/components/Views/View-Header.vue";
 // import NotFoundIcon from "@/assets/images/notFound/notFound.png";
 
 const router = useRouter();

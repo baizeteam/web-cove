@@ -26,7 +26,7 @@ const tabbarList = ref<ITabbarItem[]>([
     title: "发现",
     icon: moodCodeIcon,
     activeIcon: moodCodeActiveIcon,
-    path: "/friends",
+    path: "/recommend",
     name: promiseEnum.moodCode,
   },
   {

@@ -3,23 +3,39 @@ import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
 const routes: RouteRecordRaw[] = [
   {
     path: "/",
-    redirect: "/friends",
+    redirect: "/recommend",
   },
   {
-    path: "/friends",
+    path: "/recommend",
     meta: {
       title: "发现",
       keepAlive: false,
     },
-    component: () => import("@/views/friends/friends/index.vue"),
+    component: () => import("@/views/recommend/recommend/index.vue"),
   },
   {
-    path: "/friends/detail",
+    path: "/article",
     meta: {
-      title: "发现详情",
+      title: "全部文章",
       keepAlive: false,
     },
-    component: () => import("@/views/friends/detail/index.vue"),
+    component: () => import("@/views/article/article/index.vue"),
+  },
+  {
+    path: "/article/detail/:id",
+    meta: {
+      title: "文章详情",
+      keepAlive: false,
+    },
+    component: () => import("@/views/article/detail/index.vue"),
+  },
+  {
+    path: "/search",
+    meta: {
+      title: "搜索结果",
+      keepAlive: false,
+    },
+    component: () => import("@/views/translate/search.vue"),
   },
   {
     path: "/study",
@@ -44,7 +60,7 @@ const routes: RouteRecordRaw[] = [
     meta: {
       title: "页面不存在",
     },
-    component: () => import("@/views/error/notFound.vue"), // 你需要创建这个组件
+    component: () => import("@/views/translate/notFound.vue"), // 你需要创建这个组件
   },
 ];
 
