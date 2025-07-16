@@ -4,6 +4,7 @@
       <ViewHeader :header-config="{ title }" />
     </template>
     <ViewMd src="_markdown/test.md" />
+    <div v-if="exampleData">示例数据：{{ exampleData }}</div>
     <template #footer />
   </ViewPageLayout>
 </template>
@@ -12,8 +13,20 @@ import ViewPageLayout from "@/components/Views/View-PageLayout.vue";
 import ViewHeader from "@/components/Views/View-Header.vue";
 import { useRoute } from "vue-router";
 import ViewMd from "@/components/Views/_questions/View-Md.vue";
+import { ref, onMounted } from "vue";
+import { getExampleDataBrowser } from "@/request/example.request";
 
 const {
   meta: { title },
 } = useRoute();
+
+const exampleData = ref<any>(null);
+
+onMounted(async () => {
+  try {
+    exampleData.value = await getExampleDataBrowser();
+  } catch (e) {
+    exampleData.value = "请求失败";
+  }
+});
 </script>

@@ -11,9 +11,28 @@ export default defineConfig({
     },
   },
   server: {
-    host: '0.0.0.0', // 允许外部访问
-    port: 5173,       // 端口可自定义
-    https: true
+    host: '0.0.0.0',
+    port: 1000,
+    https: true,
+    strictPort: true,
+    proxy: {
+      '/res': {
+        target: 'https://alidocs.oss-cn-zhangjiakou.aliyuncs.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/res/, ''), // 修正：替换路径前缀应匹配 '/res'
+        headers: {
+          // 设置 Referer 和 Origin 头（解决 OSS 防盗链问题）
+          Referer: 'https://alidocs.oss-cn-zhangjiakou.aliyuncs.com',
+          Origin: 'https://your-domain.com' // 替换为你的实际域名
+        },
+        // 可选：更精细的控制（如需修改响应头）
+        configure: (proxy) => {
+          proxy.on('proxyRes', (proxyRes) => {
+            proxyRes.headers['access-control-allow-origin'] = '*';
+          });
+        }
+      }
+    }
   },
   test: {
     environment: "jsdom",
@@ -22,10 +41,7 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       less: {
-        // 这里可以全局引入 less 变量、mixin
         additionalData: `@import "@/assets/styles/index.less";`,
-        // 也可以加 less 的其他配置
-        // javascriptEnabled: true
       },
     },
   },

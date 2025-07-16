@@ -1,5 +1,9 @@
 <template>
-  <div class="markdown-viewer" ref="markdownContainer" v-html="renderedHtml"></div>
+  <div
+    class="markdown-viewer"
+    ref="markdownContainer"
+    v-html="renderedHtml"
+  ></div>
 </template>
 
 <script setup lang="ts">
@@ -38,8 +42,12 @@ const setupImagePreview = () => {
     img.style.borderRadius = '4px';
     img.style.transition = 'transform 0.2s';
 
-    if (img.src) {
-      imageList.push(img.src);
+    // 清除src中的反引号和空格
+    const cleanSrc = img.src.replace(/[`\s]/g, '');
+    img.src = cleanSrc;
+
+    if (cleanSrc) {
+      imageList.push(cleanSrc);
       imageMap.set(img, index);
     }
 
