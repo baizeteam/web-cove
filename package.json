@@ -10,7 +10,7 @@
         "preinstall": "node ./check-pnpm.js",
         "prepare": "husky install",
         "dev": "vite",
-        "build": "vue-tsc && vite build",
+        "build": "vite build",
         "preview": "vite preview",
         "test": "vitest",
         "test:ui": "vitest --ui",

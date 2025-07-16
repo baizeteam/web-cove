@@ -4,7 +4,7 @@
       <ViewHeader :header-config="{ title }" />
     </template>
     <ViewMd src="_markdown/test.md" />
-    <!-- <ViewPDF src="_pdf/test.pdf" /> -->
+    <!--     <ViewPDF src="_pdf/test.pdf" />-->
     <template #footer />
   </ViewPageLayout>
 </template>
@@ -14,7 +14,7 @@ import ViewHeader from "@/components/Views/View-Header.vue";
 import { useRoute } from "vue-router";
 import ViewMd from "@/components/Views/_questions/View-MD.vue";
 import { ref, onMounted } from "vue";
-import { getExampleDataBrowser } from "@/request/example.request";
+import { getExampleDataBrowser } from "@/request/example.request.ts";
 
 const {
   meta: { title },

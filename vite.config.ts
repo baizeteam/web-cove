@@ -10,24 +10,31 @@ export default defineConfig({
       "@": path.resolve(__dirname, "src"),
     },
   },
+  base: "./",
   server: {
     host: '0.0.0.0',
     port: 1000,
-    https: true,
+    https: {
+      key: path.resolve(__dirname, 'localhost-key.pem'),
+      cert: path.resolve(__dirname, 'localhost.pem'),
+    },
     strictPort: true,
     proxy: {
       '/res': {
         target: 'https://alidocs.oss-cn-zhangjiakou.aliyuncs.com',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/res/, ''), // 修正：替换路径前缀应匹配 '/res'
+        rewrite: (path) => path.replace(/^\/res/, ''),
         headers: {
-          // 设置 Referer 和 Origin 头（解决 OSS 防盗链问题）
-          Referer: 'https://alidocs.oss-cn-zhangjiakou.aliyuncs.com',
+          Referer: 'https://web.leaiv.cn',  // 修改为你的前端域名
+          Origin: 'https://web.leaiv.cn'     // 保持与Referer一致
         },
-        // 可选：更精细的控制（如需修改响应头）
         configure: (proxy) => {
           proxy.on('proxyRes', (proxyRes) => {
             proxyRes.headers['access-control-allow-origin'] = '*';
+            proxyRes.headers['access-control-allow-credentials'] = 'true';
+            if (proxyRes.headers['content-type']?.includes('image')) {
+              proxyRes.headers['cache-control'] = 'public, max-age=31536000';
+            }
           });
         }
       }
