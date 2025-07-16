@@ -23,7 +23,6 @@ export default defineConfig({
         headers: {
           // 设置 Referer 和 Origin 头（解决 OSS 防盗链问题）
           Referer: 'https://alidocs.oss-cn-zhangjiakou.aliyuncs.com',
-          Origin: 'https://your-domain.com' // 替换为你的实际域名
         },
         // 可选：更精细的控制（如需修改响应头）
         configure: (proxy) => {

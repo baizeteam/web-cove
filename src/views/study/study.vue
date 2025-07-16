@@ -4,7 +4,7 @@
       <ViewHeader :header-config="{ title }" />
     </template>
     <ViewMd src="_markdown/test.md" />
-    <div v-if="exampleData">示例数据：{{ exampleData }}</div>
+    <!-- <ViewPDF src="_pdf/test.pdf" /> -->
     <template #footer />
   </ViewPageLayout>
 </template>
@@ -12,7 +12,7 @@
 import ViewPageLayout from "@/components/Views/View-PageLayout.vue";
 import ViewHeader from "@/components/Views/View-Header.vue";
 import { useRoute } from "vue-router";
-import ViewMd from "@/components/Views/_questions/View-Md.vue";
+import ViewMd from "@/components/Views/_questions/View-MD.vue";
 import { ref, onMounted } from "vue";
 import { getExampleDataBrowser } from "@/request/example.request";
 
