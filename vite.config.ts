@@ -1,9 +1,10 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import path from "path";
+import basicSsl from '@vitejs/plugin-basic-ssl';
 
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [vue(), basicSsl()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),
@@ -11,7 +12,8 @@ export default defineConfig({
   },
   server: {
     host: '0.0.0.0', // 允许外部访问
-    port: 5173       // 端口可自定义
+    port: 5173,       // 端口可自定义
+    https: true
   },
   test: {
     environment: "jsdom",
