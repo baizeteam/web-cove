@@ -2,13 +2,12 @@ import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import path from "path";
 import basicSsl from '@vitejs/plugin-basic-ssl';
-import markdown from 'vite-plugin-markdown';
 
 export default defineConfig({
-  plugins: [vue(), basicSsl(),
-    markdown({
-    mode: ['html']
-  })],
+  plugins: [
+      vue(),
+    basicSsl(),
+   ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),
