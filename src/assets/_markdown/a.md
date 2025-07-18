@@ -25,8 +25,7 @@ Markdown 支持 6 级标题，使用 `#` 表示，数量对应级别：
 1.  Python 有较少的关键字
 2.  Python 代码定义更简单
 
-**<span style="color:red">print()</span>** 函数可以用来输出文本。  
-也可以使用 **`\n` (换行符)** 来给文本换行。
+**<span style="color:red">print()</span>** 函数可以用来输出文本。
 
 
 ## 四、代码块
