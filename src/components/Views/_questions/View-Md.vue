@@ -1,134 +1,198 @@
 <template>
-  <div
-    class="markdown-viewer"
-    ref="markdownContainer"
-    v-html="renderedHtml"
-  ></div>
+  <div class="markdown-preview">
+    <div v-if="loading" class="loading">加载中...</div>
+    <div v-else class="preview-container" v-html="previewHtml"></div>
+    <div v-if="error" class="error-message">{{ error }}</div>
+  </div>
 </template>
 
-<script setup lang="ts">
-import { ref, onMounted, nextTick } from 'vue';
-import MarkdownIt from 'markdown-it';
+<script lang="ts" setup>
+import { ref, onMounted, watch, computed } from 'vue';
+import * as marked from 'marked';
 import hljs from 'highlight.js';
-import 'highlight.js/styles/atom-one-dark.css';
-import { showImagePreview } from 'vant'; // 注意这里是 showImagePreview 而不是 ImagePreview
+import 'highlight.js/styles/github-dark.css';
 
-const props = defineProps<{ src: string }>();
-const renderedHtml = ref('');
-const markdownContainer = ref<HTMLElement>();
+interface Props {
+  src?: string;        // Markdown 文件路径
+  content?: string;    // 直接传递的 Markdown 内容
+  refreshKey?: string; // 刷新键，用于强制重新加载
+}
 
-const md = new MarkdownIt({
-  highlight: (str, lang) => {
+const props = withDefaults(defineProps<Props>(), {
+  src: undefined,
+  content: undefined,
+  refreshKey: undefined,
+});
+
+// 组件状态
+const previewHtml = ref('');
+const loading = ref(false);
+const error = ref<string | null>(null);
+
+// 配置 marked 解析器
+const renderer = new marked.Renderer();
+
+// 自定义解析器处理特殊格式
+renderer.strong = (text: string) => {
+
+  const cleanText = text.text.replaceAll(/^\*\*|\*\*$/g, '');
+  return `<strong>${cleanText}</strong>`;
+};
+
+renderer.listitem = (text: string) => {
+  console.log(text,'ff')
+  // 将 tokens 转换为文本
+  const textContent = text.tokens.map(token => token.text).join('');
+
+  // 使用更精确的正则表达式匹配 **文本**
+  const cleanText = textContent.replace(/\*\*(.*?)\*\*/g, '$1');
+
+  console.log('原始文本:', textContent);
+  console.log('处理后:', cleanText);
+
+  return `<li>${cleanText}</li>`;
+};
+
+// 配置 marked
+marked.setOptions({
+  renderer,
+  gfm: true,
+  breaks: true,
+  sanitize: false, // 允许 HTML 标签
+  highlight: (code, lang) => {
     if (lang && hljs.getLanguage(lang)) {
-      try {
-        return `<pre class="hljs"><code>${hljs.highlight(str, { language: lang }).value}</code></pre>`;
-      } catch (e) {}
+      return hljs.highlight(code, { language: lang }).value;
     }
-    return `<pre class="hljs"><code>${md.utils.escapeHtml(str)}</code></pre>`;
+    return hljs.highlightAuto(code).value;
   },
 });
 
-// 处理图片点击预览
-const setupImagePreview = () => {
-  if (!markdownContainer.value) return;
 
-  const images = markdownContainer.value.querySelectorAll('img');
-  const imageList: string[] = [];
-  const imageMap = new Map<HTMLImageElement, number>();
 
-  images.forEach((img, index) => {
-    img.style.cursor = 'zoom-in';
-    img.style.maxWidth = '100%';
-    img.style.borderRadius = '4px';
-    img.style.transition = 'transform 0.2s';
+// 加载 Markdown 内容
+const loadMarkdown = async () => {
+  loading.value = true;
+  error.value = null;
+  previewHtml.value = '';
 
-    // 清除src中的反引号和空格
-    const cleanSrc = img.src.replace(/[`\s]/g, '');
-    img.src = cleanSrc;
+  try {
+    let mdContent = '';
 
-    if (cleanSrc) {
-      imageList.push(cleanSrc);
-      imageMap.set(img, index);
+    if (props.src) {
+      // 从 URL 加载
+      const response = await fetch(props.src);
+      if (!response.ok) {
+        throw new Error(`Failed to load Markdown file: ${response.statusText}`);
+      }
+      mdContent = await response.text();
+    } else if (props.content !== undefined) {
+      // 使用直接传递的内容
+      mdContent = props.content;
+    } else {
+      throw new Error('Either "src" or "content" prop must be provided');
     }
 
-    img.onclick = () => {
-      const currentIndex = imageMap.get(img) || 0;
-      showImagePreview({
-        images: imageList,
-        startPosition: currentIndex,
-        closeable: true,
-      });
-    };
-  });
+    // 渲染 Markdown
+    previewHtml.value = marked.parse(mdContent);
+  } catch (err: any) {
+    console.error('Error loading/rendering Markdown:', err);
+    error.value = err.message || 'Failed to load Markdown content';
+    previewHtml.value = `<div class="error">${error.value}</div>`;
+  } finally {
+    loading.value = false;
+  }
 };
 
-onMounted(async () => {
-  const res = await fetch(props.src);
-  const mdText = await res.text();
-  renderedHtml.value = md.render(mdText);
-
-  await nextTick();
-  setupImagePreview();
+// 监听属性变化并重新加载
+watch([() => props.src, () => props.content, () => props.refreshKey], loadMarkdown, {
+  immediate: true,
 });
 </script>
 
-<style lang="less" scoped>
-:deep(.hljs) {
-  padding: 20px;
-  border-radius: 5px;
-  line-height: 20px;
+<style scoped>
+.markdown-preview {
+  position: relative;
+  min-height: 400px;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 6px;
 }
-.markdown-viewer {
-  padding: 16px;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  max-width: 800px;
-  margin: 0 auto;
+
+.loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 1rem 2rem;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
-.markdown-viewer h1,
-.markdown-viewer h2,
-.markdown-viewer h3 {
-  margin-top: 1.5em;
-  margin-bottom: 0.5em;
+
+.preview-container {
+  padding: 1rem;
+  background-color: #fff;
+  line-height: 1.6;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
-.markdown-viewer pre {
-  background: #282c34;
+
+.error-message {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #ffebee;
+  color: #b71c1c;
+  border-radius: 4px;
+  border: 1px solid #ef9a9a;
+}
+
+/* 预览样式 */
+.preview-container h1,
+.preview-container h2,
+.preview-container h3 {
+  color: #2c3e50;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.preview-container p {
+  margin-bottom: 1rem;
+}
+
+.preview-container ul,
+.preview-container ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.preview-container code {
+  padding: 0.2rem 0.4rem;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.9rem;
+}
+
+.preview-container pre {
+  padding: 1rem;
+  background-color: #282c34;
   color: #fff;
-  padding: 12px;
   border-radius: 6px;
   overflow-x: auto;
-  font-size: 15px;
-  line-height: 1.7;
-  margin: 16px 0;
-}
-.markdown-viewer code {
-  background: #282c34;
-  color: #fff;
-  padding: 2px 4px;
-  border-radius: 3px;
-  font-size: 0.95em;
 }
 
-/* 保留原有样式 */
-.markdown-viewer {
-  padding: 16px;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  max-width: 800px;
-  margin: 0 auto;
+.preview-container pre code {
+  background-color: transparent;
+  padding: 0;
+  font-size: 0.9rem;
 }
 
-.markdown-viewer img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 4px;
-  cursor: zoom-in;
-  transition: transform 0.2s;
+.preview-container strong {
+  color: #2c3e50;
 }
 
-.markdown-viewer img:hover {
-  transform: scale(1.02);
+.preview-container span[style*="color"] {
+  font-weight: bold;
 }
 </style>

@@ -37,7 +37,7 @@ const footerHeight = ref(layoutStore.footer.height);
         </template>
         <template v-else>
           <div class="flex-center loading-container">
-            <van-loading size="24px"> 加载中... </van-loading>
+            <van-loading size="24px">加载中...</van-loading>
           </div>
         </template>
       </div>
@@ -51,7 +51,7 @@ const footerHeight = ref(layoutStore.footer.height);
         :show="overlay"
       >
         <div class="overlay flex-center">
-          <van-loading size="24px"> 正在获取数据，请稍候... </van-loading>
+          <van-loading size="24px">正在获取数据，请稍候...</van-loading>
         </div>
       </van-overlay>
     </div>
@@ -69,7 +69,7 @@ const footerHeight = ref(layoutStore.footer.height);
 .page-layout {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: 100vh;
 
   .page-body {
     flex: 1;

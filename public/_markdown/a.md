@@ -1,3 +1,4 @@
+~~~python
 python 特点
 
 1. **易于学习：**Python 有相对较少的关键字，结构简单，和一个明确定义的语法，学习起来简单
@@ -13,4 +14,4 @@ python 特点
 print('hello')
 print('good\nlock')
 ```
-
+~~~
