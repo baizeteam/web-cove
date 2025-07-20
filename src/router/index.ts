@@ -32,7 +32,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: "/search",
     meta: {
-      title: "搜索结果",
+      title: "搜索页",
       keepAlive: false,
     },
     component: () => import("@/views/translate/search.vue"),
