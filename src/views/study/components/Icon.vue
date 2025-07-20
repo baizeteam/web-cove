@@ -1,6 +1,11 @@
 <template>
   <div class="grid">
-    <div v-for="item in list" :key="item.icon" class="item">
+    <div
+      v-for="item in list"
+      :key="item.icon"
+      class="item"
+      @click="item.path && router.push(item.path)"
+    >
       <div class="bg align-center">
         <van-icon :name="item.icon" />
       </div>
@@ -13,13 +18,17 @@
 
 <script lang="ts" setup>
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 
 interface Icon {
   icon: string;
   title: string;
+  path?: string;
 }
+
+const router = useRouter();
 const list = ref<Icon[]>([
-  { title: "错题记录", icon: "clear" },
+  { title: "错题记录", icon: "clear", path: "/test-md" },
   { title: "我的收藏", icon: "like" },
   { title: "我的课程", icon: "send-gift" },
 ]);

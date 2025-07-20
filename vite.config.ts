@@ -2,10 +2,21 @@ import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import path from "path";
 import basicSsl from '@vitejs/plugin-basic-ssl';
+import progress from 'vite-plugin-progress'
 
 export default defineConfig({
   plugins: [
-      vue(),
+      progress(),
+      vue(
+          {
+            babel: {
+              presets: [
+                '@babel/preset-env',
+                '@babel/preset-typescript'
+              ]
+            }
+          }
+      ),
       basicSsl(),
   ],
   resolve: {
