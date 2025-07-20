@@ -61,6 +61,23 @@ const courses = [
   margin-bottom: 16px;
 }
 
+/* 不同 badge 类型样式 */
+.course-badge--new {
+  background-color: #28a745; /* 新升级标识颜色，可自定义 */
+}
+
+.course-badge--series {
+  background-color: #17a2b8; /* 系列课程标识颜色，可自定义 */
+}
+
+.course-badge--basic {
+  background-color: #ffc107; /* 0基础标识颜色，可自定义 */
+}
+
+.badge-text {
+  vertical-align: middle;
+}
+
 .course-item {
   margin-bottom: 24px;
   overflow: hidden;
@@ -79,23 +96,6 @@ const courses = [
   border-radius: 4px;
   color: #fff;
   font-size: 8px;
-}
-
-/* 不同 badge 类型样式 */
-.course-badge--new {
-  background-color: #28a745; /* 新升级标识颜色，可自定义 */
-}
-
-.course-badge--series {
-  background-color: #17a2b8; /* 系列课程标识颜色，可自定义 */
-}
-
-.course-badge--basic {
-  background-color: #ffc107; /* 0基础标识颜色，可自定义 */
-}
-
-.badge-text {
-  vertical-align: middle;
 }
 
 .course-name {

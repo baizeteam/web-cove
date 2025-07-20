@@ -2,8 +2,8 @@
   <div class="column-knowledge">
     <div class="section-header">
       <h2 class="section-title">专栏知识</h2>
-      <div @click="handleViewMore">
-        查看更多 <van-icon name="arrow-right" />
+      <div class="more" @click="handleViewMore">
+        查看更多 <van-icon name="arrow" />
       </div>
     </div>
 
@@ -104,13 +104,6 @@ const handleArticleClick = (id: number) => {
 </script>
 
 <style scoped>
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 15px 0;
-}
-
 .list {
   padding-bottom: 16px;
   .item {
@@ -137,10 +130,5 @@ const handleArticleClick = (id: number) => {
       background-image: url("../HotCourse/img.png");
     }
   }
-}
-
-.section-title {
-  font-size: 18px;
-  font-weight: bold;
 }
 </style>
