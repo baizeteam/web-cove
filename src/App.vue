@@ -12,12 +12,13 @@ onMounted(() => {
 </script>
 
 <style lang="less">
+* {
+  box-sizing: border-box;
+}
 body {
   // 禁止长按复制
   user-select: none;
-}
-body {
-  // 禁止双击放大页面
   touch-action: manipulation;
 }
+// 禁止双击放大页面
 </style>

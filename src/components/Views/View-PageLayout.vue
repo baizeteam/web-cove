@@ -78,6 +78,7 @@ const footerHeight = ref(layoutStore.footer.height);
     .page-content {
       height: 100%;
       width: 100vw;
+      padding: 0 16px;
       overflow-x: hidden;
       overflow-y: auto;
       .safe-bottom-area();
