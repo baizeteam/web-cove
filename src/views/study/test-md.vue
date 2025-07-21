@@ -1,10 +1,9 @@
 <template>
-  <ViewPageLayout :footer="true">
+  <ViewPageLayout>
     <template #header>
       <ViewHeader :header-config="{ title }" />
     </template>
     <ViewMd :content="md" />
-    <template #footer />
   </ViewPageLayout>
 </template>
 

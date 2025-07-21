@@ -79,9 +79,10 @@ const courses = [
 }
 
 .course-item {
-  margin-bottom: 24px;
+  margin-bottom: 8px;
   overflow: hidden;
   .left {
+    position: relative;
     background-image: url("./img.png");
     margin-right: 10px;
   }
@@ -96,6 +97,8 @@ const courses = [
   border-radius: 4px;
   color: #fff;
   font-size: 8px;
+  position: absolute;
+  left: 0;
 }
 
 .course-name {
