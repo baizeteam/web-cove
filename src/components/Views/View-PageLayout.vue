@@ -4,9 +4,9 @@ import { useLayoutStore } from "@/stores/layout.store.ts";
 import { ref } from "vue";
 
 interface IProps {
-  footer: boolean;
-  loading: boolean;
-  overlay: boolean;
+  footer?: boolean;
+  loading?: boolean;
+  overlay?: boolean;
 }
 defineProps<IProps>();
 

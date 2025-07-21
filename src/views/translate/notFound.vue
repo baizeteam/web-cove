@@ -2,7 +2,8 @@
 import { useRoute, useRouter } from "vue-router";
 import ViewPageLayout from "@/components/Views/View-PageLayout.vue";
 import ViewHeader from "@/components/Views/View-Header.vue";
-// import NotFoundIcon from "@/assets/images/notFound/notFound.png";
+import ViewVantImage from "@/components/Views/View-VantImage.vue";
+import NotFoundIcon from "@/assets/images/translate/notFound.webp";
 
 const router = useRouter();
 const {
@@ -20,8 +21,8 @@ function backHome() {
     </template>
 
     <div class="flex-center" style="height: 60%">
-      <div @click="backHome">
-        <!--        <ViewVantImage :src="NotFoundIcon" />-->
+      <div>
+        <ViewVantImage :src="NotFoundIcon" />
         <p class="flex-center" @click="backHome">
           页面找不到了
           <span>回首页</span>
@@ -37,7 +38,7 @@ p {
   font-size: 16px;
   color: #1f2226;
   line-height: 22px;
-  margin-top: -120px;
+  height: 50px;
 }
 span {
   color: blue;

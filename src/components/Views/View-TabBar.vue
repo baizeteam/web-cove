@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { ref, toRefs } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import moodCodeIcon from "@/assets/images/tab-bar/moodCode.png";
-import moodCodeActiveIcon from "@/assets/images/tab-bar/moodCode-active.png";
+import recommendIcon from "@/assets/images/tab-bar/recommend.png";
+import recommendActiveIcon from "@/assets/images/tab-bar/recommend-active.png";
 import UserIcon from "@/assets/images/tab-bar/user.png";
 import UserActiveIcon from "@/assets/images/tab-bar/user-active.png";
 import { useLayoutStore } from "@/stores/layout.store";
@@ -24,8 +24,8 @@ interface Item {
 const list = ref<Item[]>([
   {
     title: "发现",
-    icon: moodCodeIcon,
-    activeIcon: moodCodeActiveIcon,
+    icon: recommendIcon,
+    activeIcon: recommendActiveIcon,
     path: "/recommend",
     name: promiseEnum.moodCode,
   },
