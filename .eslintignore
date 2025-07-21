@@ -1,3 +1,4 @@
 shims-vue.d.ts
 src/router/index.ts
 src/components/Views/_questions/View-Md.vue
+src/components/Views/_questions/View-Md.ts

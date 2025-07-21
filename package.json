@@ -19,13 +19,14 @@
         "lint:fix": "eslint --fix --ext .ts,.tsx,.vue src tests"
     },
     "dependencies": {
+        "@types/marked": "^6.0.0",
         "@vuemark/core": "^1.2.2",
         "axios": "^1.10.0",
         "highlight.js": "^11.11.1",
         "markdown-it": "^14.1.0",
         "markdown-it-attrs": "^4.3.1",
         "markdown-it-vue": "^1.1.7",
-        "marked": "^16.0.0",
+        "marked": "^16.1.1",
         "pdfjs-dist": "^5.3.93",
         "pinia": "^3.0.3",
         "vant": "^4.9.21",
