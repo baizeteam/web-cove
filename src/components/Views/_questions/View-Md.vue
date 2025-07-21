@@ -80,7 +80,7 @@ const loadMarkdown = async () => {
 
     console.log(mdContent, '处理后的 markdown 内容');
 
-    previewHtml.value = marked.parse(mdContent);
+    previewHtml.value = marked.parse(mdContent) as string;
 
     // 延迟执行高亮，确保DOM已更新
     setTimeout(() => {

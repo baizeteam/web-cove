@@ -13,7 +13,7 @@ const routes: RouteRecordRaw[] = [
       stepId: route.params.id,
       // 配置步骤映射：1 → MD，2 → 做题，3 → MD
       stepConfig: {
-        '1': { type: 'md', src: '@/assets/_markdown/yuque.md?raw' },
+        '1': { type: 'md', src: '@/assets/_markdown/yuque_origin.md?raw' },
         '2': { type: 'choice', data: {
             questions: '',
             options: ['A.6', 'B.2', 'C.3', 'D.0'],
