@@ -14,14 +14,14 @@ enum promiseEnum {
   user = "user",
 }
 
-interface ITabbarItem {
+interface Item {
   title: string;
   icon: string;
   activeIcon: string;
   path: string;
   name: promiseEnum;
 }
-const tabbarList = ref<ITabbarItem[]>([
+const list = ref<Item[]>([
   {
     title: "发现",
     icon: moodCodeIcon,
@@ -42,12 +42,12 @@ const layoutStore = useLayoutStore();
 const { footer } = toRefs(layoutStore);
 
 function getCurrentTab() {
-  return tabbarList.value.findIndex((item) => item.path === route.path);
+  return list.value.findIndex((item) => item.path === route.path);
 }
 
 const activeIdx = ref(getCurrentTab());
 
-function onRoute(item: ITabbarItem) {
+function onRoute(item: Item) {
   // talkStore.setTabActive("0");
   router.replace(item.path);
 }
@@ -62,7 +62,7 @@ function onRoute(item: ITabbarItem) {
       }"
     >
       <div
-        v-for="(tab, idx) in tabbarList"
+        v-for="(tab, idx) in list"
         v-show="promiseEnum[tab.name]"
         :key="idx"
         class="tab-item justify-center"

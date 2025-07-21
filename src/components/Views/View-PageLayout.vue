@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import ViewTabBar from "@/components/views/View-TabBar.vue";
+import ViewTabBar from "@/components/Views/View-TabBar.vue";
 import { useLayoutStore } from "@/stores/layout.store.ts";
 import { ref } from "vue";
 

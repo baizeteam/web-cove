@@ -32,6 +32,17 @@ export default defineConfig({
       key: path.resolve(__dirname, 'localhost-key.pem'),
       cert: path.resolve(__dirname, 'localhost.pem'),
     },
+    proxy: {
+      '/yuque': {
+        target: 'https://cdn.nlark.com/yuque',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/yuque/, ''),
+        headers: {
+          Referer: 'https://www.yuque.com',
+          Origin: 'https://www.yuque.com',
+        },
+      },
+    },
     strictPort: true,
   },
   test: {

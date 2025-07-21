@@ -28,6 +28,21 @@ const previewHtml = ref('');
 const loading = ref(false);
 const error = ref<string | null>(null);
 
+
+const processImageUrls = (markdownContent: string): string => {
+  // 匹配 ![...](https://cdn.nlark.com/...) 格式的图片链接
+  try {
+    const regex = /!\[(.*?)\]\((https:\/\/cdn\.nlark\.com)(\/[^)]+)\)/g;
+
+    return markdownContent.replace(regex, (match, altText, domain, path) => {
+      // 只保留路径部分，去掉域名
+      return `![${altText}](${path})`;
+    });
+  }catch (_) {
+    return markdownContent;
+  }
+};
+
 // 配置 marked 和 highlight.js
 marked.setOptions({
   gfm: true,
@@ -59,6 +74,11 @@ const loadMarkdown = async () => {
       if (!response.ok) throw new Error(`加载失败: ${response.statusText}`);
       mdContent = await response.text();
     }
+
+    // 处理图片链接：移除特定域名
+    mdContent = processImageUrls(mdContent);
+
+    console.log(mdContent, '处理后的 markdown 内容');
 
     previewHtml.value = marked.parse(mdContent);
 
