@@ -16,7 +16,6 @@
         </template>
       </van-search>
     </template>
-    <template #footer />
   </ViewPageLayout>
 </template>
 <script setup lang="ts">

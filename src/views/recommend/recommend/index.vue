@@ -14,7 +14,6 @@
       <HotCourse />
       <Article />
     </div>
-    <template #footer />
   </ViewPageLayout>
 </template>
 <script setup lang="ts">

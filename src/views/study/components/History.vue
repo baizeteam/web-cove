@@ -48,6 +48,36 @@ const courses = ref<Course[]>([
     total: 20,
     learned: 1,
   },
+  {
+    title: "Python3 入门课程",
+    total: 80,
+    learned: 0,
+  },
+  {
+    title: "Java 入门课程",
+    total: 20,
+    learned: 1,
+  },
+  {
+    title: "Python3 入门课程",
+    total: 80,
+    learned: 0,
+  },
+  {
+    title: "Java 入门课程",
+    total: 20,
+    learned: 1,
+  },
+  {
+    title: "Python3 入门课程",
+    total: 80,
+    learned: 0,
+  },
+  {
+    title: "Java 入门课程",
+    total: 20,
+    learned: 1,
+  },
 ]);
 function handleViewMore() {}
 </script>

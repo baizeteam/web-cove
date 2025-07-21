@@ -1,22 +1,14 @@
-<script setup>
+<script lang="ts" setup>
 import ViewTabBar from "@/components/views/View-TabBar.vue";
 import { useLayoutStore } from "@/stores/layout.store.ts";
 import { ref } from "vue";
 
-defineProps({
-  footer: {
-    type: Boolean,
-    default: () => false,
-  },
-  loading: {
-    type: Boolean,
-    default: () => false,
-  },
-  overlay: {
-    type: Boolean,
-    default: () => false,
-  },
-});
+interface IProps {
+  footer: boolean;
+  loading: boolean;
+  overlay: boolean;
+}
+defineProps<IProps>();
 
 const layoutStore = useLayoutStore();
 const footerHeight = ref(layoutStore.footer.height);
@@ -27,7 +19,10 @@ const footerHeight = ref(layoutStore.footer.height);
     <div class="page-header">
       <slot name="header" />
     </div>
-    <div class="page-body" :style="{ paddingBottom: footerHeight }">
+    <div
+      class="page-body"
+      :style="{ paddingBottom: footer ? footerHeight : 0 }"
+    >
       <div
         class="page-content"
         :style="{ background: layoutStore.header.backgroundColor }"

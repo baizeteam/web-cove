@@ -5,7 +5,6 @@
     </template>
     <Icon />
     <History />
-    <template #footer />
   </ViewPageLayout>
 </template>
 

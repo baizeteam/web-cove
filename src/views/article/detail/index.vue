@@ -4,7 +4,6 @@
       <ViewHeader :header-config="{ title }" />
     </template>
     文章详情
-    <template #footer />
   </ViewPageLayout>
 </template>
 <script setup lang="ts">
