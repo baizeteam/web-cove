@@ -11,6 +11,8 @@ import { ref, watch } from 'vue';
 import { marked } from 'marked';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/github-dark.css';
+import {safeJsonStringify} from "@/utils/json.util.ts";
+import {processImageUrls, removeInvisibleChars} from "@/components/Views/_questions/View.md.ts";
 
 interface Props {
   src?: string;
@@ -29,25 +31,12 @@ const loading = ref(false);
 const error = ref<string | null>(null);
 
 
-const processImageUrls = (markdownContent: string): string => {
-  // 匹配 ![...](https://cdn.nlark.com/...) 格式的图片链接
-  try {
-    const regex = /!\[(.*?)\]\((https:\/\/cdn\.nlark\.com)(\/[^)]+)\)/g;
-
-    return markdownContent.replace(regex, (match, altText, domain, path) => {
-      // 只保留路径部分，去掉域名
-      return `![${altText}](${path})`;
-    });
-  }catch (_) {
-    return markdownContent;
-  }
-};
 
 // 配置 marked 和 highlight.js
 marked.setOptions({
   gfm: true,
   breaks: true,
-  highlight: (code, lang) => {
+  highlight: (code: string, lang?: string) => { // 显式声明参数类型
     if (lang && hljs.getLanguage(lang)) {
       try {
         return hljs.highlight(code, {
@@ -75,7 +64,11 @@ const loadMarkdown = async () => {
       mdContent = await response.text();
     }
 
-    // 处理图片链接：移除特定域名
+    // 1. 首先移除不可见字符 （但是这个又要处理编排布局）
+    // mdContent = removeInvisibleChars(mdContent);
+    // const codes = Array.from(mdContent).map(c => c.charCodeAt(0).toString(16))
+    // console.log(safeJsonStringify(codes), 'unicode format');
+    // 2.然后处理图片链接：移除特定域名
     mdContent = processImageUrls(mdContent);
 
     console.log(mdContent, '处理后的 markdown 内容');
