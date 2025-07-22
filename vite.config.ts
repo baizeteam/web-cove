@@ -3,6 +3,7 @@ import vue from "@vitejs/plugin-vue";
 import path from "path";
 import basicSsl from '@vitejs/plugin-basic-ssl';
 import progress from 'vite-plugin-progress'
+import * as fs from "node:fs";
 
 export default defineConfig({
   plugins: [
@@ -26,6 +27,18 @@ export default defineConfig({
   },
   base: "./",
   server: {
+    // middlewareMode: true,
+    // configureServer: (server) => {
+    //   server.middlewares.use((req, res, next) => {
+    //     if (req.url?.endsWith('.md')) {
+    //       const fsPath = path.join(__dirname, req.url)
+    //       res.writeHead(200, { 'Content-Type': 'text/plain' })
+    //       res.end(fs.readFileSync(fsPath, 'utf-8'))
+    //       return
+    //     }
+    //     next()
+    //   })
+    // },
     host: '0.0.0.0',
     port: 1000,
     https: {
@@ -42,6 +55,11 @@ export default defineConfig({
           Origin: 'https://www.yuque.com',
         },
       },
+      '^/public/_markdown/.*\.md$': {
+        target: 'http://localhost:1000',
+        rewrite: (path) => path.replace(/^\/public/, ''),
+        bypass: (req) => req.url.endsWith('.md') ? req.url : undefined
+      }
     },
     strictPort: true,
   },

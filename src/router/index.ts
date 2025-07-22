@@ -1,5 +1,6 @@
 import {createRouter, createWebHashHistory, RouteRecordRaw} from "vue-router";
 import StepContainer from "@/views/stepContainer/index.vue";
+import stepConfigRouter from "@/router/stepConfig.router.ts";
 
 const routes: RouteRecordRaw[] = [
   {
@@ -12,15 +13,7 @@ const routes: RouteRecordRaw[] = [
     props: route => ({
       stepId: route.params.id,
       // 配置步骤映射：1 → MD，2 → 做题，3 → MD
-      stepConfig: {
-        '1': { type: 'md', src: '@/assets/_markdown/yuque_origin.md?raw' },
-        '2': { type: 'choice', data: {
-            questions: '',
-            options: ['A.6', 'B.2', 'C.3', 'D.0'],
-            answers: ['A.6'],
-          }},
-        '3': { type: 'md', src: '/md/third.md' },
-      }
+      stepConfig: stepConfigRouter,
     })
   },
   {
@@ -92,7 +85,18 @@ const routes: RouteRecordRaw[] = [
 
 const router = createRouter({
   history: createWebHashHistory(),
-  routes,
+  routes: [
+      ...routes,
+    {
+      path: '/public/_markdown/:path*',
+      beforeEnter: (to) => {
+        if (to.path.endsWith('.md')) {
+          window.location.href = to.fullPath
+          return false
+        }
+      }
+    }
+  ]
 });
 
 router.beforeEach((to, from, next) => {

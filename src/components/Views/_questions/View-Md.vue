@@ -7,12 +7,11 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from 'vue';
+import {nextTick, ref, watch} from 'vue';
 import { marked } from 'marked';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/github-dark.css';
-import {safeJsonStringify} from "@/utils/json.util.ts";
-import {processImageUrls, removeInvisibleChars} from "@/components/Views/_questions/View.md.ts";
+import {processImageUrls} from "@/components/Views/_questions/View.md.ts";
 
 interface Props {
   src?: string;
@@ -49,8 +48,7 @@ marked.setOptions({
     }
     return hljs.highlightAuto(code).value;
   },
-});
-
+} as {});
 const loadMarkdown = async () => {
   loading.value = true;
   error.value = null;
@@ -58,33 +56,36 @@ const loadMarkdown = async () => {
   try {
     let mdContent = props.content || '';
 
-    if (props.src && !props.content) {
-      const response = await fetch(props.src);
-      if (!response.ok) throw new Error(`加载失败: ${response.statusText}`);
-      mdContent = await response.text();
+    if ((props.src || props.content?.endsWith('.md')) && !mdContent.trim()) {
+      const pathToLoad = props.src || props.content;
+
+      // 开发环境特殊处理
+      if (import.meta.env.DEV) {
+        // 方案1：使用带查询参数的URL绕过路由
+        const devPath = `${pathToLoad}?raw=true&t=${Date.now()}`;
+        const res = await fetch(devPath);
+        mdContent = await res.text();
+      }
+      // 生产环境
+      else {
+        // 确保路径以 / 开头且不包含 public
+        const prodPath = pathToLoad.replace(/^\.\.\/public/, '');
+        const res = await fetch(prodPath);
+        mdContent = await res.text();
+      }
     }
 
-    // 1. 首先移除不可见字符 （但是这个又要处理编排布局）
-    // mdContent = removeInvisibleChars(mdContent);
-    // const codes = Array.from(mdContent).map(c => c.charCodeAt(0).toString(16))
-    // console.log(safeJsonStringify(codes), 'unicode format');
-    // 2.然后处理图片链接：移除特定域名
+    // 处理内容和渲染...
     mdContent = processImageUrls(mdContent);
-
-    console.log(mdContent, '处理后的 markdown 内容');
-
     previewHtml.value = marked.parse(mdContent) as string;
 
-    // 延迟执行高亮，确保DOM已更新
-    setTimeout(() => {
-      document.querySelectorAll('pre code').forEach((block) => {
-        hljs.highlightElement(block as HTMLElement);
-      });
-    }, 0);
+    nextTick(() => {
+      document.querySelectorAll('pre code').forEach(hljs.highlightElement);
+    });
 
-  } catch (err: any) {
-    error.value = err.message || '加载Markdown内容失败';
-    console.error('Error:', err);
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : '加载失败';
+    console.error('加载Markdown错误:', err);
   } finally {
     loading.value = false;
   }
