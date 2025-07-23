@@ -5,43 +5,53 @@
       <div class="progress-info">
         <span class="progress-text">2/7</span>
       </div>
-      <h2 class="question-title">以下代码的运行的结果是什么？</h2>
+      <h2 class="question-title">
+        {{ data.questions }}
+      </h2>
     </div>
 
     <!-- 代码展示区域 -->
     <div class="code-box">
-      <pre><code>def print_double(x):
-    print(2 * x)
-print_double(3)</code></pre>
+      <pre>
+        <code>
+          {{data.code}}
+        </code>
+      </pre>
     </div>
 
     <!-- 选项区域：用 Vant Radio，默认圆形 -->
     <van-radio-group v-model="selectedOption">
       <van-radio
-        v-for="(option, index) in options"
+        v-for="(option, index) in data.options"
         :key="index"
-        :name="option.value"
+        :name="option"
         class="radio-item"
       >
-        {{ option.label }}
+        {{ option }}
       </van-radio>
     </van-radio-group>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-// import { VanRadioGroup, VanRadio } from 'vant';
+import { ref, watch } from "vue";
+import { ChoiceStep } from "@/views/stepContainer/stepConfig.ts";
 
-// 选项数据
-const options = [
-  { label: "A. 6", value: "A" },
-  { label: "B. 2", value: "B" },
-  { label: "C. 3", value: "C" },
-  { label: "D. 0", value: "D" },
-];
+interface IProps {
+  data: ChoiceStep<string[]>["data"];
+}
+
+defineProps<IProps>();
 // 双向绑定选中值
-const selectedOption = ref("A");
+const selectedOption = ref("");
+
+watch(
+  selectedOption,
+  (value) => {
+    console.log(value, "vvv");
+  },
+  { deep: true },
+);
 </script>
 
 <style scoped>

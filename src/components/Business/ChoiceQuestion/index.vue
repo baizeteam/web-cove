@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ChoiceQuestion />
+    <ChoiceQuestion :data="data" />
     <div style="height: 40px"></div>
     <!-- 用于模拟页面空间，使底部组件在下方显示 -->
     <BottomIconBar />
@@ -10,7 +10,14 @@
 <script lang="ts" setup>
 import ChoiceQuestion from "./ChoiceQuestion.vue";
 import BottomIconBar from "./BottomIconBar.vue";
+import { ChoiceStep } from "@/views/stepContainer/stepConfig.ts";
 
+interface IProps {
+  data: ChoiceStep<string[]>["data"];
+}
+const props = defineProps<IProps>();
+
+console.log(props, "props");
 defineOptions({
   name: "ChoiceQuestion",
 });

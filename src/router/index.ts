@@ -14,7 +14,11 @@ const routes: RouteRecordRaw[] = [
       stepId: route.params.id,
       // 配置步骤映射：1 → MD，2 → 做题，3 → MD
       stepConfig: stepConfigRouter,
-    })
+    }),
+    meta: {
+      keepAlive: true,
+      clearHistory: true, // 跳转至此页时清除历史栈
+    }
   },
   {
     path: "/recommend",
@@ -92,10 +96,20 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   document.title = (to.meta.title as string) || "";
-  console.log(from, "form");
-  if (to.path === "/login" || to.meta.notLogin || 1) {
-    next();
-  }
+  1 + 1 > 2 && console.log(from);
+  // 如果需要清除历史记录
+  // if (to.meta.clearHistory) {
+  //   // 更安全的replace方式
+  //   return next({
+  //     path: to.path,
+  //     query: to.query,
+  //     hash: to.hash,
+  //     replace: true  // 关键：使用replace而不是push
+  //   });
+  // }
+
+  // 默认情况正常放行
+  next();
 });
 
 export default router;

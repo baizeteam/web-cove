@@ -17,10 +17,11 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from "vue";
+import { computed, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import ViewMd from "@/components/Views/Md/View-Md.vue";
 import ChoiceQuestion from "@/components/Business/ChoiceQuestion/index.vue";
+import { vantConfirm } from "@/utils/vant.util.ts";
 
 defineOptions({
   name: "StepContainer",
@@ -48,25 +49,46 @@ const currentComponent = computed(() => {
 // 动态传递组件参数
 const componentProps = computed(() => {
   const config = props.stepConfig[props.stepId];
-  return config.type === "md"
-    ? { src: config.src }
-    : { quizData: config.quizData };
+  console.log(config, "config");
+  return config.type === "md" ? { src: config.src } : { data: config.data };
 });
 
 // 导航逻辑（可结合业务调整，比如做题需提交后才允许下一步）
 const handleNext = () => {
   const nextId = +props.stepId + 1;
   if (props.stepConfig[nextId]) {
-    router.push(`/step/${nextId}`);
+    router.replace(`/step/${nextId}`);
   }
 };
 
 const handlePrev = () => {
   const prevId = +props.stepId - 1;
   if (props.stepConfig[prevId]) {
-    router.push(`/step/${prevId}`);
+    router.replace(`/step/${prevId}`);
   }
 };
+
+onMounted(() => {
+  // 禁用浏览器后退
+  history.pushState(null, "", document.location.href);
+
+  window.addEventListener("popstate", () => {
+    // 立即回到当前页面
+    router.replace(router.currentRoute.value.fullPath);
+    history.pushState(null, "", document.location.href); // 继续推一个新的
+    // 显示自定义提示
+    vantConfirm({
+      title: "请使用应用内的导航按钮",
+      showCancelButton: false,
+    });
+  });
+});
+
+onUnmounted(() => {
+  window.removeEventListener("popstate", () => {
+    console.log("<UNK>");
+  });
+});
 
 // 控制按钮显隐（可选）
 const canPrev = computed(() => !!props.stepConfig[+props.stepId - 1]);

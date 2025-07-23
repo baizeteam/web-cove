@@ -5,7 +5,7 @@ interface MdStep {
   src: string;
 }
 
-interface ChoiceStep<Options extends readonly string[]> {
+export interface ChoiceStep<Options extends readonly string[]> {
   type: "choice";
   data: {
     questions: string;

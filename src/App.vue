@@ -1,5 +1,10 @@
 <template>
-  <router-view />
+  <router-view v-slot="{ Component }">
+    <keep-alive>
+      <component :is="Component" v-if="$route.meta.keepAlive" />
+    </keep-alive>
+    <component :is="Component" v-if="!$route.meta.keepAlive" />
+  </router-view>
 </template>
 
 <script setup lang="ts">
@@ -16,9 +21,7 @@ onMounted(() => {
   box-sizing: border-box;
 }
 body {
-  // 禁止长按复制
   user-select: none;
-  // 禁止双击放大页面
   touch-action: manipulation;
 }
 </style>
