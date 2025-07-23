@@ -87,15 +87,6 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes: [
       ...routes,
-    {
-      path: '/public/_markdown/:path*',
-      beforeEnter: (to) => {
-        if (to.path.endsWith('.md')) {
-          window.location.href = to.fullPath
-          return false
-        }
-      }
-    }
   ]
 });
 
