@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from "vue-router";
-import ViewPageLayout from "@/components/Views/View-PageLayout.vue";
-import ViewHeader from "@/components/Views/View-Header.vue";
-import ViewVantImage from "@/components/Views/View-VantImage.vue";
+import ViewLayout from "@/components/Views/Layout/View-Layout.vue";
+import ViewHeader from "@/components/Views/Layout/View-Header.vue";
+import ViewVantImage from "@/components/Views/Vant/View-VantImage.vue";
 import NotFoundIcon from "@/assets/images/translate/notFound.webp";
 
 const router = useRouter();
@@ -15,7 +15,7 @@ function backHome() {
 </script>
 
 <template>
-  <ViewPageLayout>
+  <ViewLayout>
     <template #header>
       <ViewHeader :header-config="{ title }" />
     </template>
@@ -29,7 +29,7 @@ function backHome() {
         </p>
       </div>
     </div>
-  </ViewPageLayout>
+  </ViewLayout>
 </template>
 
 <style lang="less" scoped>

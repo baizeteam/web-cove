@@ -28,7 +28,8 @@ interface Icon {
 
 const router = useRouter();
 const list = ref<Icon[]>([
-  { title: "错题记录", icon: "clear", path: "/test-md" },
+  //  原路径： /test-md
+  { title: "错题记录", icon: "clear", path: "/step/1" },
   { title: "我的收藏", icon: "like" },
   { title: "我的课程", icon: "send-gift" },
 ]);

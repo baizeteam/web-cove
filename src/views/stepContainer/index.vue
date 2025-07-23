@@ -19,14 +19,18 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 import { useRouter } from "vue-router";
-import ViewMd from "@/components/Views/_questions/View-Md.vue";
+import ViewMd from "@/components/Views/Md/View-Md.vue";
 import ChoiceQuestion from "@/components/Business/ChoiceQuestion/index.vue";
 
 defineOptions({
   name: "StepContainer",
 });
 const props = defineProps({
-  stepId: String,
+  stepId: {
+    type: String,
+    required: true,
+    // default: 1,
+  },
   stepConfig: {
     type: Object,
     required: true,

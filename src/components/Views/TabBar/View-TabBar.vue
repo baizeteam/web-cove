@@ -5,7 +5,7 @@ import recommendIcon from "@/assets/images/tab-bar/recommend.png";
 import recommendActiveIcon from "@/assets/images/tab-bar/recommend-active.png";
 import UserIcon from "@/assets/images/tab-bar/user.png";
 import UserActiveIcon from "@/assets/images/tab-bar/user-active.png";
-import { useLayoutStore } from "@/stores/layout.store";
+import { useLayoutStore } from "@/stores/layout.store.ts";
 
 const router = useRouter();
 const route = useRoute();

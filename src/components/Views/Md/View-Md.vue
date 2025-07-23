@@ -11,7 +11,7 @@ import { ref, watch } from 'vue';
 import { marked } from 'marked';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/github-dark.css';
-import {processImageUrls} from "@/components/Views/_questions/View.md.ts";
+import {processImageUrls} from "@/components/Views/Md/View.md.ts";
 
 interface Props {
   src?: string;
@@ -28,8 +28,6 @@ const props = withDefaults(defineProps<Props>(), {
 const previewHtml = ref('');
 const loading = ref(false);
 const error = ref<string | null>(null);
-
-
 
 // 配置 marked 和 highlight.js
 marked.setOptions({
@@ -48,7 +46,7 @@ marked.setOptions({
     }
     return hljs.highlightAuto(code).value;
   },
-});
+} as any);
 
 const loadMarkdown = async () => {
   loading.value = true;
@@ -59,7 +57,7 @@ const loadMarkdown = async () => {
 
     if (props.src && !props.content) {
       const response = await fetch(props.src);
-      if (!response.ok) throw new Error(`加载失败: ${response.statusText}`);
+      if (!response.ok) return new Error(`加载失败: ${response.statusText}`);
       mdContent = await response.text();
     }
 
@@ -100,6 +98,7 @@ watch([
 .markdown-preview {
   position: relative;
   min-height: 100px;
+  padding: 10px;
 }
 
 .loading {

@@ -2,7 +2,7 @@
 // special 写这个组件是因为 vant-tabs 初始化动态设置值，值变了，但是 active 样式没变。
 import { nextTick, onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
-import type { ITab } from "@/types/views/tabs.type";
+import type { ITab } from "@/types/views/tabs.type.ts";
 
 defineOptions({
   name: "ViewTabs",

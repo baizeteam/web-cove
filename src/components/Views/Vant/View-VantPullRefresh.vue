@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed, ref, watch } from "vue";
-import ViewEmpty from "@/components/views/View-Empty.vue";
+import ViewEmpty from "@/components/Views/Translate/View-Empty.vue";
 
 interface IProps {
   loading: boolean;

@@ -1,6 +1,6 @@
 import {createRouter, createWebHashHistory, RouteRecordRaw} from "vue-router";
 import StepContainer from "@/views/stepContainer/index.vue";
-import stepConfigRouter from "@/router/stepConfig.router.ts";
+import {stepConfigRouter} from "@/views/stepContainer/stepConfig.ts";
 
 const routes: RouteRecordRaw[] = [
   {

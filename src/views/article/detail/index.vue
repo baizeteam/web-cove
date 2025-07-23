@@ -1,14 +1,14 @@
 <template>
-  <ViewPageLayout :footer="true">
+  <ViewLayout :footer="true">
     <template #header>
       <ViewHeader :header-config="{ title }" />
     </template>
     文章详情
-  </ViewPageLayout>
+  </ViewLayout>
 </template>
 <script setup lang="ts">
-import ViewPageLayout from "@/components/Views/View-PageLayout.vue";
-import ViewHeader from "@/components/Views/View-Header.vue";
+import ViewLayout from "@/components/Views/Layout/View-Layout.vue";
+import ViewHeader from "@/components/Views/Layout/View-Header.vue";
 import { useRoute } from "vue-router";
 
 const {

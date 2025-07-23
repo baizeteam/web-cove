@@ -1,5 +1,5 @@
 <template>
-  <ViewPageLayout :footer="true">
+  <ViewLayout :footer="true">
     <template #header>
       <ViewHeader :header-config="{ title }" />
       <van-search
@@ -14,11 +14,11 @@
       <HotCourse />
       <Article />
     </div>
-  </ViewPageLayout>
+  </ViewLayout>
 </template>
 <script setup lang="ts">
-import ViewPageLayout from "@/components/Views/View-PageLayout.vue";
-import ViewHeader from "@/components/Views/View-Header.vue";
+import ViewLayout from "@/components/Views/Layout/View-Layout.vue";
+import ViewHeader from "@/components/Views/Layout/View-Header.vue";
 import { useRoute, useRouter } from "vue-router";
 import Article from "@/views/recommend/recommend/components/Article/index.vue";
 import HotCourse from "@/views/recommend/recommend/components/HotCourse/index.vue";

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { nextTick, ref, toRefs } from "vue";
 import { useRouter } from "vue-router";
-import { useLayoutStore } from "@/stores/layout.store";
+import { useLayoutStore } from "@/stores/layout.store.ts";
 
 defineProps({
   headerConfig: {
