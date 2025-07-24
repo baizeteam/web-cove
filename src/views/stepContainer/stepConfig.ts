@@ -47,6 +47,6 @@ export const stepConfigRouter = {
   }),
   3: {
     type: "md",
-    src: urlMd().Python.yuque + "/thrid.md",
+    src: urlMd().Python.typora + "/test.md",
   },
 } as const satisfies StepConfigRouter; // `satisfies` 确保类型匹配但不放宽类型

@@ -1,8 +1,13 @@
 <template>
   <div class="markdown-preview">
     <div v-if="loading" class="loading">加载中...</div>
-    <div v-else class="preview-container" v-html="previewHtml"></div>
+    <div v-else class="preview-container" @click="handleImageClick" v-html="previewHtml"></div>
     <div v-if="error" class="error-message">{{ error }}</div>
+
+    <!-- 全屏预览模态框 -->
+    <div v-if="showFullscreen" class="image-modal" @click="showFullscreen = false">
+      <img :src="currentImageSrc" class="fullscreen-image" @click.stop />
+    </div>
   </div>
 </template>
 
@@ -28,7 +33,20 @@ const props = withDefaults(defineProps<Props>(), {
 const previewHtml = ref('');
 const loading = ref(false);
 const error = ref<string | null>(null);
+const currentImageSrc = ref('');
+const showFullscreen = ref(false);
 
+// 处理图片点击事件
+const handleImageClick = (e: MouseEvent) => {
+  const target = e.target as HTMLElement;
+  if (target.tagName === 'IMG') {
+    currentImageSrc.value = target.getAttribute('src') || '';
+    showFullscreen.value = true;
+
+    // 阻止事件冒泡，避免立即关闭模态框
+    e.stopPropagation();
+  }
+};
 // 配置 marked 和 highlight.js
 marked.setOptions({
   gfm: true,
@@ -118,6 +136,28 @@ watch([
   padding: 0.5rem;
   background-color: #f8d7da;
   border-radius: 4px;
+}
+
+/* 图片模态框样式 */
+.image-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  cursor: zoom-out;
+}
+
+.fullscreen-image {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+  cursor: default;
 }
 
 /* 深度选择器样式 */

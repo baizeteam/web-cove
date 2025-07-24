@@ -1,4 +1,5 @@
 // 除了语雀 文档零宽字符串加密问题
+// 首先移除不可见字符 （但是这个又要处理编排布局）
 export function removeInvisibleChars  (markdownContent: string): string  {
     // 1. 移除所有零宽字符
     let cleaned = markdownContent.replace(/[\u200B-\u200D\uFEFF\u2060-\u2064\u180E]/g, '');
