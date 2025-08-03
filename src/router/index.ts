@@ -1,6 +1,5 @@
 import {createRouter, createWebHashHistory, RouteRecordRaw} from "vue-router";
-import StepContainer from "@/views/stepContainer/index.vue";
-import {stepConfigRouter} from "@/views/stepContainer/stepConfig.ts";
+import {stepConfig} from "@/views/step/step/stepConfig.ts"
 
 const routes: RouteRecordRaw[] = [
   {
@@ -9,11 +8,11 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: '/step/:id',
-    component: StepContainer,
+    component: () => import("@/views/step/step/index.vue"),
     props: route => ({
       stepId: route.params.id,
       // 配置步骤映射：1 → MD，2 → 做题，3 → MD
-      stepConfig: stepConfigRouter,
+      stepConfig: stepConfig,
     }),
     meta: {
       keepAlive: true,
@@ -59,14 +58,6 @@ const routes: RouteRecordRaw[] = [
       keepAlive: false,
     },
     component: () => import("@/views/study/study.vue"),
-  },
-  {
-    path: "/test-md",
-    meta: {
-      title: "文档",
-      keepAlive: false,
-    },
-    component: () => import("@/views/study/test-md.vue"),
   },
   {
     path: "/login",

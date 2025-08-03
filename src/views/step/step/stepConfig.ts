@@ -18,16 +18,16 @@ export interface ChoiceStep<Options extends readonly string[]> {
 // `StepConfig` 需要动态处理 `ChoiceStep` 的泛型
 type StepConfig = MdStep | ChoiceStep<readonly string[]>; // 默认泛型
 
-type StepConfigRouter = {
+interface IStepConfig {
   [key: number]: StepConfig;
-};
+}
 
 // 定义一个辅助函数，自动推断 options 类型
 const createChoiceStep = <Options extends readonly string[]>(
   step: ChoiceStep<Options>,
 ) => step;
 
-export const stepConfigRouter = {
+export const stepConfig = {
   1: {
     type: "md",
     src: urlMd().Python.yuque + "/001-Python特点.md?raw",
@@ -49,4 +49,4 @@ export const stepConfigRouter = {
     type: "md",
     src: urlMd().Python.typora + "/test.md",
   },
-} as const satisfies StepConfigRouter; // `satisfies` 确保类型匹配但不放宽类型
+} as const satisfies IStepConfig; // `satisfies` 确保类型匹配但不放宽类型

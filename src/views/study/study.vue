@@ -2,8 +2,8 @@
   <ViewLayout :footer="true">
     <template #header>
       <ViewHeader :header-config="{ title }" />
+      <Icon />
     </template>
-    <Icon />
     <History />
   </ViewLayout>
 </template>

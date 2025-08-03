@@ -3,6 +3,7 @@
     <template #header>
       <ViewHeader :header-config="{ title }" />
       <van-search
+        id="van-search"
         v-model="searchValue"
         placeholder="python · html · java..."
         autofocus
@@ -23,7 +24,7 @@ import ViewLayout from "@/components/Views/Layout/View-Layout.vue";
 import ViewHeader from "@/components/Views/Layout/View-Header.vue";
 import { useRoute } from "vue-router";
 import { useLayoutStore } from "@/stores/layout.store.ts";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 
 const searchValue = ref("");
 const layoutStore = useLayoutStore();
@@ -34,4 +35,8 @@ const {
 function onSearch() {
   console.log(searchValue.value, "fff");
 }
+
+onMounted(() => {
+  document.getElementById("van-search").focus();
+});
 </script>

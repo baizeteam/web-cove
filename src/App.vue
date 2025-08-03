@@ -10,7 +10,6 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 import { stopDoubleScale } from "@/utils/dom.util.ts";
-
 onMounted(() => {
   stopDoubleScale();
 });

@@ -17,11 +17,10 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, onUnmounted } from "vue";
+import { computed } from "vue";
 import { useRouter } from "vue-router";
 import ViewMd from "@/components/Views/Md/View-Md.vue";
 import ChoiceQuestion from "@/components/Business/ChoiceQuestion/index.vue";
-import { vantConfirm } from "@/utils/vant.util.ts";
 
 defineOptions({
   name: "StepContainer",
@@ -67,28 +66,6 @@ const handlePrev = () => {
     router.replace(`/step/${prevId}`);
   }
 };
-
-onMounted(() => {
-  // 禁用浏览器后退
-  history.pushState(null, "", document.location.href);
-
-  window.addEventListener("popstate", () => {
-    // 立即回到当前页面
-    router.replace(router.currentRoute.value.fullPath);
-    history.pushState(null, "", document.location.href); // 继续推一个新的
-    // 显示自定义提示
-    vantConfirm({
-      title: "请使用应用内的导航按钮",
-      showCancelButton: false,
-    });
-  });
-});
-
-onUnmounted(() => {
-  window.removeEventListener("popstate", () => {
-    console.log("<UNK>");
-  });
-});
 
 // 控制按钮显隐（可选）
 const canPrev = computed(() => !!props.stepConfig[+props.stepId - 1]);
