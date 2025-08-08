@@ -1,23 +1,17 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import path from "path";
-import basicSsl from '@vitejs/plugin-basic-ssl';
-import progress from 'vite-plugin-progress'
+import progress from "vite-plugin-progress";
 
 export default defineConfig({
   plugins: [
-      progress(),
-      vue(
-          {
-            babel: {
-              presets: [
-                '@babel/preset-env',
-                '@babel/preset-typescript'
-              ]
-            }
-          }
-      ),
-      basicSsl(),
+    progress(),
+    vue({
+      babel: {
+        presets: ["@babel/preset-env", "@babel/preset-typescript"],
+      },
+    }),
+    // basicSsl(),
   ],
   resolve: {
     alias: {
@@ -26,20 +20,20 @@ export default defineConfig({
   },
   base: "./",
   server: {
-    host: '0.0.0.0',
+    host: "0.0.0.0",
     port: 1000,
     https: {
-      key: path.resolve(__dirname, 'localhost-key.pem'),
-      cert: path.resolve(__dirname, 'localhost.pem'),
+      key: path.resolve(__dirname, "localhost-key.pem"),
+      cert: path.resolve(__dirname, "localhost.pem"),
     },
     proxy: {
-      '/yuque': {
-        target: 'https://cdn.nlark.com/yuque',
+      "/yuque": {
+        target: "https://cdn.nlark.com/yuque",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/yuque/, ''),
+        rewrite: (path) => path.replace(/^\/yuque/, ""),
         headers: {
-          Referer: 'https://www.yuque.com',
-          Origin: 'https://www.yuque.com',
+          Referer: "https://www.yuque.com",
+          Origin: "https://www.yuque.com",
         },
       },
     },
@@ -57,4 +51,3 @@ export default defineConfig({
     },
   },
 });
-
