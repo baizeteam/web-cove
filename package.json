@@ -1,5 +1,5 @@
 {
-    "name": "vue3-vite-vitest-demo",
+    "name": "cove",
     "version": "1.0.0",
     "type": "module",
     "engines": {
@@ -12,11 +12,8 @@
         "dev": "vite",
         "build": "vite build",
         "preview": "vite preview",
-        "test": "vitest",
-        "test:ui": "vitest --ui",
-        "test:coverage": "vitest --coverage",
-        "lint": "eslint --fix --ext .ts,.tsx,.vue src tests",
-        "lint:fix": "eslint --fix --ext .ts,.tsx,.vue src tests"
+        "lint": "eslint --fix --ext .ts,.tsx,.vue src",
+        "lint:fix": "eslint --fix --ext .ts,.tsx,.vue src"
     },
     "dependencies": {
         "@types/marked": "^6.0.0",
@@ -45,9 +42,6 @@
         "@typescript-eslint/parser": "^8.39.0",
         "@vitejs/plugin-basic-ssl": "^1.1.0",
         "@vitejs/plugin-vue": "^5.0.0",
-        "@vitest/coverage-v8": "^1.0.0",
-        "@vitest/ui": "^1.0.0",
-        "@vue/test-utils": "^2.4.0",
         "eruda": "^3.4.3",
         "eslint": "^8.0.0",
         "eslint-config-prettier": "^10.1.5",
@@ -64,7 +58,6 @@
         "vite-plugin-markdown": "^2.2.0",
         "vite-plugin-progress": "^0.0.7",
         "vite-plugin-static-copy": "^3.1.1",
-        "vitest": "^1.0.0",
         "vue-tsc": "^1.8.0"
     }
 }
