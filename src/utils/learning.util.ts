@@ -1,5 +1,5 @@
 import type { LearningStatus, LanguageType } from "@/data/courses";
-import { getCourseById } from "@/data/courses";
+import { getCourseById, getTotalSteps } from "@/data/courses";
 
 const LEARNING_STATUS_KEY = "learning_status";
 
@@ -51,6 +51,7 @@ export const enrollCourse = (
     const newStatus: LearningStatus = {
       courseId,
       language,
+      currentChapter: 1,
       currentStep: 1,
       completedSteps: [],
       isEnrolled: true,
@@ -75,34 +76,41 @@ export const unenrollCourse = (courseId: string): void => {
   }
 };
 
-// 更新学习进度
+// 更新学习进度（章节和步骤）
 export const updateLearningProgress = (
   courseId: string,
-  stepNumber: number,
+  chapterId: number,
+  stepId: number,
   isCompleted: boolean = true,
 ): void => {
   const status = getLearningStatus(courseId);
 
   if (status) {
-    if (isCompleted && !status.completedSteps.includes(stepNumber)) {
-      status.completedSteps.push(stepNumber);
+    // 更新当前章节和步骤
+    status.currentChapter = chapterId;
+    status.currentStep = stepId;
+
+    if (isCompleted) {
+      // 使用章节和步骤的组合作为唯一标识
+      const stepKey = `${chapterId}-${stepId}`;
+      if (!status.completedSteps.includes(parseInt(stepKey))) {
+        status.completedSteps.push(parseInt(stepKey));
+      }
     }
 
-    status.currentStep = Math.max(status.currentStep, stepNumber + 1);
     status.lastStudyTime = Date.now();
-    status.progress = Math.round(
-      (status.completedSteps.length / getTotalSteps(courseId)) * 100,
-    );
+
+    // 计算进度
+    const course = getCourseById(courseId);
+    if (course) {
+      const totalSteps = getTotalSteps(course);
+      status.progress = Math.round(
+        (status.completedSteps.length / totalSteps) * 100,
+      );
+    }
 
     saveLearningStatus(status);
   }
-};
-
-// 获取总步骤数（这里需要从课程数据中获取，暂时返回默认值）
-const getTotalSteps = (courseId: string): number => {
-  // 这里应该从课程数据中获取，暂时返回默认值
-  const course = getCourseById(courseId);
-  return course ? course.totalSteps : 5;
 };
 
 // 获取学习进度百分比
@@ -117,6 +125,19 @@ export const isEnrolled = (courseId: string): boolean => {
   return status ? status.isEnrolled : false;
 };
 
+// 获取当前学习位置
+export const getCurrentLearningPosition = (
+  courseId: string,
+): { chapter: number; step: number } | null => {
+  const status = getLearningStatus(courseId);
+  if (!status) return null;
+
+  return {
+    chapter: status.currentChapter,
+    step: status.currentStep,
+  };
+};
+
 // 获取最近学习的课程
 export const getRecentCourses = (limit: number = 5): LearningStatus[] => {
   const allStatus = getAllLearningStatus()
@@ -124,6 +145,24 @@ export const getRecentCourses = (limit: number = 5): LearningStatus[] => {
     .sort((a, b) => b.lastStudyTime - a.lastStudyTime);
 
   return allStatus.slice(0, limit);
+};
+
+// 获取课程学习统计
+export const getCourseLearningStats = (courseId: string) => {
+  const status = getLearningStatus(courseId);
+  if (!status) return null;
+
+  const course = getCourseById(courseId);
+  if (!course) return null;
+
+  return {
+    currentChapter: status.currentChapter,
+    currentStep: status.currentStep,
+    completedSteps: status.completedSteps.length,
+    totalSteps: getTotalSteps(course),
+    progress: status.progress,
+    lastStudyTime: status.lastStudyTime,
+  };
 };
 
 // 清除所有学习状态（用于测试或重置）

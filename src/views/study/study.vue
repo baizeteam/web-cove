@@ -61,8 +61,8 @@
               </div>
 
               <div class="course-meta">
-                <span class="current-step">
-                  当前步骤: {{ course.currentStep }}
+                <span class="current-position">
+                  第{{ course.currentChapter }}章 · 步骤{{ course.currentStep }}
                 </span>
                 <span class="last-study">
                   上次学习: {{ formatTime(course.lastStudyTime) }}
