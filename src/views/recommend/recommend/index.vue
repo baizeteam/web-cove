@@ -89,7 +89,7 @@
       </div>
 
       <!-- 保留原有组件 -->
-      <HotCourse />
+      <!--      <HotCourse />-->
       <Article />
     </div>
   </ViewLayout>
@@ -100,7 +100,6 @@ import ViewLayout from "@/components/Views/Layout/View-Layout.vue";
 import ViewHeader from "@/components/Views/Layout/View-Header.vue";
 import { useRoute, useRouter } from "vue-router";
 import Article from "@/views/recommend/recommend/components/Article/index.vue";
-import HotCourse from "@/views/recommend/recommend/components/HotCourse/index.vue";
 import { ref, computed } from "vue";
 import { useLayoutStore } from "@/stores/layout.store.ts";
 import { coursesData, type LanguageType, type Course } from "@/data/courses";
@@ -128,7 +127,7 @@ const availableLanguages = [
 
 // 根据语言筛选课程
 const filteredCourses = computed(() => {
-  return coursesData.filter((course) => course.type === activeLanguage.value);
+  return coursesData.filter(course => course.type === activeLanguage.value);
 });
 
 // 语言切换处理

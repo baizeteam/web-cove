@@ -1,4 +1,4 @@
 export default {
-  "src/**/*.{js,ts,vue}": ["eslint --fix"],
-  "tests/**/*.{js,ts,vue}": ["eslint --fix"],
+  '*.{js,ts,vue,jsx,tsx}': ['eslint --fix', 'prettier --write'],
+  '*.{json,md,yml,yaml}': ['prettier --write'],
 };
