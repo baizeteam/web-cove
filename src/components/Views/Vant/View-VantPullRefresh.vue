@@ -31,7 +31,7 @@ function onLoad() {
 
 const refreshingComputed = computed({
   get: () => props.refreshing,
-  set: (value) => {
+  set: value => {
     emit("update:refreshing", value);
   },
 });
@@ -41,13 +41,13 @@ const loadingState = ref(props.loading);
 // 监听 props.loading 变化，同步到内部状态
 watch(
   () => props.loading,
-  (newVal) => {
+  newVal => {
     loadingState.value = newVal;
-  },
+  }
 );
 
 // 监听内部状态变化，通知父组件
-watch(loadingState, (newVal) => {
+watch(loadingState, newVal => {
   emit("update:loading", newVal);
 });
 </script>

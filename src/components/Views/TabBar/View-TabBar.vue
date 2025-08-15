@@ -42,7 +42,7 @@ const layoutStore = useLayoutStore();
 const { footer } = toRefs(layoutStore);
 
 function getCurrentTab() {
-  return list.value.findIndex((item) => item.path === route.path);
+  return list.value.findIndex(item => item.path === route.path);
 }
 
 const activeIdx = ref(getCurrentTab());

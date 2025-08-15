@@ -91,33 +91,33 @@ const addTodo = () => {
 };
 
 const toggleTodo = (id: number) => {
-  const todo = todos.value.find((t) => t.id === id);
+  const todo = todos.value.find(t => t.id === id);
   if (todo) {
     todo.completed = !todo.completed;
   }
 };
 
 const removeTodo = (id: number) => {
-  todos.value = todos.value.filter((t) => t.id !== id);
+  todos.value = todos.value.filter(t => t.id !== id);
 };
 
 const filteredTodos = computed(() => {
   switch (filter.value) {
     case "active":
-      return todos.value.filter((t) => !t.completed);
+      return todos.value.filter(t => !t.completed);
     case "completed":
-      return todos.value.filter((t) => t.completed);
+      return todos.value.filter(t => t.completed);
     default:
       return todos.value;
   }
 });
 
 const completedCount = computed(
-  () => todos.value.filter((t) => t.completed).length,
+  () => todos.value.filter(t => t.completed).length
 );
 
 const activeCount = computed(
-  () => todos.value.filter((t) => !t.completed).length,
+  () => todos.value.filter(t => !t.completed).length
 );
 </script>
 

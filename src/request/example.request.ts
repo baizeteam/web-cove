@@ -12,7 +12,7 @@ export async function getExampleDataWithHeaders<T = any>(): Promise<T> {
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
       },
       responseType: "arraybuffer", // 如需图片二进制
-    },
+    }
   );
   return res.data as T;
 }
@@ -22,7 +22,7 @@ export async function getExampleDataBrowser<T = any>(): Promise<T> {
   // 直接用 request 封装（即 axios 实例）
   // 如果目标服务器未设置 CORS，浏览器会拦截
   const res = await request.get<T>(
-    "https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/ABmOoWbg4gMKAOaw/img/9a2c5f84-21a8-4527-8834-5ba473a65511.png",
+    "https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/ABmOoWbg4gMKAOaw/img/9a2c5f84-21a8-4527-8834-5ba473a65511.png"
   );
   return res as T;
 }
@@ -41,7 +41,7 @@ export async function putExampleData<T = any, D = any>(data: D): Promise<T> {
 
 // 示例：DELETE 请求
 export async function deleteExampleData<T = any>(
-  id: string | number,
+  id: string | number
 ): Promise<T> {
   const res = await request.delete<T>(`/example/${id}`);
   return res as T;

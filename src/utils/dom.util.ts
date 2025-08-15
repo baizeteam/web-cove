@@ -8,7 +8,7 @@ export function stopDoubleScale() {
         event.preventDefault();
       }
     },
-    { passive: false },
+    { passive: false }
   );
 
   let lastTouchEnd = 0;
@@ -22,6 +22,6 @@ export function stopDoubleScale() {
       }
       lastTouchEnd = now;
     },
-    { passive: false },
+    { passive: false }
   );
 }

@@ -31,10 +31,10 @@ function handlePreview() {
 }
 watch(
   () => props.src,
-  (newSrc) => {
+  newSrc => {
     displayImage.value = newSrc || props.defaultSrc;
   },
-  { immediate: true },
+  { immediate: true }
 );
 </script>
 

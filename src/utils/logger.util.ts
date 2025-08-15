@@ -4,13 +4,13 @@ import eruda from "eruda";
 
 // 普通的带颜色 加粗console.log函数
 export function colorLog(...args: any[]) {
-  args.forEach((arg) => {
+  args.forEach(arg => {
     // 安全处理对象转字符串（避免循环引用报错）
     const content = isObjectLike(arg) ? safeJsonStringify(arg) : String(arg);
 
     console.log(
       "%c" + content,
-      "color: #009a61; font-weight: bold; font-size: 16px;",
+      "color: #009a61; font-weight: bold; font-size: 16px;"
     );
   });
 }

@@ -123,14 +123,14 @@ const learningStatus = ref<LearningStatus[]>([]);
 
 // 计算属性
 const enrolledCourses = computed(() => {
-  return learningStatus.value.filter((status) => status.isEnrolled);
+  return learningStatus.value.filter(status => status.isEnrolled);
 });
 
 const totalProgress = computed(() => {
   if (enrolledCourses.value.length === 0) return 0;
   const total = enrolledCourses.value.reduce(
     (sum, course) => sum + course.progress,
-    0,
+    0
   );
   return Math.round(total / enrolledCourses.value.length);
 });
@@ -140,7 +140,7 @@ const totalStudyTime = computed(() => {
   const now = Date.now();
   const oneDay = 24 * 60 * 60 * 1000;
   const oldestStudy = Math.min(
-    ...learningStatus.value.map((s) => s.lastStudyTime),
+    ...learningStatus.value.map(s => s.lastStudyTime)
   );
   return Math.ceil((now - oldestStudy) / oneDay);
 });

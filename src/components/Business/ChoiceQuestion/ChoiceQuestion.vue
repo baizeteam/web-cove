@@ -47,10 +47,10 @@ const selectedOption = ref("");
 
 watch(
   selectedOption,
-  (value) => {
+  value => {
     console.log(value, "vvv");
   },
-  { deep: true },
+  { deep: true }
 );
 </script>
 

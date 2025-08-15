@@ -24,3 +24,7 @@ docs/
 
 # Environment files
 .env*
+
+src/shims-vue.d.ts
+
+src/components/Views/Md/View.md.ts

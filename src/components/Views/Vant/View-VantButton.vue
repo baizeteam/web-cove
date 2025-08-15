@@ -40,9 +40,9 @@ function handleClick(event: MouseEvent) {
 // 监听外部 loading 变化（避免内外状态冲突）
 watch(
   () => props.loading,
-  (val) => {
+  val => {
     if (!val) innerLoading.value = false;
-  },
+  }
 );
 </script>
 

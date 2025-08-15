@@ -1,5 +1,4 @@
-import {createRouter, createWebHashHistory, RouteRecordRaw} from "vue-router";
-import {stepConfig} from "@/views/step/step/stepConfig.ts"
+import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
 
 const routes: RouteRecordRaw[] = [
   {
@@ -7,7 +6,7 @@ const routes: RouteRecordRaw[] = [
     redirect: "/recommend",
   },
   {
-    path: '/step/:language/:id',
+    path: "/step/:language/:id",
     component: () => import("@/views/step/step/index.vue"),
     props: route => ({
       language: route.params.language,
@@ -16,7 +15,7 @@ const routes: RouteRecordRaw[] = [
     meta: {
       keepAlive: true,
       clearHistory: true, // 跳转至此页时清除历史栈
-    }
+    },
   },
   {
     path: "/recommend",
@@ -79,14 +78,12 @@ const routes: RouteRecordRaw[] = [
 
 const router = createRouter({
   history: createWebHashHistory(),
-  routes: [
-      ...routes,
-  ]
+  routes: [...routes],
 });
 
 router.beforeEach((to, from, next) => {
   document.title = (to.meta.title as string) || "";
-  1 + 1 > 2 && console.log(from);
+  console.log(from);
   // 如果需要清除历史记录
   // if (to.meta.clearHistory) {
   //   // 更安全的replace方式

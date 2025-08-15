@@ -1,22 +1,31 @@
 <template>
   <div class="markdown-preview">
     <div v-if="loading" class="loading">加载中...</div>
-    <div v-else class="preview-container" @click="handleImageClick" v-html="previewHtml"></div>
+    <div
+      v-else
+      class="preview-container"
+      @click="handleImageClick"
+      v-html="previewHtml"
+    ></div>
     <div v-if="error" class="error-message">{{ error }}</div>
 
     <!-- 全屏预览模态框 -->
-    <div v-if="showFullscreen" class="image-modal" @click="showFullscreen = false">
+    <div
+      v-if="showFullscreen"
+      class="image-modal"
+      @click="showFullscreen = false"
+    >
       <img :src="currentImageSrc" class="fullscreen-image" @click.stop />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from 'vue';
-import { marked } from 'marked';
-import hljs from 'highlight.js';
-import 'highlight.js/styles/github-dark.css';
-import {processImageUrls} from "@/components/Views/Md/View.md.ts";
+import { ref, watch } from "vue";
+import { marked } from "marked";
+import hljs from "highlight.js";
+import "highlight.js/styles/github-dark.css";
+import { processImageUrls } from "@/components/Views/Md/View.md.ts";
 
 interface Props {
   src?: string;
@@ -30,17 +39,17 @@ const props = withDefaults(defineProps<Props>(), {
   refreshKey: undefined,
 });
 
-const previewHtml = ref('');
+const previewHtml = ref("");
 const loading = ref(false);
 const error = ref<string | null>(null);
-const currentImageSrc = ref('');
+const currentImageSrc = ref("");
 const showFullscreen = ref(false);
 
 // 处理图片点击事件
 const handleImageClick = (e: MouseEvent) => {
   const target = e.target as HTMLElement;
-  if (target.tagName === 'IMG') {
-    currentImageSrc.value = target.getAttribute('src') || '';
+  if (target.tagName === "IMG") {
+    currentImageSrc.value = target.getAttribute("src") || "";
     showFullscreen.value = true;
 
     // 阻止事件冒泡，避免立即关闭模态框
@@ -51,12 +60,13 @@ const handleImageClick = (e: MouseEvent) => {
 marked.setOptions({
   gfm: true,
   breaks: true,
-  highlight: (code: string, lang?: string) => { // 显式声明参数类型
+  highlight: (code: string, lang?: string) => {
+    // 显式声明参数类型
     if (lang && hljs.getLanguage(lang)) {
       try {
         return hljs.highlight(code, {
           language: lang,
-          ignoreIllegals: true
+          ignoreIllegals: true,
         }).value;
       } catch (e) {
         console.warn(`Failed to highlight ${lang} code`, e);
@@ -71,7 +81,7 @@ const loadMarkdown = async () => {
   error.value = null;
 
   try {
-    let mdContent = props.content || '';
+    let mdContent = props.content || "";
 
     if (props.src && !props.content) {
       const response = await fetch(props.src);
@@ -86,30 +96,29 @@ const loadMarkdown = async () => {
     // 2.然后处理图片链接：移除特定域名
     mdContent = processImageUrls(mdContent);
 
-    console.log(mdContent, '处理后的 markdown 内容');
+    console.log(mdContent, "处理后的 markdown 内容");
 
     previewHtml.value = marked.parse(mdContent) as string;
 
     // 延迟执行高亮，确保DOM已更新
     setTimeout(() => {
-      document.querySelectorAll('pre code').forEach((block) => {
+      document.querySelectorAll("pre code").forEach(block => {
         hljs.highlightElement(block as HTMLElement);
       });
     }, 0);
-
   } catch (err: any) {
-    error.value = err.message || '加载Markdown内容失败';
-    console.error('Error:', err);
+    error.value = err.message || "加载Markdown内容失败";
+    console.error("Error:", err);
   } finally {
     loading.value = false;
   }
 };
 
-watch([
-  () => props.src,
-  () => props.content,
-  () => props.refreshKey
-], loadMarkdown, { immediate: true });
+watch(
+  [() => props.src, () => props.content, () => props.refreshKey],
+  loadMarkdown,
+  { immediate: true }
+);
 </script>
 
 <style scoped>
@@ -128,7 +137,9 @@ watch([
 
 .preview-container {
   line-height: 1.6;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+    sans-serif;
 }
 
 .error-message {
@@ -162,23 +173,48 @@ watch([
 
 /* 深度选择器样式 */
 .preview-container :deep() {
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     margin-top: 1.25em;
     margin-bottom: 0.5em;
     font-weight: 600;
     line-height: 1.25;
   }
 
-  h1 { font-size: 2em; border-bottom: 1px solid #eaecef; padding-bottom: 0.3em; }
-  h2 { font-size: 1.5em; border-bottom: 1px solid #eaecef; padding-bottom: 0.3em; }
-  h3 { font-size: 1.25em; }
-  h4 { font-size: 1em; }
-  h5 { font-size: 0.875em; }
-  h6 { font-size: 0.85em; color: #6a737d; }
+  h1 {
+    font-size: 2em;
+    border-bottom: 1px solid #eaecef;
+    padding-bottom: 0.3em;
+  }
+  h2 {
+    font-size: 1.5em;
+    border-bottom: 1px solid #eaecef;
+    padding-bottom: 0.3em;
+  }
+  h3 {
+    font-size: 1.25em;
+  }
+  h4 {
+    font-size: 1em;
+  }
+  h5 {
+    font-size: 0.875em;
+  }
+  h6 {
+    font-size: 0.85em;
+    color: #6a737d;
+  }
 
-  p { margin-bottom: 1em; }
+  p {
+    margin-bottom: 1em;
+  }
 
-  ul, ol {
+  ul,
+  ol {
     padding-left: 2em;
     margin-bottom: 1em;
   }
@@ -187,8 +223,12 @@ watch([
     margin-bottom: 0.5em;
   }
 
-  ol { list-style-type: decimal; }
-  ul { list-style-type: disc; }
+  ol {
+    list-style-type: decimal;
+  }
+  ul {
+    list-style-type: disc;
+  }
 
   blockquote {
     padding: 0 1em;
@@ -207,7 +247,8 @@ watch([
   }
 
   code {
-    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    font-family:
+      "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
     font-size: 0.9em;
   }
 
@@ -247,7 +288,8 @@ watch([
     overflow: auto;
   }
 
-  th, td {
+  th,
+  td {
     padding: 6px 13px;
     border: 1px solid #dfe2e5;
   }

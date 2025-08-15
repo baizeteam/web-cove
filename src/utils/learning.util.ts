@@ -17,7 +17,7 @@ export const getAllLearningStatus = (): LearningStatus[] => {
 // 获取指定课程的学习状态
 export const getLearningStatus = (courseId: string): LearningStatus | null => {
   const allStatus = getAllLearningStatus();
-  return allStatus.find((status) => status.courseId === courseId) || null;
+  return allStatus.find(status => status.courseId === courseId) || null;
 };
 
 // 保存学习状态
@@ -25,7 +25,7 @@ export const saveLearningStatus = (status: LearningStatus): void => {
   try {
     const allStatus = getAllLearningStatus();
     const existingIndex = allStatus.findIndex(
-      (s) => s.courseId === status.courseId,
+      s => s.courseId === status.courseId
     );
 
     if (existingIndex >= 0) {
@@ -43,7 +43,7 @@ export const saveLearningStatus = (status: LearningStatus): void => {
 // 加入学习
 export const enrollCourse = (
   courseId: string,
-  language: LanguageType,
+  language: LanguageType
 ): void => {
   const existingStatus = getLearningStatus(courseId);
 
@@ -81,7 +81,7 @@ export const updateLearningProgress = (
   courseId: string,
   chapterId: number,
   stepId: number,
-  isCompleted: boolean = true,
+  isCompleted: boolean = true
 ): void => {
   const status = getLearningStatus(courseId);
 
@@ -105,7 +105,7 @@ export const updateLearningProgress = (
     if (course) {
       const totalSteps = getTotalSteps(course);
       status.progress = Math.round(
-        (status.completedSteps.length / totalSteps) * 100,
+        (status.completedSteps.length / totalSteps) * 100
       );
     }
 
@@ -127,7 +127,7 @@ export const isEnrolled = (courseId: string): boolean => {
 
 // 获取当前学习位置
 export const getCurrentLearningPosition = (
-  courseId: string,
+  courseId: string
 ): { chapter: number; step: number } | null => {
   const status = getLearningStatus(courseId);
   if (!status) return null;
@@ -141,7 +141,7 @@ export const getCurrentLearningPosition = (
 // 获取最近学习的课程
 export const getRecentCourses = (limit: number = 5): LearningStatus[] => {
   const allStatus = getAllLearningStatus()
-    .filter((status) => status.isEnrolled)
+    .filter(status => status.isEnrolled)
     .sort((a, b) => b.lastStudyTime - a.lastStudyTime);
 
   return allStatus.slice(0, limit);

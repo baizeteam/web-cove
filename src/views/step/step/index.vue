@@ -142,14 +142,14 @@ const currentStepId = computed(() => {
 // 当前章节
 const currentChapter = computed(() => {
   if (!course.value) return null;
-  return course.value.chapters.find((ch) => ch.id === currentChapterId.value);
+  return course.value.chapters.find(ch => ch.id === currentChapterId.value);
 });
 
 // 当前步骤
 const currentStep = computed(() => {
   if (!course.value || !currentChapter.value) return null;
   return currentChapter.value.steps.find(
-    (step) => step.id === currentStepId.value,
+    step => step.id === currentStepId.value
   );
 });
 
@@ -163,10 +163,10 @@ const chapterProgress = computed(() => {
   if (!course.value || !currentChapter.value) return 0;
   const chapterSteps = getChapterStepsCount(
     course.value,
-    currentChapterId.value,
+    currentChapterId.value
   );
-  const completedInChapter = currentChapter.value.steps.filter((step) =>
-    isStepCompleted(currentChapterId.value, step.id),
+  const completedInChapter = currentChapter.value.steps.filter(step =>
+    isStepCompleted(currentChapterId.value, step.id)
   ).length;
   return Math.round((completedInChapter / chapterSteps) * 100);
 });
@@ -203,10 +203,10 @@ const isStepCompleted = (chapterId: number, stepId: number): boolean => {
 const isChapterCompleted = (chapterId: number): boolean => {
   if (!course.value) return false;
 
-  const chapter = course.value.chapters.find((ch) => ch.id === chapterId);
+  const chapter = course.value.chapters.find(ch => ch.id === chapterId);
   if (!chapter) return false;
 
-  return chapter.steps.every((step) => isStepCompleted(chapterId, step.id));
+  return chapter.steps.every(step => isStepCompleted(chapterId, step.id));
 };
 
 // 导航逻辑
@@ -214,7 +214,7 @@ const handleNext = () => {
   if (!course.value || !currentChapter.value || !currentStep.value) return;
 
   const currentStepIndex = currentChapter.value.steps.findIndex(
-    (step) => step.id === currentStep.value!.id,
+    step => step.id === currentStep.value!.id
   );
 
   if (currentStepIndex < currentChapter.value.steps.length - 1) {
@@ -224,7 +224,7 @@ const handleNext = () => {
   } else {
     // 下一章节的第一步
     const nextChapter = course.value.chapters.find(
-      (ch) => ch.id === currentChapter.value!.id + 1,
+      ch => ch.id === currentChapter.value!.id + 1
     );
     if (nextChapter && nextChapter.steps.length > 0) {
       goToStep(nextChapter.id, nextChapter.steps[0].id);
@@ -236,7 +236,7 @@ const handlePrev = () => {
   if (!course.value || !currentChapter.value || !currentStep.value) return;
 
   const currentStepIndex = currentChapter.value.steps.findIndex(
-    (step) => step.id === currentStep.value!.id,
+    step => step.id === currentStep.value!.id
   );
 
   if (currentStepIndex > 0) {
@@ -246,7 +246,7 @@ const handlePrev = () => {
   } else {
     // 上一章节的最后一步
     const prevChapter = course.value.chapters.find(
-      (ch) => ch.id === currentChapter.value!.id - 1,
+      ch => ch.id === currentChapter.value!.id - 1
     );
     if (prevChapter && prevChapter.steps.length > 0) {
       const lastStep = prevChapter.steps[prevChapter.steps.length - 1];
@@ -259,7 +259,7 @@ const handlePrev = () => {
 const goToChapter = (chapterId: number) => {
   if (!course.value) return;
 
-  const chapter = course.value.chapters.find((ch) => ch.id === chapterId);
+  const chapter = course.value.chapters.find(ch => ch.id === chapterId);
   if (chapter && chapter.steps.length > 0) {
     goToStep(chapterId, chapter.steps[0].id);
   }
@@ -280,7 +280,7 @@ const canPrev = computed(() => {
     return false;
 
   const currentStepIndex = currentChapter.value.steps.findIndex(
-    (step) => step.id === currentStep.value!.id,
+    step => step.id === currentStep.value!.id
   );
   return currentStepIndex > 0 || currentChapter.value.id > 1;
 });
@@ -290,7 +290,7 @@ const canNext = computed(() => {
     return false;
 
   const currentStepIndex = currentChapter.value.steps.findIndex(
-    (step) => step.id === currentStep.value!.id,
+    step => step.id === currentStep.value!.id
   );
   return (
     currentStepIndex < currentChapter.value.steps.length - 1 ||

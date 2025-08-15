@@ -7,7 +7,7 @@
 export function safeJsonStringify(
   data: unknown,
   indent: number = 2,
-  defaultValue: string = "",
+  defaultValue: string = ""
 ): string {
   try {
     // 处理 undefined、函数等 JSON.stringify 不支持的类型
@@ -30,7 +30,7 @@ export function safeJsonStringify(
  */
 export function safeJsonParse<T = unknown>(
   jsonStr: string,
-  defaultValue: T = null as unknown as T,
+  defaultValue: T = null as unknown as T
 ): T {
   try {
     // 处理 undefined 和空字符串

@@ -24,7 +24,7 @@ interface IStepConfig {
 
 // 定义一个辅助函数，自动推断 options 类型
 const createChoiceStep = <Options extends readonly string[]>(
-  step: ChoiceStep<Options>,
+  step: ChoiceStep<Options>
 ) => step;
 
 export const stepConfig = {

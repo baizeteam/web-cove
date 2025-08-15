@@ -323,21 +323,21 @@ export const coursesData: Course[] = [
 
 // 获取指定语言的课程
 export const getCoursesByLanguage = (language: LanguageType): Course[] => {
-  return coursesData.filter((course) => course.type === language);
+  return coursesData.filter(course => course.type === language);
 };
 
 // 获取指定课程
 export const getCourseById = (id: string): Course | undefined => {
-  return coursesData.find((course) => course.id === id);
+  return coursesData.find(course => course.id === id);
 };
 
 // 获取指定语言和ID的课程
 export const getCourseByLanguageAndId = (
   language: LanguageType,
-  id: string,
+  id: string
 ): Course | undefined => {
   return coursesData.find(
-    (course) => course.type === language && course.id === id,
+    course => course.type === language && course.id === id
   );
 };
 
@@ -345,12 +345,12 @@ export const getCourseByLanguageAndId = (
 export const getStepConfig = (
   course: Course,
   chapterId: number,
-  stepId: number,
+  stepId: number
 ): Step | undefined => {
-  const chapter = course.chapters.find((ch) => ch.id === chapterId);
+  const chapter = course.chapters.find(ch => ch.id === chapterId);
   if (!chapter) return undefined;
 
-  return chapter.steps.find((step) => step.id === stepId);
+  return chapter.steps.find(step => step.id === stepId);
 };
 
 // 获取课程的总章节数
@@ -361,9 +361,9 @@ export const getTotalChapters = (course: Course): number => {
 // 获取指定章节的总步骤数
 export const getChapterStepsCount = (
   course: Course,
-  chapterId: number,
+  chapterId: number
 ): number => {
-  const chapter = course.chapters.find((ch) => ch.id === chapterId);
+  const chapter = course.chapters.find(ch => ch.id === chapterId);
   return chapter ? chapter.steps.length : 0;
 };
 
@@ -371,6 +371,6 @@ export const getChapterStepsCount = (
 export const getTotalSteps = (course: Course): number => {
   return course.chapters.reduce(
     (total, chapter) => total + chapter.steps.length,
-    0,
+    0
   );
 };

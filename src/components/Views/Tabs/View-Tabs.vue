@@ -25,7 +25,7 @@ const emit = defineEmits<{
 
 const route = useRoute();
 const currentName = ref(
-  props.active || route.query?.activeTab || props.tabs[0]?.name || "",
+  props.active || route.query?.activeTab || props.tabs[0]?.name || ""
 );
 const indicatorStyle = ref({
   width: "0px",
@@ -47,7 +47,7 @@ function getIndicatorWidth(tabWidth: number) {
 // 更新指示器位置
 function updateIndicator() {
   const activeIndex = props.tabs.findIndex(
-    (tab) => tab.name === currentName.value,
+    tab => tab.name === currentName.value
   );
   if (activeIndex === -1) return;
 
@@ -84,20 +84,20 @@ watch(currentName, () => {
 watch(
   () => props.tabs,
   () => {
-    if (!props.tabs.some((tab) => tab.name === currentName.value))
+    if (!props.tabs.some(tab => tab.name === currentName.value))
       currentName.value = props.tabs[0]?.name || "";
 
     nextTick(updateIndicator);
   },
-  { deep: true },
+  { deep: true }
 );
 
 // 监听modelValue变化
 watch(
   () => props.active,
-  (newVal) => {
+  newVal => {
     if (newVal && newVal !== currentName.value) currentName.value = newVal;
-  },
+  }
 );
 
 onMounted(() => {
