@@ -10,7 +10,7 @@
 <script lang="ts" setup>
 import ChoiceQuestion from "./ChoiceQuestion.vue";
 import BottomIconBar from "./BottomIconBar.vue";
-import { ChoiceStep } from "@/views/stepContainer/stepConfig.ts";
+import { ChoiceStep } from "@/views/step/step/stepConfig";
 
 interface IProps {
   data: ChoiceStep<string[]>["data"];

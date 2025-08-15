@@ -35,7 +35,7 @@
 
 <script setup lang="ts">
 import { ref, watch } from "vue";
-import { ChoiceStep } from "@/views/stepContainer/stepConfig.ts";
+import { ChoiceStep } from "@/views/step/step/stepConfig.ts";
 
 interface IProps {
   data: ChoiceStep<string[]>["data"];

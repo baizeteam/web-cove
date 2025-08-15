@@ -22,10 +22,7 @@ export default defineConfig({
   server: {
     host: "0.0.0.0",
     port: 1000,
-    https: {
-      key: path.resolve(__dirname, "localhost-key.pem"),
-      cert: path.resolve(__dirname, "localhost.pem"),
-    },
+    https: false,
     proxy: {
       "/yuque": {
         target: "https://cdn.nlark.com/yuque",
