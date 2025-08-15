@@ -7,12 +7,11 @@ const routes: RouteRecordRaw[] = [
     redirect: "/recommend",
   },
   {
-    path: '/step/:id',
+    path: '/step/:language/:id',
     component: () => import("@/views/step/step/index.vue"),
     props: route => ({
+      language: route.params.language,
       stepId: route.params.id,
-      // 配置步骤映射：1 → MD，2 → 做题，3 → MD
-      stepConfig: stepConfig,
     }),
     meta: {
       keepAlive: true,
