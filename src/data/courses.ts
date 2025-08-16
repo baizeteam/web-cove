@@ -70,7 +70,7 @@ function getPython(): Course {
     title: "Python 基础入门",
     description: "从零开始学习Python编程语言，掌握基础语法和概念",
     icon: "/src/assets/images/icon/python-icon.png",
-    totalSteps: 4,
+    totalSteps: 5,
     difficulty: "beginner",
     tags: ["编程", "Python", "入门"],
     chapters: [
@@ -122,6 +122,15 @@ function getPython(): Course {
             content: {
               type: "md",
               src: urlMd().Python.yuque + "/test-prism-highlight.md",
+            },
+          },
+          {
+            id: 5,
+            type: "md",
+            title: "交互选择题",
+            content: {
+              type: "md",
+              src: urlMd().Python.yuque + "/003-交互选择题.md",
             },
           },
         ],

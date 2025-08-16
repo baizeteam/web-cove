@@ -1,61 +1,69 @@
 <template>
   <div class="learn-container">
-    <!-- 内容头部 -->
-    <div v-if="navigationInfo" class="content-header">
-      <button class="back-to-catalog" @click="goBackToCatalog">
-        <van-icon name="arrow-left" />
-        返回目录
-      </button>
-      <div class="content-info">
-        <h3 class="content-title">
-          {{
-            navigationInfo.currentStep.title ||
-            `步骤 ${navigationInfo.currentStep.id}`
-          }}
-        </h3>
-        <span class="content-location">
-          第{{ navigationInfo.currentChapter.id }}章 · 步骤{{
-            navigationInfo.currentStep.id
-          }}
-        </span>
+    <!-- 当前学习内容 -->
+    <div class="content-area">
+      <!-- 内容头部 -->
+      <div class="content-header">
+        <div class="step-info">
+          <h2 class="step-title">{{ navigationInfo?.currentStep?.title }}</h2>
+          <div class="step-meta">第{{ chapterId }}章 · 步骤{{ stepId }}</div>
+        </div>
       </div>
-    </div>
 
-    <!-- 动态渲染组件 -->
-    <component
-      :is="currentComponent"
-      v-if="currentComponent && navigationInfo"
-      v-bind="componentProps"
-      @next="handleNext"
-      @prev="handlePrev"
-    />
+      <!-- 动态内容渲染 -->
+      <div class="content-body">
+        <component
+          :is="currentComponent"
+          v-bind="componentProps"
+          :key="`${courseId}-${chapterId}-${stepId}`"
+        />
+      </div>
 
-    <!-- 导航按钮 -->
-    <div v-if="navigationInfo" class="content-nav">
-      <van-button
-        v-if="navigationInfo.hasPrev"
-        type="default"
-        size="large"
-        @click="handlePrev"
-      >
-        上一步
-      </van-button>
-      <van-button
-        v-if="navigationInfo.hasNext"
-        type="primary"
-        size="large"
-        @click="handleNext"
-      >
-        下一步
-      </van-button>
-      <van-button
-        v-if="canCompleteChapter"
-        type="success"
-        size="large"
-        @click="completeCurrentChapter"
-      >
-        结束该章
-      </van-button>
+      <!-- 底部导航 -->
+      <div class="navigation-controls">
+        <van-button
+          v-if="navigationInfo?.hasPrev"
+          type="default"
+          size="large"
+          class="nav-button"
+          @click="handlePrev"
+        >
+          <van-icon name="arrow-left" />
+          上一步
+        </van-button>
+
+        <van-button
+          type="default"
+          size="large"
+          class="nav-button catalog-button"
+          @click="goBackToCatalog"
+        >
+          <van-icon name="home-o" />
+          返回目录
+        </van-button>
+
+        <van-button
+          v-if="navigationInfo?.hasNext"
+          type="primary"
+          size="large"
+          class="nav-button"
+          @click="handleNext"
+        >
+          下一步
+          <van-icon name="arrow" />
+        </van-button>
+
+        <van-button
+          v-else-if="canCompleteChapter"
+          type="success"
+          size="large"
+          class="nav-button"
+          @click="completeCurrentChapter"
+        >
+          结束该章
+          <van-icon name="checked" />
+        </van-button>
+      </div>
     </div>
   </div>
 </template>
@@ -99,7 +107,11 @@ const navigationInfo = computed(() => {
 const currentComponent = computed(() => {
   if (!navigationInfo.value) return null;
   const step = navigationInfo.value.currentStep;
-  return step.type === "md" ? ViewMd : ChoiceQuestion;
+
+  // 检查标题是否包含"选择题"
+  const isChoiceQuestion = step.title && step.title.includes("选择题");
+
+  return isChoiceQuestion ? ChoiceQuestion : ViewMd;
 });
 
 // 动态传递组件参数
@@ -107,10 +119,21 @@ const componentProps = computed(() => {
   if (!navigationInfo.value) return {};
   const step = navigationInfo.value.currentStep;
 
-  if (step.type === "md") {
-    return { src: step.content.src };
+  const isChoiceQuestion = step.title && step.title.includes("选择题");
+
+  if (isChoiceQuestion) {
+    // 对于标题包含"选择题"的步骤，使用默认的选择题数据
+    return {
+      data: {
+        questions: "以下代码运行什么？",
+        code: `def print_double(x):
+    print(2 * x)
+print_double(3)`,
+        options: ["6", "2", "3", "0"],
+      },
+    };
   } else {
-    return { data: step.content.data };
+    return { src: step.content.type === "md" ? step.content.src : "" };
   }
 });
 
@@ -197,6 +220,16 @@ onMounted(() => {
   margin: 0 auto;
 }
 
+.content-area {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 200px); /* Adjust for header and footer */
+}
+
 .content-header {
   display: flex;
   align-items: center;
@@ -208,36 +241,18 @@ onMounted(() => {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
-.back-to-catalog {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  border: 1px solid #d9d9d9;
-  border-radius: 8px;
-  background: white;
-  color: #595959;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.back-to-catalog:hover {
-  border-color: #1890ff;
-  color: #1890ff;
-}
-
-.content-info {
+.step-info {
   flex: 1;
 }
 
-.content-title {
-  font-size: 20px;
+.step-title {
+  font-size: 24px;
   font-weight: 600;
   margin: 0 0 8px 0;
   color: #262626;
 }
 
-.content-location {
+.step-meta {
   font-size: 14px;
   color: #8c8c8c;
   background: #f5f5f5;
@@ -245,14 +260,50 @@ onMounted(() => {
   border-radius: 12px;
 }
 
-.content-nav {
+.content-body {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding-bottom: 24px;
+}
+
+.navigation-controls {
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   gap: 16px;
-  margin-top: 24px;
   padding: 20px;
   background: white;
   border-radius: 16px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.nav-button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.nav-button:active {
+  transform: scale(0.98);
+}
+
+.nav-button:hover {
+  background-color: #f0f0f0;
+}
+
+.catalog-button {
+  background-color: #f0f0f0;
+  color: #595959;
+}
+
+.catalog-button:hover {
+  background-color: #e0e0e0;
+  color: #1890ff;
 }
 </style>

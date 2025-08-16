@@ -90,8 +90,9 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  document.title = (to.meta.title as string) || "";
-  console.log(from);
+  if (from) {
+    document.title = (to.meta.title as string) || "";
+  }
   // 如果需要清除历史记录
   // if (to.meta.clearHistory) {
   //   // 更安全的replace方式
