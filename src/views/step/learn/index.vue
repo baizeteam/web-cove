@@ -17,6 +17,7 @@
           v-bind="componentProps"
           :key="`${courseId}-${chapterId}-${stepId}`"
           @answered="handleAnswered"
+          @quiz-answered="handleQuizAnswered"
         />
       </div>
 
@@ -48,7 +49,7 @@
           type="primary"
           size="large"
           class="nav-button"
-          :disabled="false"
+          :disabled="stepInfo.type === 'choice' && !hasAnswered"
           @click="handleNext"
         >
           下一步
@@ -121,10 +122,18 @@ const currentComponent = computed(() => {
 const componentProps = computed(() => {
   if (!navigationInfo.value) return {};
 
-  const { type, src } = stepInfo.value.content;
-  console.log(src, "src");
-  // 暂时都用 Markdown 渲染
-  return { src: type === "md" ? src : "" };
+  const step = stepInfo.value;
+  const { type } = step.content;
+  console.log((step.content as any).src, "src");
+
+  // 检查是否是选择题
+  const isQuiz = step.type === "choice";
+
+  return {
+    src: type === "md" ? (step.content as any).src : "",
+    isQuiz,
+    quizAnswer: isQuiz ? step.answer : undefined,
+  };
 });
 
 // 是否可以完成章节
@@ -153,6 +162,18 @@ const handleAnswered = (answered: boolean, answer: string) => {
   hasAnswered.value = answered;
   currentAnswer.value = answer;
   console.log("答题状态:", answered, "答案:", answer);
+};
+
+// 处理Markdown选择题答题事件
+const handleQuizAnswered = (isCorrect: boolean, selectedAnswer: string) => {
+  hasAnswered.value = true;
+  currentAnswer.value = selectedAnswer;
+  console.log(
+    "选择题答题:",
+    isCorrect ? "正确" : "错误",
+    "答案:",
+    selectedAnswer
+  );
 };
 
 // 重置答题状态

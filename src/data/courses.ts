@@ -22,11 +22,18 @@ export interface ChoiceStep<Options extends readonly string[]> {
 type StepContent = MdStep | ChoiceStep<readonly string[]>;
 
 // 单个步骤
+// 选择题答案配置
+export interface QuizAnswer {
+  correct: string; // 正确答案 (A, B, C, D)
+  explanation?: string; // 答案解析
+}
+
 interface Step {
   id: number;
   type: "md" | "choice";
   title?: string;
   content: StepContent;
+  answer?: QuizAnswer; // 选择题答案配置
 }
 
 // 章节
@@ -95,6 +102,12 @@ function getPython(): Course {
             content: {
               type: "md",
               src: urlMd().Python.yuque + "/002-选择题.md",
+            },
+            // 选择题答案配置（前端存储，用户看不到源码）
+            answer: {
+              correct: "A", // 正确答案
+              explanation:
+                "print_double(3) 执行时，会计算 2 * 3 = 6，所以输出是 6",
             },
           },
           {

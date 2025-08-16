@@ -14,6 +14,9 @@
       {{ error }}
     </div>
 
+    <!-- 选择题结果显示区域 -->
+    <div v-if="isQuiz" class="quiz-result" style="display: none"></div>
+
     <!-- 全屏预览模态框 -->
     <div
       v-if="showFullscreen"
@@ -47,24 +50,40 @@ import "prismjs/plugins/line-numbers/prism-line-numbers.css";
 import "prismjs/plugins/line-numbers/prism-line-numbers";
 
 import { processImageUrls } from "@/components/Views/Md/View.md.ts";
+import type { QuizAnswer } from "@/data/courses";
 
 interface Props {
   src?: string;
   content?: string;
   refreshKey?: string;
+  // 选择题相关props
+  isQuiz?: boolean;
+  quizAnswer?: QuizAnswer;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   src: undefined,
   content: undefined,
   refreshKey: undefined,
+  isQuiz: false,
+  quizAnswer: undefined,
 });
+
+// 定义事件
+const emit = defineEmits<{
+  quizAnswered: [isCorrect: boolean, selectedAnswer: string];
+}>();
 
 const previewHtml = ref("");
 const loading = ref(false);
 const error = ref<string | null>(null);
 const currentImageSrc = ref("");
 const showFullscreen = ref(false);
+
+// 选择题状态
+const selectedOption = ref("");
+const showResult = ref(false);
+const isCorrect = ref(false);
 
 // 处理图片点击事件
 const handleImageClick = (e: MouseEvent) => {
@@ -122,7 +141,7 @@ renderer.code = function ({ text, lang }: { text: string; lang?: string }) {
     <div class="code-block-wrapper">
       <div class="code-block-header">
         <span class="code-language">${getLanguageDisplayName(language)}</span>
-        <button class="copy-button" onclick="copyToClipboard(this)" data-code="${encodeURIComponent(text)}">
+        <button class="copy-button" style="color:black" onclick="copyToClipboard(this)" data-code="${encodeURIComponent(text)}">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
@@ -132,6 +151,42 @@ renderer.code = function ({ text, lang }: { text: string; lang?: string }) {
       <pre class="language-${language} line-numbers"><code class="language-${language}">${highlightedCode}</code></pre>
     </div>
   `;
+};
+
+// 增强列表渲染，支持选择题选项
+renderer.list = function (token: any) {
+  const body = token.raw;
+  const ordered = token.ordered;
+
+  if (props.isQuiz && !ordered) {
+    // 从原始文本中提取选项
+    const lines = body.split("\n").filter((line: string) => line.trim());
+    const optionsHtml = lines
+      .map((line: string) => {
+        const match = line.match(/^\s*-\s+([A-Z])\.\s*(.+)$/);
+        if (match) {
+          const [, letter, text] = match;
+          return `
+            <div class="quiz-option" data-option="${letter}" onclick="selectQuizOption('${letter}')">
+              <span class="option-letter">${letter}</span>
+              <span class="option-text" style="color: black">${text}</span>
+            </div>
+          `;
+        }
+        return "";
+      })
+      .filter((item: string) => item)
+      .join("");
+
+    return `<div class="quiz-options">${optionsHtml}</div>`;
+  }
+
+  // 普通列表 - 使用默认渲染
+  const listItems = token.items
+    .map((item: any) => `<li>${item.text}</li>`)
+    .join("");
+  const tag = ordered ? "ol" : "ul";
+  return `<${tag}>${listItems}</${tag}>`;
 };
 
 // 获取语言显示名称
@@ -151,12 +206,6 @@ const getLanguageDisplayName = (lang: string): string => {
     ts: "TypeScript",
   };
   return displayNames[lang.toLowerCase()] || lang.toUpperCase() || "Text";
-};
-
-// 处理选择题内容
-const processQuizContent = (content: string): string => {
-  // 移除选择题处理逻辑，直接返回原内容
-  return content;
 };
 
 // 配置 marked
@@ -184,10 +233,7 @@ const loadMarkdown = async () => {
     // 处理图片链接
     mdContent = processImageUrls(mdContent);
 
-    // 处理选择题内容
-    mdContent = processQuizContent(mdContent);
-
-    // console.log(mdContent, "处理后的 markdown 内容");
+    console.log(mdContent, "处理后的 markdown 内容");
 
     previewHtml.value = marked.parse(mdContent) as string;
 
@@ -235,6 +281,55 @@ const loadMarkdown = async () => {
           document.body.removeChild(textArea);
         });
     };
+
+    // 添加选择题交互功能
+    if (props.isQuiz) {
+      (window as any).selectQuizOption = function (selectedAnswer: string) {
+        selectedOption.value = selectedAnswer;
+        showResult.value = true;
+
+        if (props.quizAnswer) {
+          isCorrect.value = selectedAnswer === props.quizAnswer.correct;
+
+          // 更新选项样式
+          const options = document.querySelectorAll(".quiz-option");
+          options.forEach(option => {
+            const optionEl = option as HTMLElement;
+            const optionValue = optionEl.dataset.option;
+
+            optionEl.classList.remove("selected", "correct", "wrong");
+
+            if (optionValue === selectedAnswer) {
+              optionEl.classList.add("selected");
+              if (isCorrect.value) {
+                optionEl.classList.add("correct");
+              } else {
+                optionEl.classList.add("wrong");
+              }
+            }
+
+            if (optionValue === props.quizAnswer?.correct) {
+              optionEl.classList.add("correct");
+            }
+
+            // 禁用点击
+            optionEl.style.pointerEvents = "none";
+          });
+
+          // 显示结果提示
+          const resultEl = document.querySelector(".quiz-result");
+          if (resultEl) {
+            resultEl.innerHTML = isCorrect.value
+              ? `<div class="result-success">✅ 回答正确！${props.quizAnswer.explanation || ""}</div>`
+              : `<div class="result-error">❌ 回答错误！正确答案是 ${props.quizAnswer.correct}。${props.quizAnswer.explanation || ""}</div>`;
+            (resultEl as HTMLElement).style.display = "block";
+          }
+
+          // 通知父组件
+          emit("quizAnswered", isCorrect.value, selectedAnswer);
+        }
+      };
+    }
   } catch (err: any) {
     error.value = err.message || "加载Markdown内容失败";
     console.error("Error:", err);
@@ -250,6 +345,109 @@ watch(
 );
 </script>
 
-<style scoped>
+<style>
 @import "./index.css";
+
+/* 选择题特有样式 */
+.quiz-options {
+  margin: 24px 0;
+}
+
+.quiz-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  margin: 12px 0;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.quiz-option:hover {
+  border-color: #3182ce;
+  background: #f8faff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(49, 130, 206, 0.1);
+}
+
+.quiz-option.selected {
+  border-color: #3182ce;
+  background: #edf2f7;
+}
+
+.quiz-option.correct {
+  border-color: #68d391;
+  background: #f0fff4;
+  color: #22543d;
+}
+
+.quiz-option.wrong {
+  border-color: #fc8181;
+  background: #fef2f2;
+  color: #c53030;
+}
+
+.option-letter {
+  width: 36px;
+  height: 36px;
+  background: #e2e8f0;
+  color: #2d3748;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.quiz-option.selected .option-letter {
+  background: #3182ce;
+  color: white;
+}
+
+.quiz-option.correct .option-letter {
+  background: #68d391;
+  color: white;
+}
+
+.quiz-option.wrong .option-letter {
+  background: #fc8181;
+  color: white;
+}
+
+.option-text {
+  flex: 1;
+  line-height: 1.5;
+}
+
+.quiz-result {
+  margin-top: 24px;
+  padding: 16px;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.result-success {
+  color: #22543d;
+  background: #f0fff4;
+  border: 1px solid #9ae6b4;
+  padding: 16px;
+  border-radius: 8px;
+  line-height: 1.6;
+}
+
+.result-error {
+  color: #c53030;
+  background: #fef2f2;
+  border: 1px solid #fc8181;
+  padding: 16px;
+  border-radius: 8px;
+  line-height: 1.6;
+}
 </style>
