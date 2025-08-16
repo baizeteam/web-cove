@@ -48,7 +48,7 @@
           type="primary"
           size="large"
           class="nav-button"
-          :disabled="isChoiceQuestionStep && !hasAnswered"
+          :disabled="false"
           @click="handleNext"
         >
           下一步
@@ -74,7 +74,7 @@
 import { computed, onMounted, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import ViewMd from "@/components/Views/Md/View-Md.vue";
-import ChoiceQuestion from "@/components/Business/ChoiceQuestion/index.vue";
+// import ChoiceQuestion from "@/components/Business/ChoiceQuestion/index.vue";
 import { getNavigationInfo } from "../step/stepConfig";
 import {
   updateLearningProgress,
@@ -90,10 +90,10 @@ const router = useRouter();
 const route = useRoute();
 
 // 从路由参数获取信息
-const language = computed(() => route.params.language as LanguageType);
-const courseId = computed(() => route.params.id as string);
-const chapterId = computed(() => parseInt(route.params.chapter as string));
-const stepId = computed(() => parseInt(route.params.step as string));
+const language = computed(() => route.params.language as LanguageType); // 语言
+const courseId = computed(() => route.params.id as string); // 语言简易程度
+const chapterId = computed(() => parseInt(route.params.chapter as string)); // 目录id
+const stepId = computed(() => parseInt(route.params.step as string)); // 章节
 
 // 答题状态管理
 const hasAnswered = ref(false);
@@ -109,39 +109,22 @@ const navigationInfo = computed(() => {
   );
 });
 
-// 检查当前是否是选择题步骤
-const isChoiceQuestionStep = computed(() => {
-  if (!navigationInfo.value) return false;
-  const step = navigationInfo.value.currentStep;
-  return step.title && step.title.includes("选择题");
-});
+const stepInfo = computed(() => navigationInfo.value.currentStep);
 
-// 动态判断当前该渲染什么组件
+console.log(stepInfo.value, "vvv");
+// 都用 Markdown 渲染
 const currentComponent = computed(() => {
-  if (!navigationInfo.value) return null;
-
-  return isChoiceQuestionStep.value ? ChoiceQuestion : ViewMd;
+  return ViewMd;
 });
 
 // 动态传递组件参数
 const componentProps = computed(() => {
   if (!navigationInfo.value) return {};
-  const step = navigationInfo.value.currentStep;
 
-  if (isChoiceQuestionStep.value) {
-    // 对于标题包含"选择题"的步骤，使用默认的选择题数据
-    return {
-      data: {
-        questions: "以下代码运行什么？11",
-        code: `def print_double(x):
-    print(2 * x)
-print_double(3)`,
-        options: ["6", "2", "3", "0"],
-      },
-    };
-  } else {
-    return { src: step.content.type === "md" ? step.content.src : "" };
-  }
+  const { type, src } = stepInfo.value.content;
+  console.log(src, "src");
+  // 暂时都用 Markdown 渲染
+  return { src: type === "md" ? src : "" };
 });
 
 // 是否可以完成章节

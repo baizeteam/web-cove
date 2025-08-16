@@ -187,7 +187,7 @@ const loadMarkdown = async () => {
     // 处理选择题内容
     mdContent = processQuizContent(mdContent);
 
-    console.log(mdContent, "处理后的 markdown 内容");
+    // console.log(mdContent, "处理后的 markdown 内容");
 
     previewHtml.value = marked.parse(mdContent) as string;
 

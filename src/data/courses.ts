@@ -70,7 +70,7 @@ function getPython(): Course {
     title: "Python 基础入门",
     description: "从零开始学习Python编程语言，掌握基础语法和概念",
     icon: "/src/assets/images/icon/python-icon.png",
-    totalSteps: 5,
+    totalSteps: 4,
     difficulty: "beginner",
     tags: ["编程", "Python", "入门"],
     chapters: [
@@ -90,33 +90,15 @@ function getPython(): Course {
           },
           {
             id: 2,
-            type: "md",
+            type: "choice",
             title: "选择题",
             content: {
               type: "md",
-              src: urlMd().Python.yuque + "/002-选择题.md?raw",
+              src: urlMd().Python.yuque + "/002-选择题.md",
             },
           },
           {
             id: 3,
-            type: "choice",
-            title: "Python基础概念测试",
-            content: {
-              type: "choice",
-              data: {
-                questions: "以下的代码运行什么？",
-                code: `
-                  def print_double(x):
-                    print(2 * x)
-                  print_double(3)
-                `,
-                options: ["A.6", "B.2", "C.3", "D.0"] as const,
-                answer: "A.6",
-              },
-            },
-          },
-          {
-            id: 4,
             type: "md",
             title: "代码高亮测试",
             content: {
