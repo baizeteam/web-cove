@@ -24,7 +24,7 @@
 <script lang="ts" setup>
 import { ref, watch } from "vue";
 import { marked } from "marked";
-import { useCodeHighlight } from "../composables/useCodeHighlight";
+import { useCodeHighlight } from "../hooks/useCodeHighlight";
 import { processImageUrls } from "../View.md.ts";
 
 interface Props {
@@ -104,7 +104,7 @@ watch(
 setupMarked();
 </script>
 
-<style scoped>
+<style lang="less" scoped>
 .markdown-renderer {
   width: 100%;
   height: 100%;
@@ -129,6 +129,11 @@ setupMarked();
 }
 
 .markdown-content {
+  width: 100%;
+  height: 100%;
+}
+:deep(p img) {
+  margin: 10px 0;
   width: 100%;
   height: 100%;
 }

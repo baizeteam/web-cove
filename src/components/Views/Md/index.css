@@ -580,7 +580,7 @@
 /* 暗色模式支持 */
 @media (prefers-color-scheme: dark) {
   .markdown-preview {
-    background: #1a202c;
+    background: #fff;
   }
 
   .preview-container {

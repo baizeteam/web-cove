@@ -191,10 +191,6 @@ const props = defineProps({
     required: true,
   },
 });
-onMounted(() => {
-  alert("abc");
-});
-
 const router = useRouter();
 
 // 响应式数据
