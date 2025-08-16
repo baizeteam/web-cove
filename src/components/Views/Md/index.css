@@ -583,10 +583,6 @@
     background: #fff;
   }
 
-  .preview-container {
-    color: #e2e8f0;
-  }
-
   .preview-container :deep() {
     h1,
     h2,

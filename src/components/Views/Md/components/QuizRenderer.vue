@@ -48,7 +48,7 @@ const setupQuizRenderer = (marked: any) => {
             return `
               <div class="quiz-option" data-option="${letter}" onclick="selectQuizOption('${letter}')">
                 <span class="option-letter">${letter}</span>
-                <span class="option-text" style="color: black">${text}</span>
+                <span class="option-text">${text}</span>
               </div>
             `;
           }
@@ -108,8 +108,8 @@ const setupQuizInteraction = () => {
       // 显示结果提示
       if (resultRef.value) {
         resultRef.value.innerHTML = isCorrect.value
-          ? `<div class="result-success">✅ 回答正确！${props.quizAnswer.explanation || ""}</div>`
-          : `<div class="result-error">❌ 回答错误！正确答案是 ${props.quizAnswer.correct}。${props.quizAnswer.explanation || ""}</div>`;
+          ? `<div class="result-correct">✅ 回答正确！${props.quizAnswer.explanation || ""}</div>`
+          : `<div class="result-wrong">❌ 回答错误！正确答案是 ${props.quizAnswer.correct}。${props.quizAnswer.explanation || ""}</div>`;
         resultRef.value.style.display = "block";
       }
 
@@ -164,107 +164,8 @@ defineExpose({
 });
 </script>
 
-<style>
-/* 选择题特有样式 */
-.quiz-options {
-  margin: 24px 0;
-}
-
-.quiz-option {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 16px 20px;
-  margin: 12px 0;
-  background: white;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 16px;
-  font-weight: 500;
-}
-
-.quiz-option:hover {
-  border-color: #3182ce;
-  background: #f8faff;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(49, 130, 206, 0.1);
-}
-
-.quiz-option.selected {
-  border-color: #3182ce;
-  background: #edf2f7;
-}
-
-.quiz-option.correct {
-  border-color: #68d391;
-  background: #f0fff4;
-  color: #22543d;
-}
-
-.quiz-option.wrong {
-  border-color: #fc8181;
-  background: #fef2f2;
-  color: #c53030;
-}
-
-.option-letter {
-  width: 36px;
-  height: 36px;
-  background: #e2e8f0;
-  color: #2d3748;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 16px;
-  flex-shrink: 0;
-}
-
-.quiz-option.selected .option-letter {
-  background: #3182ce;
-  color: white;
-}
-
-.quiz-option.correct .option-letter {
-  background: #68d391;
-  color: white;
-}
-
-.quiz-option.wrong .option-letter {
-  background: #fc8181;
-  color: white;
-}
-
-.option-text {
-  flex: 1;
-  line-height: 1.5;
-}
-
-.quiz-result {
-  margin-top: 24px;
-  padding: 16px;
-  border-radius: 12px;
-  font-weight: 500;
-}
-
-.result-success {
-  color: #22543d;
-  background: #f0fff4;
-  border: 1px solid #9ae6b4;
-  padding: 16px;
-  border-radius: 8px;
-  line-height: 1.6;
-}
-
-.result-error {
-  color: #c53030;
-  background: #fef2f2;
-  border: 1px solid #fc8181;
-  padding: 16px;
-  border-radius: 8px;
-  line-height: 1.6;
+<style scoped>
+.quiz-renderer {
+  /* 选择题组件容器样式已在 index.css 中通过 :deep() 定义 */
 }
 </style>

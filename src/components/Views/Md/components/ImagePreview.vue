@@ -79,10 +79,18 @@ const handleKeyDown = (e: KeyboardEvent) => {
 
 // 设置图片点击监听
 const setupImageClickListener = () => {
-  const container = document.querySelector(props.containerSelector);
-  if (container) {
-    container.addEventListener("click", handleImageClick);
-  }
+  // 延迟执行，确保DOM已更新
+  setTimeout(() => {
+    const container = document.querySelector(props.containerSelector);
+    if (container) {
+      // 先移除旧的监听器，避免重复绑定
+      container.removeEventListener("click", handleImageClick);
+      container.addEventListener("click", handleImageClick);
+      console.log("图片点击监听器已设置");
+    } else {
+      console.warn("未找到图片容器:", props.containerSelector);
+    }
+  }, 100);
 };
 
 // 移除图片点击监听

@@ -22,7 +22,7 @@
     <!-- 图片预览组件 -->
     <ImagePreview
       ref="imagePreviewRef"
-      container-selector=".markdown-content"
+      container-selector=".preview-container"
     />
   </div>
 </template>

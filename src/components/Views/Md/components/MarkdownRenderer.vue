@@ -8,7 +8,7 @@
 
     <div
       v-else-if="!error"
-      class="markdown-content"
+      class="preview-container"
       v-html="renderedHtml"
     ></div>
 
@@ -128,7 +128,7 @@ setupMarked();
   margin: 16px 0;
 }
 
-.markdown-content {
+.preview-container {
   width: 100%;
   height: 100%;
 }
