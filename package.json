@@ -29,6 +29,7 @@
     "marked": "^16.1.1",
     "pdfjs-dist": "^5.3.93",
     "pinia": "^3.0.3",
+    "prismjs": "^1.30.0",
     "vant": "^4.9.21",
     "vue": "^3.4.0",
     "vue-router": "^4.5.1"
@@ -41,6 +42,7 @@
     "@commitlint/config-conventional": "^19.8.1",
     "@types/axios": "^0.14.4",
     "@types/markdown-it": "^14.1.2",
+    "@types/prismjs": "^1.26.5",
     "@typescript-eslint/eslint-plugin": "^8.39.0",
     "@typescript-eslint/parser": "^8.39.0",
     "@vitejs/plugin-basic-ssl": "^1.1.0",
