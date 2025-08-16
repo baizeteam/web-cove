@@ -43,9 +43,9 @@ import Header from "./components/Header/index.vue";
 import Content from "./components/Content/index.vue";
 import Navigation from "./components/Navigation/index.vue";
 
-// 导入 composables
-import { useQuizState } from "./composables/useQuizState";
-import { useNavigation } from "./composables/useNavigation";
+// 导入 hooks
+import { useQuizState } from "./hooks/useQuizState";
+import { useNavigation } from "./hooks/useNavigation";
 
 const route = useRoute();
 

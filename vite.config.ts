@@ -22,12 +22,12 @@ export default defineConfig({
   server: {
     host: "0.0.0.0",
     port: 1000,
-    https: false,
+    // https: false,
     proxy: {
       "/yuque": {
         target: "https://cdn.nlark.com/yuque",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/yuque/, ""),
+        rewrite: path => path.replace(/^\/yuque/, ""),
         headers: {
           Referer: "https://www.yuque.com",
           Origin: "https://www.yuque.com",
@@ -35,10 +35,6 @@ export default defineConfig({
       },
     },
     strictPort: true,
-  },
-  test: {
-    environment: "jsdom",
-    globals: true,
   },
   css: {
     preprocessorOptions: {
