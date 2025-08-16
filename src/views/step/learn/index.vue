@@ -22,17 +22,31 @@
         :navigation-info="navigationInfo"
         :can-complete-chapter="canCompleteChapter"
         :is-next-button-disabled="isNextButtonDisabled"
-        @prev="handlePrev"
+        @prev="smartGoBack"
         @next="handleNext"
         @back-to-catalog="goBackToCatalog"
         @complete-chapter="completeCurrentChapter"
       />
     </div>
+
+    <!-- 章节完成弹窗 -->
+    <ChapterCompleteDialog
+      ref="completeDialogRef"
+      :chapter-title="`第${chapterId}章`"
+      :completed-steps="navigationInfo?.currentStep?.id || 0"
+      :total-time="'5分钟'"
+      :rating="5"
+      :has-next-chapter="false"
+      :next-chapter-title="''"
+      @back-to-catalog="handleDialogBackToCatalog"
+      @continue-next="handleDialogContinueNext"
+      @close="showCompleteDialog = false"
+    />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { getNavigationInfo } from "../step/stepConfig";
 import { updateLearningProgress } from "@/utils/learning.util";
@@ -42,12 +56,16 @@ import type { LanguageType } from "@/data/courses";
 import Header from "./components/Header/index.vue";
 import Content from "./components/Content/index.vue";
 import Navigation from "./components/Navigation/index.vue";
+import ChapterCompleteDialog from "@/components/Business/StudyStatus/ChapterCompleteDialog.vue";
 
 // 导入 hooks
 import { useQuizState } from "./hooks/useQuizState";
 import { useNavigation } from "./hooks/useNavigation";
 
 const route = useRoute();
+
+// 组件引用
+const completeDialogRef = ref<InstanceType<typeof ChapterCompleteDialog>>();
 
 // 从路由参数获取信息
 const language = computed(() => route.params.language as LanguageType);
@@ -78,9 +96,12 @@ const { isNextButtonDisabled, resetAnswerState, handleQuizAnswered } =
 const {
   canCompleteChapter,
   goBackToCatalog,
+  smartGoBack,
   handleNext,
-  handlePrev,
   completeCurrentChapter,
+  showCompleteDialog,
+  handleDialogBackToCatalog,
+  handleDialogContinueNext,
 } = useNavigation(
   language,
   courseId,
@@ -100,6 +121,13 @@ onMounted(() => {
 
   // 触发存储事件，让其他组件知道学习状态变化
   window.dispatchEvent(new Event("storage"));
+});
+
+// 监听完成弹窗状态
+watch(showCompleteDialog, newValue => {
+  if (newValue && completeDialogRef.value) {
+    completeDialogRef.value.show();
+  }
 });
 </script>
 

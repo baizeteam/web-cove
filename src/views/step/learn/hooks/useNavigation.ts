@@ -1,9 +1,10 @@
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import {
   updateLearningProgress,
   markChapterCompleted,
 } from "@/utils/learning.util";
+import { getNavigationManager } from "@/utils/navigation.util";
 
 export function useNavigation(
   language: any,
@@ -14,6 +15,14 @@ export function useNavigation(
   resetAnswerState: () => void
 ) {
   const router = useRouter();
+  const navManager = getNavigationManager();
+  const showCompleteDialog = ref(false);
+
+  // 设置目录路由
+  navManager.setCatalogRoute(`/step/${language.value}/${courseId.value}`);
+
+  // 记录当前章节学习路由
+  navManager.enterChapterStudy(chapterId.value, stepId.value);
 
   // 是否可以完成章节
   const canCompleteChapter = computed(() => {
@@ -23,7 +32,12 @@ export function useNavigation(
 
   // 返回目录
   const goBackToCatalog = () => {
-    router.push(`/step/${language.value}/${courseId.value}`);
+    navManager.backToCatalogWithCleanup();
+  };
+
+  // 智能返回上一页
+  const smartGoBack = () => {
+    navManager.smartGoBack();
   };
 
   // 导航到下一步
@@ -72,18 +86,32 @@ export function useNavigation(
       // 触发存储事件，让其他组件知道学习状态变化
       window.dispatchEvent(new Event("storage"));
 
-      // 返回目录页面
-      goBackToCatalog();
+      // 显示完成弹窗
+      showCompleteDialog.value = true;
     } else {
       console.error("章节完成标记失败");
     }
   };
 
+  // 处理完成弹窗的回调
+  const handleDialogBackToCatalog = () => {
+    navManager.completeChapterStudy();
+  };
+
+  const handleDialogContinueNext = () => {
+    // 这里可以添加跳转到下一章的逻辑
+    navManager.completeChapterStudy();
+  };
+
   return {
     canCompleteChapter,
     goBackToCatalog,
+    smartGoBack,
     handleNext,
     handlePrev,
     completeCurrentChapter,
+    showCompleteDialog,
+    handleDialogBackToCatalog,
+    handleDialogContinueNext,
   };
 }
