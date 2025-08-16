@@ -160,6 +160,7 @@ onMounted(() => {
 // 暴露方法给父组件
 defineExpose({
   setupQuizRenderer,
+  setupQuizInteraction,
   resetQuiz,
 });
 </script>

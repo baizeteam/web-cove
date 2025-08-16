@@ -31,12 +31,14 @@ interface Props {
   src?: string;
   content?: string;
   refreshKey?: string;
+  isQuiz?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   src: undefined,
   content: undefined,
   refreshKey: undefined,
+  isQuiz: false,
 });
 
 const emit = defineEmits<{
@@ -60,6 +62,62 @@ const setupMarked = () => {
 
   // 设置自定义渲染器
   setupRenderer(marked);
+
+  // 如果是选择题，设置选择题渲染器
+  if (props.isQuiz) {
+    setupQuizRenderer(marked);
+  }
+};
+
+// 设置选择题的marked渲染器
+const setupQuizRenderer = (marked: any) => {
+  const renderer = new marked.Renderer();
+
+  // 增强列表渲染，支持选择题选项
+  renderer.list = function (token: any) {
+    const body = token.raw;
+    const ordered = token.ordered;
+
+    if (props.isQuiz && !ordered) {
+      // 从原始文本中提取选项
+      const lines = body.split("\n").filter((line: string) => line.trim());
+      const optionsHtml = lines
+        .map((line: string) => {
+          const match = line.match(/^\s*-\s+([A-Z])\.\s*(.+)$/);
+          if (match) {
+            const [, letter, text] = match;
+            return `
+              <div class="quiz-option" data-option="${letter}" onclick="selectQuizOption('${letter}')">
+                <span class="option-letter">${letter}</span>
+                <span class="option-text">${text}</span>
+              </div>
+            `;
+          }
+          return "";
+        })
+        .filter((item: string) => item)
+        .join("");
+
+      return `<div class="quiz-options">${optionsHtml}</div>`;
+    }
+
+    // 普通列表 - 使用默认渲染
+    const listItems = token.items
+      .map((item: any) => `<li>${item.text}</li>`)
+      .join("");
+    const tag = ordered ? "ol" : "ul";
+    return `<${tag}>${listItems}</${tag}>`;
+  };
+
+  marked.use({ renderer });
+};
+
+// 设置选择题交互函数
+const setupQuizInteraction = () => {
+  (window as any).selectQuizOption = function (selectedAnswer: string) {
+    // 这里只是设置一个临时函数，实际的处理会由QuizRenderer组件接管
+    console.log("选择了选项:", selectedAnswer);
+  };
 };
 
 const loadAndRenderMarkdown = async () => {
@@ -82,6 +140,11 @@ const loadAndRenderMarkdown = async () => {
     // 渲染markdown
     const html = marked.parse(mdContent) as string;
     renderedHtml.value = html;
+
+    // 如果是选择题，设置交互函数
+    if (props.isQuiz) {
+      setupQuizInteraction();
+    }
 
     emit("rendered", html);
   } catch (err: any) {
