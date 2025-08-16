@@ -104,12 +104,119 @@ onMounted(() => {
 });
 </script>
 
-<style>
-@import "./index.css";
+<style lang="less">
+@import "./index.less";
 
 .markdown-preview {
   width: 100%;
   height: 100%;
   position: relative;
+
+  // 确保选择题样式能够应用到动态插入的HTML
+  :deep(.quiz-options) {
+    margin: 24px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  :deep(.quiz-option) {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+
+    &:hover {
+      border-color: #3182ce;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(49, 130, 206, 0.1);
+    }
+
+    &.selected {
+      border-color: #3182ce;
+      background: #edf2f7;
+    }
+
+    &.correct {
+      border-color: #68d391;
+      background: #f0fff4;
+      color: #22543d;
+    }
+
+    &.wrong {
+      border-color: #fc8181;
+      background: #fef5e7;
+      color: #c53030;
+    }
+  }
+
+  :deep(.option-letter) {
+    width: 32px;
+    height: 32px;
+    background: #e2e8f0;
+    color: #2d3748;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  :deep(.quiz-option.selected .option-letter) {
+    background: #3182ce;
+    color: white;
+  }
+
+  :deep(.quiz-option.correct .option-letter) {
+    background: #68d391;
+    color: white;
+  }
+
+  :deep(.quiz-option.wrong .option-letter) {
+    background: #fc8181;
+    color: white;
+  }
+
+  :deep(.option-text) {
+    flex: 1;
+    font-size: 16px;
+  }
+
+  :deep(.quiz-result) {
+    margin-top: 20px;
+    padding: 16px;
+    border-radius: 8px;
+    font-weight: 500;
+  }
+
+  :deep(.result-correct) {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #22543d;
+    background: #f0fff4;
+    border: 1px solid #9ae6b4;
+    padding: 12px 16px;
+    border-radius: 8px;
+  }
+
+  :deep(.result-wrong) {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #c53030;
+    background: #fef2f2;
+    border: 1px solid #fc8181;
+    padding: 12px 16px;
+    border-radius: 8px;
+  }
 }
 </style>
