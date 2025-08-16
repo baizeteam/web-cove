@@ -16,6 +16,7 @@
           :is="currentComponent"
           v-bind="componentProps"
           :key="`${courseId}-${chapterId}-${stepId}`"
+          @answered="handleAnswered"
         />
       </div>
 
@@ -47,6 +48,7 @@
           type="primary"
           size="large"
           class="nav-button"
+          :disabled="isChoiceQuestionStep && !hasAnswered"
           @click="handleNext"
         >
           下一步
@@ -69,7 +71,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import ViewMd from "@/components/Views/Md/View-Md.vue";
 import ChoiceQuestion from "@/components/Business/ChoiceQuestion/index.vue";
@@ -93,6 +95,10 @@ const courseId = computed(() => route.params.id as string);
 const chapterId = computed(() => parseInt(route.params.chapter as string));
 const stepId = computed(() => parseInt(route.params.step as string));
 
+// 答题状态管理
+const hasAnswered = ref(false);
+const currentAnswer = ref("");
+
 // 获取导航信息
 const navigationInfo = computed(() => {
   return getNavigationInfo(
@@ -103,15 +109,18 @@ const navigationInfo = computed(() => {
   );
 });
 
+// 检查当前是否是选择题步骤
+const isChoiceQuestionStep = computed(() => {
+  if (!navigationInfo.value) return false;
+  const step = navigationInfo.value.currentStep;
+  return step.title && step.title.includes("选择题");
+});
+
 // 动态判断当前该渲染什么组件
 const currentComponent = computed(() => {
   if (!navigationInfo.value) return null;
-  const step = navigationInfo.value.currentStep;
 
-  // 检查标题是否包含"选择题"
-  const isChoiceQuestion = step.title && step.title.includes("选择题");
-
-  return isChoiceQuestion ? ChoiceQuestion : ViewMd;
+  return isChoiceQuestionStep.value ? ChoiceQuestion : ViewMd;
 });
 
 // 动态传递组件参数
@@ -119,13 +128,11 @@ const componentProps = computed(() => {
   if (!navigationInfo.value) return {};
   const step = navigationInfo.value.currentStep;
 
-  const isChoiceQuestion = step.title && step.title.includes("选择题");
-
-  if (isChoiceQuestion) {
+  if (isChoiceQuestionStep.value) {
     // 对于标题包含"选择题"的步骤，使用默认的选择题数据
     return {
       data: {
-        questions: "以下代码运行什么？",
+        questions: "以下代码运行什么？11",
         code: `def print_double(x):
     print(2 * x)
 print_double(3)`,
@@ -158,6 +165,19 @@ const goBackToCatalog = () => {
   router.push(`/step/${language.value}/${courseId.value}`);
 };
 
+// 处理选择题答题事件
+const handleAnswered = (answered: boolean, answer: string) => {
+  hasAnswered.value = answered;
+  currentAnswer.value = answer;
+  console.log("答题状态:", answered, "答案:", answer);
+};
+
+// 重置答题状态
+const resetAnswerState = () => {
+  hasAnswered.value = false;
+  currentAnswer.value = "";
+};
+
 // 导航逻辑
 const handleNext = () => {
   if (!navigationInfo.value || !navigationInfo.value.hasNext) return;
@@ -168,6 +188,9 @@ const handleNext = () => {
   // 触发存储事件，让其他组件知道学习状态变化
   window.dispatchEvent(new Event("storage"));
 
+  // 重置答题状态
+  resetAnswerState();
+
   // 跳转到下一步
   router.push(
     `/step/${language.value}/${courseId.value}/${navigationInfo.value.nextChapter}/${navigationInfo.value.nextStep}`
@@ -176,6 +199,9 @@ const handleNext = () => {
 
 const handlePrev = () => {
   if (!navigationInfo.value || !navigationInfo.value.hasPrev) return;
+
+  // 重置答题状态
+  resetAnswerState();
 
   // 跳转到上一步
   router.push(

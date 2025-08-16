@@ -42,13 +42,21 @@ interface IProps {
 }
 
 defineProps<IProps>();
+
+// 定义事件
+const emit = defineEmits<{
+  answered: [hasAnswered: boolean, selectedAnswer: string];
+}>();
+
 // 双向绑定选中值
 const selectedOption = ref("");
 
 watch(
   selectedOption,
   value => {
-    console.log(value, "vvv");
+    console.log(value, "选择的答案:", value);
+    // 通知父组件答题状态
+    emit("answered", !!value, value);
   },
   { deep: true }
 );

@@ -124,15 +124,6 @@ function getPython(): Course {
               src: urlMd().Python.yuque + "/test-prism-highlight.md",
             },
           },
-          {
-            id: 5,
-            type: "md",
-            title: "交互选择题",
-            content: {
-              type: "md",
-              src: urlMd().Python.yuque + "/003-交互选择题.md",
-            },
-          },
         ],
       },
     ],
