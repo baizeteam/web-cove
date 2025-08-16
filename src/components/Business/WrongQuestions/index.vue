@@ -117,7 +117,7 @@ const router = useRouter();
 const wrongQuestions = ref<WrongQuestion[]>([]);
 const wrongQuestionStats = ref<WrongQuestionStats>({
   totalWrong: 0,
-  byLanguage: {},
+  byLanguage: {} as Record<LanguageType, number>,
   recentWrong: [],
 });
 const selectedLanguage = ref<LanguageType | "all">("all");

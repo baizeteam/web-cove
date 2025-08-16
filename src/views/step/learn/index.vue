@@ -49,7 +49,7 @@
           type="primary"
           size="large"
           class="nav-button"
-          :disabled="stepInfo.type === 'choice' && !hasAnswered"
+          :disabled="isNextButtonDisabled"
           @click="handleNext"
         >
           下一步
@@ -72,7 +72,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import ViewMd from "@/components/Views/Md/View-Md.vue";
 // import ChoiceQuestion from "@/components/Business/ChoiceQuestion/index.vue";
@@ -110,9 +110,22 @@ const navigationInfo = computed(() => {
   );
 });
 
-const stepInfo = computed(() => navigationInfo.value.currentStep);
+const stepInfo = computed(() => navigationInfo.value?.currentStep);
 
-console.log(stepInfo.value, "vvv");
+console.log(stepInfo.value, "stepInfo");
+
+// 计算下一步按钮是否应该禁用
+const isNextButtonDisabled = computed(() => {
+  const isChoiceStep = stepInfo.value?.type === "choice";
+  const result = isChoiceStep && !hasAnswered.value;
+  console.log("下一步按钮状态:", {
+    isChoiceStep,
+    hasAnswered: hasAnswered.value,
+    disabled: result,
+  });
+  return result;
+});
+
 // 都用 Markdown 渲染
 const currentComponent = computed(() => {
   return ViewMd;
@@ -120,7 +133,7 @@ const currentComponent = computed(() => {
 
 // 动态传递组件参数
 const componentProps = computed(() => {
-  if (!navigationInfo.value) return {};
+  if (!navigationInfo.value || !stepInfo.value) return {};
 
   const step = stepInfo.value;
   const { type } = step.content;
@@ -172,7 +185,9 @@ const handleQuizAnswered = (isCorrect: boolean, selectedAnswer: string) => {
     "选择题答题:",
     isCorrect ? "正确" : "错误",
     "答案:",
-    selectedAnswer
+    selectedAnswer,
+    "hasAnswered:",
+    hasAnswered.value
   );
 };
 
@@ -233,8 +248,20 @@ const completeCurrentChapter = () => {
   }
 };
 
+// 监听步骤变化，重置答题状态
+watch(
+  [courseId, chapterId, stepId],
+  () => {
+    resetAnswerState();
+  },
+  { immediate: false }
+);
+
 // 生命周期
 onMounted(() => {
+  // 重置答题状态
+  resetAnswerState();
+
   // 更新学习进度（访问当前步骤）
   updateLearningProgress(courseId.value, chapterId.value, stepId.value, false);
 
