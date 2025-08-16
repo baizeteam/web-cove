@@ -15,7 +15,7 @@
         </div>
         <!-- 使用div实现的按钮组 -->
         <div class="btn-group">
-          <div class="custom-btn left-btn" @click="onBackCatalog">返回目录</div>
+          <div class="custom-btn left-btn" @click="onBackCatalog">返回</div>
           <div class="custom-btn right-btn" @click="onContinueNext">
             继续下一节
           </div>

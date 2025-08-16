@@ -1,7 +1,7 @@
 <template>
   <div class="learn-container">
     <!-- 当前学习内容 -->
-    <div class="content-area">
+    <div class="">
       <!-- 内容头部 -->
       <div class="content-header">
         <div class="step-info">
@@ -28,7 +28,7 @@
           class="nav-button"
           @click="handlePrev"
         >
-          <van-icon name="arrow-left" />
+          <!--          <van-icon name="arrow-left" />-->
           上一步
         </van-button>
 
@@ -38,8 +38,8 @@
           class="nav-button catalog-button"
           @click="goBackToCatalog"
         >
-          <van-icon name="home-o" />
-          返回目录
+          <!--          <van-icon name="home-o" />-->
+          返回
         </van-button>
 
         <van-button
@@ -50,7 +50,7 @@
           @click="handleNext"
         >
           下一步
-          <van-icon name="arrow" />
+          <!--          <van-icon name="arrow" />-->
         </van-button>
 
         <van-button
@@ -213,7 +213,7 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>
+<style lang="less" scoped>
 .learn-container {
   padding: 16px;
   max-width: 1200px;
@@ -227,7 +227,7 @@ onMounted(() => {
   padding: 24px;
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 200px); /* Adjust for header and footer */
+  //height: calc(100vh - 200px); /* Adjust for header and footer */
 }
 
 .content-header {
