@@ -1,52 +1,84 @@
-import { urlMd } from "@/utils/url.util.ts";
+import { getCourseByLanguageAndId, getStepConfig } from "@/data/courses";
+import type { LanguageType } from "@/data/courses";
 
-interface MdStep {
-  type: "md";
-  src: string;
-}
+// 获取步骤配置
+export const getStepConfigByRoute = (
+  language: LanguageType,
+  courseId: string,
+  chapterId: number,
+  stepId: number
+) => {
+  const course = getCourseByLanguageAndId(language, courseId);
+  if (!course) return null;
 
-export interface ChoiceStep<Options extends readonly string[]> {
-  type: "choice";
-  data: {
-    questions: string;
-    code?: string;
-    options: Options;
-    answer: Options[number]; // `Options[number]` 提取联合类型
+  return getStepConfig(course, chapterId, stepId);
+};
+
+// 获取导航信息
+export const getNavigationInfo = (
+  language: LanguageType,
+  courseId: string,
+  chapterId: number,
+  stepId: number
+) => {
+  const course = getCourseByLanguageAndId(language, courseId);
+  if (!course) return null;
+
+  const currentChapter = course.chapters.find(ch => ch.id === chapterId);
+  if (!currentChapter) return null;
+
+  const currentStepIndex = currentChapter.steps.findIndex(
+    step => step.id === stepId
+  );
+  if (currentStepIndex === -1) return null;
+
+  // 判断是否有上一步
+  let hasPrev = false;
+  let prevChapter = chapterId;
+  let prevStep = stepId;
+
+  if (currentStepIndex > 0) {
+    // 同一章节内的上一步
+    hasPrev = true;
+    prevStep = currentChapter.steps[currentStepIndex - 1].id;
+  } else if (chapterId > 1) {
+    // 上一章节的最后一步
+    const prevChapterData = course.chapters.find(ch => ch.id === chapterId - 1);
+    if (prevChapterData && prevChapterData.steps.length > 0) {
+      hasPrev = true;
+      prevChapter = prevChapterData.id;
+      prevStep = prevChapterData.steps[prevChapterData.steps.length - 1].id;
+    }
+  }
+
+  // 判断是否有下一步
+  let hasNext = false;
+  let nextChapter = chapterId;
+  let nextStep = stepId;
+
+  if (currentStepIndex < currentChapter.steps.length - 1) {
+    // 同一章节内的下一步
+    hasNext = true;
+    nextStep = currentChapter.steps[currentStepIndex + 1].id;
+  } else {
+    // 下一章节的第一步
+    const nextChapterData = course.chapters.find(ch => ch.id === chapterId + 1);
+    if (nextChapterData && nextChapterData.steps.length > 0) {
+      hasNext = true;
+      nextChapter = nextChapterData.id;
+      nextStep = nextChapterData.steps[0].id;
+    }
+  }
+
+  return {
+    course,
+    currentChapter,
+    currentStep: currentChapter.steps[currentStepIndex],
+    hasPrev,
+    hasNext,
+    prevChapter,
+    prevStep,
+    nextChapter,
+    nextStep,
   };
-}
-
-// `StepConfig` 需要动态处理 `ChoiceStep` 的泛型
-type StepConfig = MdStep | ChoiceStep<readonly string[]>; // 默认泛型
-
-interface IStepConfig {
-  [key: number]: StepConfig;
-}
-
-// 定义一个辅助函数，自动推断 options 类型
-const createChoiceStep = <Options extends readonly string[]>(
-  step: ChoiceStep<Options>
-) => step;
-
-export const stepConfig = {
-  1: {
-    type: "md",
-    src: urlMd().Python.yuque + "/001-Python特点.md?raw",
-  },
-  2: createChoiceStep({
-    type: "choice",
-    data: {
-      questions: "以下的代码运行什么？",
-      code: `
-             def print_double(x):
-               print(2 * x)
-             print_double(3)
-            `,
-      options: ["A.6", "B.2", "C.3", "D.0"] as const,
-      answer: "A.6", // 使用辅助函数创建，这里会正确报错
-    },
-  }),
-  3: {
-    type: "md",
-    src: urlMd().Python.typora + "/test.md",
-  },
-} as const satisfies IStepConfig; // `satisfies` 确保类型匹配但不放宽类型
+};

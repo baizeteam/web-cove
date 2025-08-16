@@ -57,6 +57,7 @@ export interface LearningStatus {
   currentChapter: number;
   currentStep: number;
   completedSteps: number[];
+  completedChapters: number[]; // 新增：已完成的章节
   isEnrolled: boolean;
   lastStudyTime: number;
   progress: number; // 0-100

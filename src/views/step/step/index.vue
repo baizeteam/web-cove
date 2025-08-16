@@ -1,88 +1,161 @@
 <template>
   <div class="step-container">
-    <!-- 章节信息 -->
-    <div v-if="course && currentChapter" class="chapter-header">
-      <div class="chapter-info">
-        <h2 class="chapter-title">{{ currentChapter.title }}</h2>
-        <p v-if="currentChapter.description" class="chapter-description">
-          {{ currentChapter.description }}
-        </p>
+    <!-- 课程头部信息 -->
+    <div v-if="course" class="course-header">
+      <div class="course-info">
+        <h1 class="course-title">{{ course.title }}</h1>
+        <p class="course-description">{{ course.description }}</p>
+        <div class="course-meta">
+          <span class="course-language">{{
+            getLanguageText(course.type)
+          }}</span>
+          <span class="course-difficulty">{{
+            getDifficultyText(course.difficulty)
+          }}</span>
+          <span class="course-steps">共 {{ totalSteps }} 步骤</span>
+        </div>
       </div>
-      <div class="chapter-progress">
-        <span class="progress-text">
-          第 {{ currentChapter.id }} 章 / 共 {{ totalChapters }} 章
-        </span>
+      <div class="course-progress">
+        <div class="progress-info">
+          <span class="progress-text">总体进度</span>
+          <span class="progress-percentage">{{ overallProgress }}%</span>
+        </div>
         <van-progress
-          :percentage="chapterProgress"
+          :percentage="overallProgress"
           :show-pivot="false"
-          stroke-width="4"
+          stroke-width="8"
           color="#1890ff"
         />
       </div>
     </div>
 
-    <!-- 步骤信息 -->
-    <div v-if="currentStep" class="step-header">
-      <div class="step-info">
-        <h3 class="step-title">
-          {{ currentStep.title || `步骤 ${currentStep.id}` }}
-        </h3>
-        <span class="step-counter">
-          步骤 {{ currentStep.id }} / 章节 {{ currentChapter?.id }}
-        </span>
+    <!-- 继续学习按钮 -->
+    <div v-if="course" class="continue-learning">
+      <van-button
+        type="primary"
+        size="large"
+        round
+        block
+        @click="continueLearning"
+      >
+        {{ hasLearningProgress ? "继续学习" : "开始学习" }}
+      </van-button>
+      <div v-if="hasLearningProgress" class="last-study-info">
+        上次学习：第{{ currentChapterId }}章 · 步骤{{ currentStepId }}
       </div>
     </div>
 
-    <!-- 动态渲染组件 -->
-    <component
-      :is="currentComponent"
-      v-if="currentComponent"
-      v-bind="componentProps"
-      @next="handleNext"
-      @prev="handlePrev"
-    />
-
-    <!-- 导航按钮 -->
-    <div class="nav">
-      <button v-if="canPrev" class="nav-btn prev-btn" @click="handlePrev">
-        上一步
-      </button>
-      <button v-if="canNext" class="nav-btn next-btn" @click="handleNext">
-        下一步
-      </button>
-    </div>
-
-    <!-- 章节导航 -->
-    <div class="chapter-nav">
-      <h4>章节导航</h4>
-      <div class="chapter-list">
+    <!-- 章节目录 -->
+    <div v-if="course" class="chapters-container">
+      <h2 class="chapters-title">课程章节</h2>
+      <div class="chapters-list">
         <div
-          v-for="chapter in course?.chapters"
+          v-for="chapter in course.chapters"
           :key="chapter.id"
           class="chapter-item"
           :class="{
             current: chapter.id === currentChapterId,
-            completed: isChapterCompleted(chapter.id),
+            completed: checkChapterCompleted(chapter.id),
+            expanded: expandedChapters.includes(chapter.id),
           }"
-          @click="goToChapter(chapter.id)"
         >
-          <div class="chapter-item-header">
-            <span class="chapter-number">{{ chapter.id }}</span>
-            <span class="chapter-title">{{ chapter.title }}</span>
+          <!-- 章节头部 -->
+          <div class="chapter-header" @click="toggleChapter(chapter.id)">
+            <div class="chapter-info">
+              <div class="chapter-title-section">
+                <span class="chapter-number">{{ chapter.id }}</span>
+                <h3 class="chapter-title">{{ chapter.title }}</h3>
+                <van-icon
+                  :name="
+                    expandedChapters.includes(chapter.id)
+                      ? 'arrow-down'
+                      : 'arrow'
+                  "
+                  class="expand-icon"
+                />
+              </div>
+              <p v-if="chapter.description" class="chapter-description">
+                {{ chapter.description }}
+              </p>
+            </div>
+            <div class="chapter-status">
+              <div class="chapter-progress">
+                <span class="progress-text">
+                  {{ getChapterCompletedSteps(chapter.id) }}/{{
+                    chapter.steps.length
+                  }}
+                </span>
+                <van-progress
+                  :percentage="getChapterProgress(chapter.id)"
+                  :show-pivot="false"
+                  stroke-width="4"
+                  color="#52c41a"
+                />
+              </div>
+              <div class="chapter-actions">
+                <van-button
+                  v-if="
+                    !checkChapterCompleted(chapter.id) &&
+                    canCompleteChapter(chapter.id)
+                  "
+                  type="success"
+                  size="small"
+                  @click.stop="completeChapter(chapter.id)"
+                >
+                  结束该章
+                </van-button>
+                <van-icon
+                  v-else-if="checkChapterCompleted(chapter.id)"
+                  name="success"
+                  color="#52c41a"
+                  size="20"
+                />
+              </div>
+            </div>
           </div>
-          <div class="chapter-steps">
-            <span
+
+          <!-- 章节步骤列表 -->
+          <div
+            v-if="expandedChapters.includes(chapter.id)"
+            class="chapter-steps"
+          >
+            <div
               v-for="step in chapter.steps"
               :key="step.id"
-              class="step-dot"
+              class="step-item"
               :class="{
-                current: step.id === currentStepId,
+                current:
+                  step.id === currentStepId && chapter.id === currentChapterId,
                 completed: isStepCompleted(chapter.id, step.id),
+                accessible: isStepAccessible(chapter.id, step.id),
               }"
-              @click.stop="goToStep(chapter.id, step.id)"
+              @click="goToStep(chapter.id, step.id)"
             >
-              {{ step.id }}
-            </span>
+              <div class="step-info">
+                <span class="step-number">{{ step.id }}</span>
+                <span class="step-title">{{
+                  step.title || `步骤 ${step.id}`
+                }}</span>
+                <span class="step-type">{{ getStepTypeText(step.type) }}</span>
+              </div>
+              <div class="step-status">
+                <van-icon
+                  v-if="isStepCompleted(chapter.id, step.id)"
+                  name="success"
+                  color="#52c41a"
+                  size="16"
+                />
+                <van-icon
+                  v-else-if="
+                    step.id === currentStepId && chapter.id === currentChapterId
+                  "
+                  name="play-circle-o"
+                  color="#1890ff"
+                  size="16"
+                />
+                <van-icon v-else name="circle-o" color="#d9d9d9" size="16" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -91,19 +164,17 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from "vue";
+import { computed, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import ViewMd from "@/components/Views/Md/View-Md.vue";
-import ChoiceQuestion from "@/components/Business/ChoiceQuestion/index.vue";
-import {
-  getCourseByLanguageAndId,
-  getTotalChapters,
-  getChapterStepsCount,
-} from "@/data/courses";
+import { getCourseByLanguageAndId, getTotalSteps } from "@/data/courses";
 import {
   updateLearningProgress,
   getCurrentLearningPosition,
   getCourseLearningStats,
+  markChapterCompleted,
+  isChapterCompleted,
+  enrollCourse,
+  isEnrolled,
 } from "@/utils/learning.util";
 
 defineOptions({
@@ -123,9 +194,17 @@ const props = defineProps({
 
 const router = useRouter();
 
+// 响应式数据
+const expandedChapters = ref<number[]>([]);
+
 // 获取课程数据
 const course = computed(() => {
   return getCourseByLanguageAndId(props.language as any, props.stepId);
+});
+
+// 检查是否有学习进度
+const hasLearningProgress = computed(() => {
+  return isEnrolled(props.stepId);
 });
 
 // 当前章节ID和步骤ID
@@ -136,59 +215,78 @@ const currentChapterId = computed(() => {
 
 const currentStepId = computed(() => {
   const position = getCurrentLearningPosition(props.stepId);
-  return position ? position.step : parseInt(props.stepId);
+  return position ? position.step : 1;
 });
 
-// 当前章节
-const currentChapter = computed(() => {
-  if (!course.value) return null;
-  return course.value.chapters.find(ch => ch.id === currentChapterId.value);
+const totalSteps = computed(() => {
+  return course.value ? getTotalSteps(course.value) : 0;
 });
 
-// 当前步骤
-const currentStep = computed(() => {
-  if (!course.value || !currentChapter.value) return null;
-  return currentChapter.value.steps.find(
-    step => step.id === currentStepId.value
-  );
+// 总体进度
+const overallProgress = computed(() => {
+  if (!course.value) return 0;
+  const stats = getCourseLearningStats(props.stepId);
+  return stats ? stats.progress : 0;
 });
 
-// 总章节数
-const totalChapters = computed(() => {
-  return course.value ? getTotalChapters(course.value) : 0;
-});
+// 继续学习
+const continueLearning = () => {
+  if (!hasLearningProgress.value) {
+    // 如果没有学习记录，则自动注册课程
+    enrollCourse(props.stepId, props.language as any);
 
-// 章节进度
-const chapterProgress = computed(() => {
-  if (!course.value || !currentChapter.value) return 0;
-  const chapterSteps = getChapterStepsCount(
-    course.value,
-    currentChapterId.value
-  );
-  const completedInChapter = currentChapter.value.steps.filter(step =>
-    isStepCompleted(currentChapterId.value, step.id)
-  ).length;
-  return Math.round((completedInChapter / chapterSteps) * 100);
-});
-
-// 动态判断当前该渲染什么组件
-const currentComponent = computed(() => {
-  const step = currentStep.value;
-  if (!step) return null;
-  return step.type === "md" ? ViewMd : ChoiceQuestion;
-});
-
-// 动态传递组件参数
-const componentProps = computed(() => {
-  const step = currentStep.value;
-  if (!step) return {};
-
-  if (step.type === "md") {
-    return { src: step.content.src };
-  } else {
-    return { data: step.content.data };
+    // 触发存储事件，让其他组件知道学习状态变化
+    window.dispatchEvent(new Event("storage"));
   }
-});
+
+  // 跳转到学习页面
+  const chapterId = currentChapterId.value;
+  const stepId = currentStepId.value;
+  router.push(`/step/${props.language}/${props.stepId}/${chapterId}/${stepId}`);
+};
+
+// 方法
+const toggleChapter = (chapterId: number) => {
+  const index = expandedChapters.value.indexOf(chapterId);
+  if (index > -1) {
+    expandedChapters.value.splice(index, 1);
+  } else {
+    expandedChapters.value.push(chapterId);
+  }
+};
+
+const goToStep = (chapterId: number, stepId: number) => {
+  // 如果没有学习记录，自动注册课程
+  if (!hasLearningProgress.value) {
+    enrollCourse(props.stepId, props.language as any);
+  }
+
+  // 更新学习进度
+  updateLearningProgress(props.stepId, chapterId, stepId);
+
+  // 触发存储事件，让其他组件知道学习状态变化
+  window.dispatchEvent(new Event("storage"));
+
+  // 跳转到具体的学习页面
+  router.push(`/step/${props.language}/${props.stepId}/${chapterId}/${stepId}`);
+};
+
+const completeChapter = (chapterId: number) => {
+  if (markChapterCompleted(props.stepId, chapterId)) {
+    // 章节完成后的处理
+    console.log(`第${chapterId}章已完成`);
+
+    // 可选：自动展开下一章
+    const nextChapter = course.value?.chapters.find(
+      ch => ch.id === chapterId + 1
+    );
+    if (nextChapter && !expandedChapters.value.includes(nextChapter.id)) {
+      expandedChapters.value.push(nextChapter.id);
+    }
+  } else {
+    console.log(`第${chapterId}章无法完成，请先完成所有步骤`);
+  }
+};
 
 // 检查步骤是否完成
 const isStepCompleted = (chapterId: number, stepId: number): boolean => {
@@ -200,102 +298,97 @@ const isStepCompleted = (chapterId: number, stepId: number): boolean => {
 };
 
 // 检查章节是否完成
-const isChapterCompleted = (chapterId: number): boolean => {
+const checkChapterCompleted = (chapterId: number): boolean => {
+  return isChapterCompleted(props.stepId, chapterId);
+};
+
+// 检查步骤是否可访问
+const isStepAccessible = (chapterId: number): boolean => {
+  // 第一章的所有步骤都可以访问
+  if (chapterId === 1) return true;
+
+  // 其他章节需要前一章完成
+  const prevChapter = course.value?.chapters.find(
+    ch => ch.id === chapterId - 1
+  );
+  if (prevChapter) {
+    return checkChapterCompleted(chapterId - 1);
+  }
+
+  return false;
+};
+
+// 检查是否可以完成章节
+const canCompleteChapter = (chapterId: number): boolean => {
   if (!course.value) return false;
 
   const chapter = course.value.chapters.find(ch => ch.id === chapterId);
   if (!chapter) return false;
 
+  // 检查是否所有步骤都已完成
   return chapter.steps.every(step => isStepCompleted(chapterId, step.id));
 };
 
-// 导航逻辑
-const handleNext = () => {
-  if (!course.value || !currentChapter.value || !currentStep.value) return;
-
-  const currentStepIndex = currentChapter.value.steps.findIndex(
-    step => step.id === currentStep.value!.id
-  );
-
-  if (currentStepIndex < currentChapter.value.steps.length - 1) {
-    // 同一章节内的下一步
-    const nextStep = currentChapter.value.steps[currentStepIndex + 1];
-    goToStep(currentChapter.value.id, nextStep.id);
-  } else {
-    // 下一章节的第一步
-    const nextChapter = course.value.chapters.find(
-      ch => ch.id === currentChapter.value!.id + 1
-    );
-    if (nextChapter && nextChapter.steps.length > 0) {
-      goToStep(nextChapter.id, nextChapter.steps[0].id);
-    }
-  }
-};
-
-const handlePrev = () => {
-  if (!course.value || !currentChapter.value || !currentStep.value) return;
-
-  const currentStepIndex = currentChapter.value.steps.findIndex(
-    step => step.id === currentStep.value!.id
-  );
-
-  if (currentStepIndex > 0) {
-    // 同一章节内的上一步
-    const prevStep = currentChapter.value.steps[currentStepIndex - 1];
-    goToStep(currentChapter.value.id, prevStep.id);
-  } else {
-    // 上一章节的最后一步
-    const prevChapter = course.value.chapters.find(
-      ch => ch.id === currentChapter.value!.id - 1
-    );
-    if (prevChapter && prevChapter.steps.length > 0) {
-      const lastStep = prevChapter.steps[prevChapter.steps.length - 1];
-      goToStep(prevChapter.id, lastStep.id);
-    }
-  }
-};
-
-// 跳转到指定章节
-const goToChapter = (chapterId: number) => {
-  if (!course.value) return;
+// 获取章节进度
+const getChapterProgress = (chapterId: number): number => {
+  if (!course.value) return 0;
 
   const chapter = course.value.chapters.find(ch => ch.id === chapterId);
-  if (chapter && chapter.steps.length > 0) {
-    goToStep(chapterId, chapter.steps[0].id);
+  if (!chapter) return 0;
+
+  const completedSteps = chapter.steps.filter(step =>
+    isStepCompleted(chapterId, step.id)
+  ).length;
+
+  return Math.round((completedSteps / chapter.steps.length) * 100);
+};
+
+// 获取章节已完成步骤数
+const getChapterCompletedSteps = (chapterId: number): number => {
+  if (!course.value) return 0;
+
+  const chapter = course.value.chapters.find(ch => ch.id === chapterId);
+  if (!chapter) return 0;
+
+  return chapter.steps.filter(step => isStepCompleted(chapterId, step.id))
+    .length;
+};
+
+// 获取步骤类型文本
+const getStepTypeText = (type: string): string => {
+  const typeMap = {
+    md: "文档",
+    choice: "练习",
+  };
+  return typeMap[type as keyof typeof typeMap] || type;
+};
+
+// 获取语言文本
+const getLanguageText = (language: string): string => {
+  const languageMap = {
+    python: "Python",
+    javascript: "JavaScript",
+    html: "HTML & CSS",
+  };
+  return languageMap[language as keyof typeof languageMap] || language;
+};
+
+// 获取难度文本
+const getDifficultyText = (difficulty: string): string => {
+  const difficultyMap = {
+    beginner: "初级",
+    intermediate: "中级",
+    advanced: "高级",
+  };
+  return difficultyMap[difficulty as keyof typeof difficultyMap] || difficulty;
+};
+
+// 生命周期
+onMounted(() => {
+  // 默认展开第一章
+  if (course.value && course.value.chapters.length > 0) {
+    expandedChapters.value.push(1);
   }
-};
-
-// 跳转到指定步骤
-const goToStep = (chapterId: number, stepId: number) => {
-  // 更新学习进度
-  updateLearningProgress(props.stepId, chapterId, stepId);
-
-  // 跳转路由
-  router.replace(`/step/${props.language}/${props.stepId}`);
-};
-
-// 控制按钮显隐
-const canPrev = computed(() => {
-  if (!course.value || !currentChapter.value || !currentStep.value)
-    return false;
-
-  const currentStepIndex = currentChapter.value.steps.findIndex(
-    step => step.id === currentStep.value!.id
-  );
-  return currentStepIndex > 0 || currentChapter.value.id > 1;
-});
-
-const canNext = computed(() => {
-  if (!course.value || !currentChapter.value || !currentStep.value)
-    return false;
-
-  const currentStepIndex = currentChapter.value.steps.findIndex(
-    step => step.id === currentStep.value!.id
-  );
-  return (
-    currentStepIndex < currentChapter.value.steps.length - 1 ||
-    currentChapter.value.id < totalChapters.value
-  );
 });
 </script>
 
@@ -306,124 +399,121 @@ const canNext = computed(() => {
   margin: 0 auto;
 }
 
-.chapter-header {
+.course-header {
   background: white;
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
-.chapter-title {
-  font-size: 24px;
-  font-weight: 600;
-  margin: 0 0 8px 0;
+.course-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 12px 0;
   color: #262626;
 }
 
-.chapter-description {
-  font-size: 14px;
-  color: #8c8c8c;
-  margin: 0 0 16px 0;
-  line-height: 1.5;
-}
-
-.chapter-progress {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.progress-text {
-  font-size: 14px;
-  color: #595959;
-  min-width: 120px;
-}
-
-.step-header {
-  background: white;
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.step-title {
-  font-size: 18px;
-  font-weight: 600;
-  margin: 0 0 8px 0;
-  color: #262626;
-}
-
-.step-counter {
-  font-size: 12px;
-  color: #8c8c8c;
-  background: #f5f5f5;
-  padding: 4px 8px;
-  border-radius: 4px;
-}
-
-.nav {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  margin: 24px 0;
-}
-
-.nav-btn {
-  padding: 12px 24px;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.prev-btn {
-  background: #f5f5f5;
-  color: #595959;
-}
-
-.prev-btn:hover {
-  background: #e8e8e8;
-}
-
-.next-btn {
-  background: #1890ff;
-  color: white;
-}
-
-.next-btn:hover {
-  background: #40a9ff;
-}
-
-.chapter-nav {
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  margin-top: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.chapter-nav h4 {
+.course-description {
   font-size: 16px;
-  font-weight: 600;
-  margin: 0 0 16px 0;
-  color: #262626;
+  color: #595959;
+  margin: 0 0 20px 0;
+  line-height: 1.6;
 }
 
-.chapter-list {
+.course-meta {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.course-language,
+.course-difficulty,
+.course-steps {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.course-language {
+  background: #e6f7ff;
+  color: #1890ff;
+}
+
+.course-difficulty {
+  background: #f6ffed;
+  color: #52c41a;
+}
+
+.course-steps {
+  background: #f5f5f5;
+  color: #595959;
+}
+
+.course-progress {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.progress-text {
+  font-size: 14px;
+  color: #595959;
+}
+
+.progress-percentage {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1890ff;
+}
+
+.continue-learning {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.last-study-info {
+  margin-top: 12px;
+  font-size: 14px;
+  color: #8c8c8c;
+}
+
+.chapters-container {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.chapters-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 20px 0;
+  color: #262626;
+}
+
+.chapters-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .chapter-item {
   border: 1px solid #e8e8e8;
-  border-radius: 8px;
-  padding: 16px;
-  cursor: pointer;
+  border-radius: 12px;
+  overflow: hidden;
   transition: all 0.3s ease;
 }
 
@@ -442,23 +532,40 @@ const canNext = computed(() => {
   background: #f6ffed;
 }
 
-.chapter-item-header {
+.chapter-header {
+  padding: 20px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  transition: background-color 0.3s ease;
+}
+
+.chapter-header:hover {
+  background-color: #fafafa;
+}
+
+.chapter-info {
+  flex: 1;
+}
+
+.chapter-title-section {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .chapter-number {
   background: #1890ff;
   color: white;
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
 }
 
@@ -467,46 +574,129 @@ const canNext = computed(() => {
 }
 
 .chapter-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  color: #262626;
+}
+
+.expand-icon {
+  color: #8c8c8c;
+  transition: transform 0.3s ease;
+}
+
+.chapter-item.expanded .expand-icon {
+  transform: rotate(180deg);
+}
+
+.chapter-description {
+  font-size: 14px;
+  color: #8c8c8c;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.chapter-status {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.chapter-progress {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.progress-text {
+  font-size: 12px;
+  color: #595959;
+}
+
+.chapter-actions {
+  display: flex;
+  align-items: center;
+}
+
+.chapter-steps {
+  border-top: 1px solid #f0f0f0;
+  background: #fafafa;
+}
+
+.step-item {
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.step-item:last-child {
+  border-bottom: none;
+}
+
+.step-item:hover {
+  background-color: #f0f0f0;
+}
+
+.step-item.current {
+  background-color: #e6f7ff;
+  border-left: 4px solid #1890ff;
+}
+
+.step-item.completed {
+  background-color: #f6ffed;
+}
+
+.step-item:not(.accessible) {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.step-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.step-number {
+  background: #f0f0f0;
+  color: #595959;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.step-item.current .step-number {
+  background: #1890ff;
+  color: white;
+}
+
+.step-item.completed .step-number {
+  background: #52c41a;
+  color: white;
+}
+
+.step-title {
   font-size: 14px;
   font-weight: 500;
   color: #262626;
 }
 
-.chapter-steps {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.step-dot {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: #f5f5f5;
-  border: 1px solid #d9d9d9;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.step-type {
+  padding: 2px 8px;
+  border-radius: 12px;
   font-size: 11px;
-  color: #8c8c8c;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.step-dot:hover {
-  border-color: #1890ff;
-  color: #1890ff;
-}
-
-.step-dot.current {
-  background: #1890ff;
-  border-color: #1890ff;
-  color: white;
-}
-
-.step-dot.completed {
-  background: #52c41a;
-  border-color: #52c41a;
-  color: white;
+  background: #f0f0f0;
+  color: #595959;
 }
 </style>

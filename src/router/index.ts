@@ -18,6 +18,14 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
+    path: "/step/:language/:id/:chapter/:step",
+    component: () => import("@/views/step/learn/index.vue"),
+    meta: {
+      keepAlive: false,
+      title: "学习内容",
+    },
+  },
+  {
     path: "/recommend",
     meta: {
       title: "发现",

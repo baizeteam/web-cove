@@ -35,6 +35,12 @@ export const saveLearningStatus = (status: LearningStatus): void => {
     }
 
     localStorage.setItem(LEARNING_STATUS_KEY, JSON.stringify(allStatus));
+
+    // 触发自定义事件，通知其他组件数据已更新
+    const event = new CustomEvent("learning-status-updated", {
+      detail: { courseId: status.courseId, status },
+    });
+    window.dispatchEvent(event);
   } catch (error) {
     console.error("保存学习状态失败:", error);
   }
@@ -54,6 +60,7 @@ export const enrollCourse = (
       currentChapter: 1,
       currentStep: 1,
       completedSteps: [],
+      completedChapters: [],
       isEnrolled: true,
       lastStudyTime: Date.now(),
       progress: 0,
@@ -162,6 +169,132 @@ export const getCourseLearningStats = (courseId: string) => {
     totalSteps: getTotalSteps(course),
     progress: status.progress,
     lastStudyTime: status.lastStudyTime,
+  };
+};
+
+// 标记章节完成
+export const markChapterCompleted = (
+  courseId: string,
+  chapterId: number
+): boolean => {
+  const status = getLearningStatus(courseId);
+  if (!status) return false;
+
+  // 确保 completedChapters 数组存在
+  if (!status.completedChapters) {
+    status.completedChapters = [];
+  }
+
+  // 检查章节是否已经完成
+  if (status.completedChapters.includes(chapterId)) {
+    return true; // 已经完成
+  }
+
+  // 获取课程信息
+  const course = getCourseById(courseId);
+  if (!course) return false;
+
+  // 找到对应章节
+  const chapter = course.chapters.find(ch => ch.id === chapterId);
+  if (!chapter) return false;
+
+  // 检查该章节的所有步骤是否都已完成
+  const allStepsCompleted = chapter.steps.every(step => {
+    const stepKey = `${chapterId}-${step.id}`;
+    return status.completedSteps.includes(parseInt(stepKey));
+  });
+
+  if (!allStepsCompleted) {
+    console.log(
+      `章节 ${chapterId} 未完成，已完成步骤: ${status.completedSteps.length}/${chapter.steps.length}`
+    );
+    return false; // 章节未完成，不能标记
+  }
+
+  // 标记章节完成
+  status.completedChapters.push(chapterId);
+  status.lastStudyTime = Date.now();
+
+  // 重新计算总体进度（基于完成的章节数）
+  const totalChapters = course.chapters.length;
+  status.progress = Math.round(
+    (status.completedChapters.length / totalChapters) * 100
+  );
+
+  console.log(`章节 ${chapterId} 已完成，总体进度: ${status.progress}%`);
+  saveLearningStatus(status);
+  return true;
+};
+
+// 检查章节是否完成
+export const isChapterCompleted = (
+  courseId: string,
+  chapterId: number
+): boolean => {
+  const status = getLearningStatus(courseId);
+  if (!status) return false;
+
+  // 确保 completedChapters 数组存在
+  if (!status.completedChapters) {
+    status.completedChapters = [];
+  }
+
+  return status.completedChapters.includes(chapterId);
+};
+
+// 获取章节完成状态
+export const getChapterCompletionStatus = (
+  courseId: string,
+  chapterId: number
+) => {
+  const status = getLearningStatus(courseId);
+  if (!status) return null;
+
+  const course = getCourseById(courseId);
+  if (!course) return null;
+
+  const chapter = course.chapters.find(ch => ch.id === chapterId);
+  if (!chapter) return null;
+
+  const completedSteps = chapter.steps.filter(step => {
+    const stepKey = `${chapterId}-${step.id}`;
+    return status.completedSteps.includes(parseInt(stepKey));
+  }).length;
+
+  // 确保 completedChapters 数组存在
+  if (!status.completedChapters) {
+    status.completedChapters = [];
+  }
+
+  return {
+    totalSteps: chapter.steps.length,
+    completedSteps,
+    progress: Math.round((completedSteps / chapter.steps.length) * 100),
+    isCompleted: status.completedChapters.includes(chapterId),
+  };
+};
+
+// 获取课程总体完成状态
+export const getCourseOverallStatus = (courseId: string) => {
+  const status = getLearningStatus(courseId);
+  if (!status) return null;
+
+  const course = getCourseById(courseId);
+  if (!course) return null;
+
+  const totalChapters = course.chapters.length;
+  const completedChapters = status.completedChapters.length;
+  const totalSteps = getTotalSteps(course);
+  const completedSteps = status.completedSteps.length;
+
+  return {
+    totalChapters,
+    completedChapters,
+    totalSteps,
+    completedSteps,
+    chapterProgress: Math.round((completedChapters / totalChapters) * 100),
+    stepProgress: Math.round((completedSteps / totalSteps) * 100),
+    overallProgress: Math.round((completedChapters / totalChapters) * 100), // 基于章节的进度
   };
 };
 
