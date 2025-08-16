@@ -63,15 +63,14 @@ export interface LearningStatus {
   progress: number; // 0-100
 }
 
-// 课程数据
-export const coursesData: Course[] = [
-  {
+function getPython(): Course {
+  return {
     id: "python-basics",
     type: "python",
     title: "Python 基础入门",
     description: "从零开始学习Python编程语言，掌握基础语法和概念",
     icon: "/src/assets/images/icon/python-icon.png",
-    totalSteps: 5,
+    totalSteps: 3,
     difficulty: "beginner",
     tags: ["编程", "Python", "入门"],
     chapters: [
@@ -91,6 +90,15 @@ export const coursesData: Course[] = [
           },
           {
             id: 2,
+            type: "md",
+            title: "选择题",
+            content: {
+              type: "md",
+              src: urlMd().Python.yuque + "/002-选择题.md?raw",
+            },
+          },
+          {
+            id: 3,
             type: "choice",
             title: "Python基础概念测试",
             content: {
@@ -109,55 +117,12 @@ export const coursesData: Course[] = [
           },
         ],
       },
-      {
-        id: 2,
-        title: "Python 函数",
-        description: "学习Python函数的定义和使用",
-        steps: [
-          {
-            id: 3,
-            type: "md",
-            title: "函数基础",
-            content: {
-              type: "md",
-              src: urlMd().Python.typora + "/test.md",
-            },
-          },
-          {
-            id: 4,
-            type: "choice",
-            title: "函数定义测试",
-            content: {
-              type: "choice",
-              data: {
-                questions: "Python中如何定义一个函数？",
-                code: `
-                  # 选择正确的函数定义语法
-                `,
-                options: [
-                  "A. function name():",
-                  "B. def name():",
-                  "C. func name():",
-                  "D. define name():",
-                ] as const,
-                answer: "B. def name():",
-              },
-            },
-          },
-          {
-            id: 5,
-            type: "md",
-            title: "函数进阶",
-            content: {
-              type: "md",
-              src: urlMd().Python.yuque + "/thrid.md",
-            },
-          },
-        ],
-      },
     ],
-  },
-  {
+  };
+}
+
+function getJavaScript(): Course {
+  return {
     id: "javascript-basics",
     type: "javascript",
     title: "JavaScript 基础",
@@ -179,27 +144,6 @@ export const coursesData: Course[] = [
             content: {
               type: "md",
               src: urlMd().Python.yuque + "/001-Python特点.md?raw", // 临时使用Python的MD
-            },
-          },
-          {
-            id: 2,
-            type: "choice",
-            title: "变量声明测试",
-            content: {
-              type: "choice",
-              data: {
-                questions: "JavaScript中如何声明变量？",
-                code: `
-                  // 选择正确的变量声明方式
-                `,
-                options: [
-                  "A. var x = 1",
-                  "B. let x = 1",
-                  "C. const x = 1",
-                  "D. 以上都对",
-                ] as const,
-                answer: "D. 以上都对",
-              },
             },
           },
         ],
@@ -230,97 +174,13 @@ export const coursesData: Course[] = [
               },
             },
           },
-          {
-            id: 4,
-            type: "md",
-            title: "数据类型详解",
-            content: {
-              type: "md",
-              src: urlMd().Python.typora + "/test.md", // 临时使用Python的MD
-            },
-          },
         ],
       },
     ],
-  },
-  {
-    id: "html-css-basics",
-    type: "html",
-    title: "HTML & CSS 基础",
-    description: "学习网页开发的基础知识，HTML结构和CSS样式",
-    icon: "/src/assets/images/icon/html-icon.png",
-    totalSteps: 3,
-    difficulty: "beginner",
-    tags: ["网页", "HTML", "CSS"],
-    chapters: [
-      {
-        id: 1,
-        title: "HTML 基础",
-        description: "学习HTML标签和页面结构",
-        steps: [
-          {
-            id: 1,
-            type: "md",
-            title: "HTML简介",
-            content: {
-              type: "md",
-              src: urlMd().Python.yuque + "/001-Python特点.md?raw", // 临时使用Python的MD
-            },
-          },
-          {
-            id: 2,
-            type: "choice",
-            title: "HTML标签测试",
-            content: {
-              type: "choice",
-              data: {
-                questions: "HTML中如何创建链接？",
-                code: `
-                  <!-- 选择正确的HTML链接标签 -->
-                `,
-                options: [
-                  "A. <link>",
-                  "B. <a>",
-                  "C. <href>",
-                  "D. <url>",
-                ] as const,
-                answer: "B. <a>",
-              },
-            },
-          },
-        ],
-      },
-      {
-        id: 2,
-        title: "CSS 样式",
-        description: "学习CSS样式和布局",
-        steps: [
-          {
-            id: 3,
-            type: "choice",
-            title: "CSS属性测试",
-            content: {
-              type: "choice",
-              data: {
-                questions: "CSS中如何改变文字颜色？",
-                code: `
-                  /* 选择正确的CSS属性 */
-                `,
-                options: [
-                  "A. text-color",
-                  "B. color",
-                  "C. font-color",
-                  "D. text-style",
-                ] as const,
-                answer: "B. color",
-              },
-            },
-          },
-        ],
-      },
-    ],
-  },
-];
+  };
+}
+// 课程数据
+export const coursesData: Course[] = [getPython(), getJavaScript()];
 
 // 获取指定语言的课程
 export const getCoursesByLanguage = (language: LanguageType): Course[] => {
