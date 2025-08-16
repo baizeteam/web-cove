@@ -3,25 +3,11 @@ import { urlMd } from "@/utils/url.util.ts";
 // 课程类型定义
 export type LanguageType = "javascript" | "python" | "html" | "css";
 
-// 步骤配置类型
-interface MdStep {
-  type: "md";
+// 步骤配置类型 - 现在统一为markdown内容
+interface StepContent {
   src: string;
 }
 
-export interface ChoiceStep<Options extends readonly string[]> {
-  type: "choice";
-  data: {
-    questions: string;
-    code?: string;
-    options: Options;
-    answer: Options[number];
-  };
-}
-
-type StepContent = MdStep | ChoiceStep<readonly string[]>;
-
-// 单个步骤
 // 选择题答案配置
 export interface QuizAnswer {
   correct: string; // 正确答案 (A, B, C, D)
@@ -30,10 +16,9 @@ export interface QuizAnswer {
 
 interface Step {
   id: number;
-  type: "md" | "choice";
-  title?: string;
+  title: string; // 必须的标题，用于判断是否为选择题
   content: StepContent;
-  answer?: QuizAnswer; // 选择题答案配置
+  answer?: QuizAnswer; // 选择题答案配置（当title以'-选择题'结尾时使用）
 }
 
 // 章节
@@ -88,20 +73,16 @@ function getPython(): Course {
         steps: [
           {
             id: 1,
-            type: "md",
             title: "Python特点",
             content: {
-              type: "md",
-              src: urlMd().Python.yuque + "/001-Python特点.md?raw",
+              src: urlMd().Python + "/001-Python特点.md?raw",
             },
           },
           {
             id: 2,
-            type: "choice",
-            title: "选择题",
+            title: "基础语法-选择题",
             content: {
-              type: "md",
-              src: urlMd().Python.yuque + "/002-选择题.md",
+              src: urlMd().Python + "/002-选择题.md",
             },
             // 选择题答案配置（前端存储，用户看不到源码）
             answer: {
@@ -112,11 +93,9 @@ function getPython(): Course {
           },
           {
             id: 3,
-            type: "md",
             title: "代码高亮测试",
             content: {
-              type: "md",
-              src: urlMd().Python.yuque + "/test-prism-highlight.md",
+              src: urlMd().Python + "/test-prism-highlight.md",
             },
           },
         ],
@@ -143,11 +122,9 @@ function getJavaScript(): Course {
         steps: [
           {
             id: 1,
-            type: "md",
             title: "JavaScript简介",
             content: {
-              type: "md",
-              src: urlMd().Python.yuque + "/001-Python特点.md?raw", // 临时使用Python的MD
+              src: urlMd().Python + "/001-Python特点.md?raw", // 临时使用Python的MD
             },
           },
         ],
@@ -159,23 +136,14 @@ function getJavaScript(): Course {
         steps: [
           {
             id: 3,
-            type: "choice",
-            title: "数据类型测试",
+            title: "数据类型-选择题",
             content: {
-              type: "choice",
-              data: {
-                questions: "以下哪个是JavaScript的数据类型？",
-                code: `
-                  // 选择JavaScript支持的数据类型
-                `,
-                options: [
-                  "A. int",
-                  "B. string",
-                  "C. float",
-                  "D. double",
-                ] as const,
-                answer: "B. string",
-              },
+              src: urlMd().Python + "/js-data-types-quiz.md", // 需要创建对应的MD文件
+            },
+            answer: {
+              correct: "B", // 正确答案
+              explanation:
+                "JavaScript支持string数据类型，而int、float、double是其他语言的类型",
             },
           },
         ],
@@ -238,4 +206,9 @@ export const getTotalSteps = (course: Course): number => {
     (total, chapter) => total + chapter.steps.length,
     0
   );
+};
+
+// 判断步骤是否为选择题（根据title是否以'-选择题'结尾）
+export const isChoiceStep = (step: Step): boolean => {
+  return step.title.endsWith("-选择题");
 };

@@ -36,13 +36,12 @@ const contentProps = computed(() => {
   if (!props.stepInfo) return {};
 
   const step = props.stepInfo;
-  const { type } = step.content;
 
-  // 检查是否是选择题
-  const isQuiz = step.type === "choice";
+  // 检查是否是选择题（根据title判断）
+  const isQuiz = step.title.endsWith("-选择题");
 
   return {
-    src: type === "md" ? (step.content as any).src : "",
+    src: step.content.src,
     isQuiz,
     quizAnswer: isQuiz ? step.answer : undefined,
   };

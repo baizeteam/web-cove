@@ -12,7 +12,7 @@ export function useQuizState(
 
   // 计算下一步按钮是否应该禁用
   const isNextButtonDisabled = computed(() => {
-    const isChoiceStep = stepInfo.value?.type === "choice";
+    const isChoiceStep = stepInfo.value?.title?.endsWith("-选择题") || false;
     const result = isChoiceStep && !hasAnswered.value;
     console.log("下一步按钮状态:", {
       isChoiceStep,
