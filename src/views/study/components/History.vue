@@ -212,9 +212,9 @@ window.addEventListener("learning-status-updated", () => {
 }
 
 .section-title {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
-  color: #262626;
+  color: black;
   margin: 0;
 }
 
@@ -403,10 +403,6 @@ window.addEventListener("learning-status-updated", () => {
   }
 
   .course-name {
-    color: #ffffff;
-  }
-
-  .section-title {
     color: #ffffff;
   }
 
