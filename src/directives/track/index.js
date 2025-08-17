@@ -17,7 +17,7 @@ const Track = {
       exposureValMap.set(el, binding.value);
       const _observer = new IntersectionObserver(
         (entries, observer) => {
-          entries.forEach((entry) => {
+          entries.forEach(entry => {
             if (entry.isIntersecting) {
               sensors.track("WebExposure", exposureValMap.get(el));
               observer.unobserve(entry.target);
@@ -28,7 +28,7 @@ const Track = {
           root: null,
           rootMargin: "0px",
           threshold: 0.5,
-        },
+        }
       );
 
       _observer.observe(el);

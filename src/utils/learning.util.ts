@@ -221,9 +221,20 @@ export const markChapterCompleted = (
   });
 
   if (!allStepsCompleted) {
+    // 计算当前章节中已完成的步骤数
+    const completedStepsInChapter = chapter.steps.filter(step => {
+      const stepKey = chapterId * 1000 + step.id;
+      return status.completedSteps.includes(stepKey);
+    }).length;
+
     console.log(
-      `章节 ${chapterId} 未完成，已完成步骤: ${status.completedSteps.length}/${chapter.steps.length}`
+      `章节 ${chapterId} 未完成，已完成步骤: ${completedStepsInChapter}/${chapter.steps.length}`
     );
+    console.log(
+      "当前章节步骤:",
+      chapter.steps.map(s => `${s.id}-${s.title}`)
+    );
+    console.log("已完成的步骤keys:", status.completedSteps);
     return false; // 章节未完成，不能标记
   }
 

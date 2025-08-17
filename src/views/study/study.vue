@@ -185,11 +185,15 @@ const formatTime = (timestamp: number): string => {
 };
 
 const goToCourse = (course: LearningStatus) => {
-  router.push(`/step/${course.language}/${course.courseId}`);
+  // 对中文课程ID进行URL编码
+  const encodedCourseId = encodeURIComponent(course.courseId);
+  router.push(`/step/${course.language}/${encodedCourseId}`);
 };
 
 const continueLearning = (course: LearningStatus) => {
-  router.push(`/step/${course.language}/${course.courseId}`);
+  // 对中文课程ID进行URL编码
+  const encodedCourseId = encodeURIComponent(course.courseId);
+  router.push(`/step/${course.language}/${encodedCourseId}`);
 };
 
 const unenrollCourse = (courseId: string) => {

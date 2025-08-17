@@ -110,7 +110,7 @@ export class NavigationManager {
     return <boolean>(
       (this.chapterRoutes.includes(path) ||
         path.includes("/learn/") ||
-        path.match(/\/step\/\w+\/\d+\/\d+\/\d+/))
+        path.match(/\/step\/\w+\/[^/]+\/\d+\/\d+/)) // 支持中文课程ID
     );
   }
 
@@ -118,11 +118,13 @@ export class NavigationManager {
    * 从当前路由推断目录路由
    */
   private inferCatalogRoute(currentPath: string): string {
-    // 匹配类似 /step/python/python-basics/1/1 的路径
+    // 匹配类似 /step/python/Python基础入门/1/1 的路径（支持中文课程ID）
     const match = currentPath.match(/^\/step\/([^/]+)\/([^/]+)/);
     if (match) {
       const [, language, courseId] = match;
-      return `/step/${language}/${courseId}`;
+      // 确保课程ID被正确编码
+      const encodedCourseId = encodeURIComponent(decodeURIComponent(courseId));
+      return `/step/${language}/${encodedCourseId}`;
     }
 
     // 默认返回根路径

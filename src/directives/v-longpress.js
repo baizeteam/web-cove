@@ -10,7 +10,7 @@ export default {
     let timer = null;
 
     // 鼠标按下或触摸开始时触发
-    start = (e) => {
+    start = e => {
       if (!e.touches) return;
       startX = e.touches[0].screenX;
       startY = e.touches[0].screenY;
@@ -35,7 +35,7 @@ export default {
     };
 
     // 鼠标移动或触摸移动时触发
-    move = (e) => {
+    move = e => {
       if (
         !e.touches ||
         Math.abs(e.touches[0].screenX - startX) < 50 ||

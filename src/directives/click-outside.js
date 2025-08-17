@@ -2,8 +2,8 @@ const nodeList = new Map();
 
 let startClick;
 
-document.addEventListener("mousedown", (e) => (startClick = e));
-document.addEventListener("mouseup", (e) => {
+document.addEventListener("mousedown", e => (startClick = e));
+document.addEventListener("mouseup", e => {
   for (const handlers of nodeList.values()) {
     for (const { documentHandler } of handlers) documentHandler(e, startClick);
   }
@@ -30,7 +30,7 @@ function createDocumentHandler(el, binding) {
 
     const isTargetExcluded =
       (excludes.length &&
-        excludes.some((item) => item?.contains(mouseUpTarget))) ||
+        excludes.some(item => item?.contains(mouseUpTarget))) ||
       (excludes.length && excludes.includes(mouseDownTarget));
     if (
       isBound ||
@@ -59,7 +59,7 @@ const ClickOutside = {
 
     const handlers = nodeList.get(el);
     const oldHandlerIndex = handlers.findIndex(
-      (item) => item.bindingFn === binding.oldValue,
+      item => item.bindingFn === binding.oldValue
     );
     const newHandler = {
       documentHandler: createDocumentHandler(el, binding),

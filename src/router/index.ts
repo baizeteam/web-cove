@@ -10,7 +10,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import("@/views/step/step/index.vue"),
     props: route => ({
       language: route.params.language,
-      stepId: route.params.id,
+      stepId: decodeURIComponent(route.params.id as string), // 解码中文课程ID
     }),
     meta: {
       keepAlive: true,
@@ -20,6 +20,12 @@ const routes: RouteRecordRaw[] = [
   {
     path: "/step/:language/:id/:chapter/:step",
     component: () => import("@/views/step/learn/index.vue"),
+    props: route => ({
+      language: route.params.language,
+      id: decodeURIComponent(route.params.id as string), // 解码中文课程ID
+      chapter: route.params.chapter,
+      step: route.params.step,
+    }),
     meta: {
       keepAlive: false,
       title: "学习内容",

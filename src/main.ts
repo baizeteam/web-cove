@@ -5,10 +5,19 @@ import router from "./router";
 import plugins from "@/plugins";
 import { initEruda } from "@/utils/logger.util.ts";
 import { initNavigationManager } from "@/utils/navigation.util.ts";
+import {
+  needsMigration,
+  migrateLearningStatusIds,
+} from "@/utils/id-migration.util";
 import "@/utils/reset.util.ts";
 
 initEruda(); // 初始化 Eruda
 initNavigationManager(router); // 初始化导航管理器
+
+// 检查并执行课程ID迁移
+if (needsMigration()) {
+  migrateLearningStatusIds();
+}
 
 const app = createApp(App);
 app.use(createPinia());

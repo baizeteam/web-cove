@@ -152,13 +152,16 @@ const onLanguageChange = (language: LanguageType) => {
 
 // 课程点击处理
 const handleCourseClick = (course: Course) => {
+  // 对中文课程ID进行URL编码
+  const encodedCourseId = encodeURIComponent(course.id);
+
   if (checkIsEnrolled(course.id)) {
     // 已加入学习，跳转到学习页面
-    router.push(`/step/${course.type}/${course.id}`);
+    router.push(`/step/${course.type}/${encodedCourseId}`);
   } else {
     // 未加入学习，先加入再跳转
     handleEnrollCourse(course.id, course.type);
-    router.push(`/step/${course.type}/${course.id}`);
+    router.push(`/step/${course.type}/${encodedCourseId}`);
   }
 };
 
