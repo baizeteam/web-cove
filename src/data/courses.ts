@@ -93,10 +93,8 @@ function getPython(): Course {
           explanation: "print函数用于输出内容到控制台",
         }),
         createStep("005-打印文本"),
-        createStep("006-填空题", {
-          correct: ["print", "Kevin"], // 多个填空答案
-          explanation: "第一个空是print函数，第二个空是Kevin",
-        }),
+        createStep("006-注释"),
+        createStep("007-注释"),
       ],
     },
   ];

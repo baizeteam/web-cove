@@ -282,6 +282,51 @@
     border-radius: 8px;
   }
 
+  /* 填空题样式 */
+  .blank-question-container {
+    margin: 24px 0;
+    padding: 20px;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+  }
+
+  .blank-input {
+    display: inline-block;
+    min-width: 120px;
+    padding: 8px 12px;
+    margin: 0 4px;
+    border: 2px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 16px;
+    font-family: inherit;
+    background: white;
+    transition: all 0.3s ease;
+    outline: none;
+  }
+
+  .blank-input:focus {
+    border-color: #3182ce;
+    box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+  }
+
+  .blank-input.correct {
+    border-color: #68d391;
+    background: #f0fff4;
+    color: #22543d;
+  }
+
+  .blank-input.wrong {
+    border-color: #fc8181;
+    background: #fef2f2;
+    color: #c53030;
+  }
+
+  .blank-input:disabled {
+    background: #f7fafc;
+    cursor: not-allowed;
+  }
+
   /* 引用样式 */
   blockquote {
     padding: 16px 20px;
@@ -570,6 +615,16 @@
 
     .option-text {
       font-size: 14px;
+    }
+
+    .blank-question-container {
+      padding: 16px;
+    }
+
+    .blank-input {
+      min-width: 100px;
+      padding: 6px 10px;
+      font-size: 15px;
     }
   }
 }

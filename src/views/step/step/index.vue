@@ -86,21 +86,6 @@
                 />
               </div>
             </div>
-            <div class="chapter-status">
-              <div class="chapter-progress">
-                <span class="progress-text">
-                  {{ getChapterCompletedSteps(chapter.id) }}/{{
-                    chapter.steps.length
-                  }}
-                </span>
-                <van-progress
-                  :percentage="getChapterProgress(chapter.id)"
-                  :show-pivot="false"
-                  stroke-width="4"
-                  color="#52c41a"
-                />
-              </div>
-            </div>
           </div>
 
           <!-- 章节步骤列表 -->
@@ -315,31 +300,6 @@ const isStepAccessible = (chapterId: number): boolean => {
   }
 
   return false;
-};
-
-// 获取章节进度
-const getChapterProgress = (chapterId: number): number => {
-  if (!course.value) return 0;
-
-  const chapter = course.value.chapters.find(ch => ch.id === chapterId);
-  if (!chapter) return 0;
-
-  const completedSteps = chapter.steps.filter(step =>
-    isStepCompleted(chapterId, step.id)
-  ).length;
-
-  return Math.round((completedSteps / chapter.steps.length) * 100);
-};
-
-// 获取章节已完成步骤数
-const getChapterCompletedSteps = (chapterId: number): number => {
-  if (!course.value) return 0;
-
-  const chapter = course.value.chapters.find(ch => ch.id === chapterId);
-  if (!chapter) return 0;
-
-  return chapter.steps.filter(step => isStepCompleted(chapterId, step.id))
-    .length;
 };
 
 // 获取步骤类型文本
