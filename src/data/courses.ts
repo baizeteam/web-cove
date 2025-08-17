@@ -94,7 +94,11 @@ function getPython(): Course {
         }),
         createStep("005-打印文本"),
         createStep("006-注释"),
-        createStep("007-注释"),
+        createStep("007-选择题", {
+          correct: "B", // 正确答案：使用三个单引号'''包裹注释内容
+          explanation:
+            "Python中使用三个单引号'''或三个双引号\"\"\"来进行多行注释",
+        }),
       ],
     },
   ];

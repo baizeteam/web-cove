@@ -45,7 +45,7 @@ const setupQuizRenderer = (marked: any) => {
       const lines = body.split("\n").filter((line: string) => line.trim());
       const optionsHtml = lines
         .map((line: string) => {
-          const match = line.match(/^\s*-\s+([A-Z])\.\s*(.+)$/);
+          const match = line.match(/^\s*[-+]\s+([A-Z])\.\s*(.+)$/);
           if (match) {
             const [, letter, text] = match;
             return `
