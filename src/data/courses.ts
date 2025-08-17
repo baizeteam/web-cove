@@ -8,11 +8,10 @@ interface StepContent {
   src: string;
 }
 
-// 选择题答案配置
+// 答案配置（选择题和填空题通用）
 export interface QuizAnswer {
   correct: string; // 正确答案 (选择题: A, B, C, D; 填空题: 实际答案字符串)
   explanation?: string; // 答案解析
-  type?: "choice" | "blank"; // 题目类型，默认为选择题
 }
 
 interface Step {
@@ -110,7 +109,6 @@ function getPython(): Course {
             answer: {
               correct: "print", // 正确答案：print
               explanation: "print函数用于输出内容到控制台",
-              type: "blank",
             },
           },
         ],

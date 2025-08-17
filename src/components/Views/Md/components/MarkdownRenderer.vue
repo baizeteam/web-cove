@@ -67,6 +67,9 @@ const setupMarked = () => {
   if (props.isQuiz) {
     setupQuizRenderer(marked);
   }
+
+  // 应用外部传入的自定义渲染器
+  applyCustomRenderer();
 };
 
 // 设置选择题的marked渲染器
@@ -163,8 +166,34 @@ watch(
   { immediate: true }
 );
 
+// 自定义渲染器
+let customRenderer: ((marked: any) => void) | null = null;
+
+// 设置自定义渲染器
+const setCustomRenderer = (renderer: (marked: any) => void) => {
+  customRenderer = renderer;
+  // 重新设置marked配置
+  setupMarked();
+  // 如果有内容，重新渲染
+  if (renderedHtml.value) {
+    loadAndRenderMarkdown();
+  }
+};
+
+// 应用自定义渲染器
+const applyCustomRenderer = () => {
+  if (customRenderer) {
+    customRenderer(marked);
+  }
+};
+
 // 初始化marked配置
 setupMarked();
+
+// 暴露方法
+defineExpose({
+  setCustomRenderer,
+});
 </script>
 
 <style lang="less" scoped>

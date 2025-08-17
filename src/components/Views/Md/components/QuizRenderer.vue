@@ -71,23 +71,6 @@ const setupQuizRenderer = (marked: any) => {
     return `<${tag}>${listItems}</${tag}>`;
   };
 
-  // 增强段落渲染，支持填空题
-  renderer.paragraph = function (token: any) {
-    const text = token.text;
-
-    if (props.enabled && props.isBlank && text.includes("____")) {
-      // 处理填空题，将 ____ 替换为输入框
-      const blankHtml = text.replace(
-        /____/g,
-        '<input type="text" class="blank-input" onchange="handleBlankInput(this.value)" placeholder="请填入答案">'
-      );
-      return `<p class="blank-question">${blankHtml}</p>`;
-    }
-
-    // 普通段落
-    return `<p>${text}</p>`;
-  };
-
   marked.use({ renderer });
 };
 
@@ -140,43 +123,59 @@ const setupQuizInteraction = () => {
   };
 
   // 填空题交互函数
-  (window as any).handleBlankInput = function (inputValue: string) {
+  (window as any).updateBlankInput = function (inputValue: string) {
     userAnswer.value = inputValue.trim();
+  };
 
-    if (userAnswer.value && props.quizAnswer) {
-      showResult.value = true;
-      // 不区分大小写比较答案
-      isCorrect.value =
-        userAnswer.value.toLowerCase() ===
-        props.quizAnswer.correct.toLowerCase();
+  // 填空题验证函数（供外部调用）
+  (window as any).validateBlankAnswer = function () {
+    // 如果已经显示结果了，返回之前的正确性
+    if (showResult.value) {
+      return isCorrect.value;
+    }
 
-      // 更新输入框样式
-      const inputs = document.querySelectorAll(".blank-input");
-      inputs.forEach(input => {
-        const inputEl = input as HTMLInputElement;
-        inputEl.classList.remove("correct", "wrong");
+    // 如果没有答案配置，无法验证
+    if (!props.quizAnswer) {
+      return false;
+    }
 
-        if (isCorrect.value) {
-          inputEl.classList.add("correct");
-        } else {
-          inputEl.classList.add("wrong");
-        }
+    // 如果用户没有输入，返回false
+    if (!userAnswer.value) {
+      return false;
+    }
 
-        // 禁用输入
-        inputEl.disabled = true;
-      });
+    showResult.value = true;
+    // 不区分大小写比较答案
+    isCorrect.value =
+      userAnswer.value.toLowerCase() === props.quizAnswer.correct.toLowerCase();
 
-      // 显示结果提示
-      if (resultRef.value) {
-        resultRef.value.innerHTML = isCorrect.value
-          ? `<div class="result-correct">✅ 回答正确！${props.quizAnswer.explanation || ""}</div>`
-          : `<div class="result-wrong">❌ 回答错误！正确答案是 ${props.quizAnswer.correct}。${props.quizAnswer.explanation || ""}</div>`;
-        resultRef.value.style.display = "block";
+    // 更新输入框样式
+    const inputs = document.querySelectorAll(".blank-input");
+    inputs.forEach(input => {
+      const inputEl = input as HTMLInputElement;
+      inputEl.classList.remove("correct", "wrong");
+
+      if (isCorrect.value) {
+        inputEl.classList.add("correct");
+      } else {
+        inputEl.classList.add("wrong");
       }
 
-      // 通知父组件
-      emit("quizAnswered", isCorrect.value, userAnswer.value);
+      // 禁用输入
+      inputEl.disabled = true;
+    });
+
+    // 显示结果提示
+    if (resultRef.value) {
+      resultRef.value.innerHTML = isCorrect.value
+        ? `<div class="result-correct">✅ 回答正确！${props.quizAnswer.explanation || ""}</div>`
+        : `<div class="result-wrong">❌ 回答错误！正确答案是 ${props.quizAnswer.correct}。${props.quizAnswer.explanation || ""}</div>`;
+      resultRef.value.style.display = "block";
     }
+
+    // 通知父组件
+    emit("quizAnswered", isCorrect.value, userAnswer.value);
+    return isCorrect.value;
   };
 };
 

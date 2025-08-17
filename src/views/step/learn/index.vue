@@ -89,8 +89,12 @@ const stepInfo = computed(() => navigationInfo.value?.currentStep);
 console.log(stepInfo.value, "stepInfo");
 
 // 使用答题状态管理
-const { isNextButtonDisabled, resetAnswerState, handleQuizAnswered } =
-  useQuizState(courseId, chapterId, stepId, stepInfo);
+const {
+  isNextButtonDisabled,
+  resetAnswerState,
+  handleQuizAnswered,
+  validateCurrentStep,
+} = useQuizState(courseId, chapterId, stepId, stepInfo);
 
 // 使用导航逻辑管理
 const {
@@ -108,7 +112,8 @@ const {
   chapterId,
   stepId,
   navigationInfo,
-  resetAnswerState
+  resetAnswerState,
+  validateCurrentStep
 );
 
 // 生命周期

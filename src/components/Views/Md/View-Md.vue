@@ -70,10 +70,14 @@ const imagePreviewRef = ref<InstanceType<typeof ImagePreview>>();
 const { highlightAll } = useCodeHighlight();
 
 // 处理Markdown渲染完成
-const onMarkdownRendered = async (html: string) => {
+const onMarkdownRendered = async () => {
   // 使用 nextTick 确保 DOM 更新后再执行高亮
-  if (!html) console.log(html);
   await nextTick();
+
+  // 如果是填空题，处理填空位置
+  if (props.isBlank) {
+    processBlankQuestions();
+  }
 
   // 重新高亮所有代码块
   highlightAll();
@@ -94,12 +98,57 @@ const onQuizAnswered = (isCorrect: boolean, selectedAnswer: string) => {
   emit("quizAnswered", isCorrect, selectedAnswer);
 };
 
+// 处理填空题DOM转换
+const processBlankQuestions = () => {
+  if (!markdownRef.value) return;
+
+  // 等待DOM更新
+  nextTick(() => {
+    const container =
+      markdownRef.value?.$el?.querySelector(".preview-container");
+    if (!container) return;
+
+    // 获取容器内的所有HTML内容
+    let html = container.innerHTML;
+
+    // 检查是否包含____
+    if (!html.includes("____")) return;
+
+    // 直接替换HTML中的____为输入框
+    html = html.replace(
+      /____/g,
+      '<input type="text" class="blank-input" oninput="updateBlankInput(this.value)" placeholder="请填入答案" autocomplete="off">'
+    );
+
+    // 为包含输入框的段落添加样式容器
+    html = html.replace(
+      /(<p[^>]*>.*?<input[^>]*class="blank-input"[^>]*>.*?<\/p>)/g,
+      '<div class="blank-question-container">$1</div>'
+    );
+
+    // 更新容器内容
+    container.innerHTML = html;
+
+    // 设置填空题交互
+    if (quizRef.value) {
+      setTimeout(() => {
+        quizRef.value?.setupQuizInteraction();
+      }, 100);
+    }
+  });
+};
+
 onMounted(() => {
   // 组件初始化完成
   console.log("View-Md组件已挂载");
 
-  // 如果是选择题，确保在组件挂载时就设置交互函数
+  // 如果是交互题目，确保在组件挂载时就设置交互函数
   if (props.isQuiz && quizRef.value) {
+    // 传递渲染器配置给MarkdownRenderer
+    if (markdownRef.value && quizRef.value.setupQuizRenderer) {
+      markdownRef.value.setCustomRenderer(quizRef.value.setupQuizRenderer);
+    }
+
     setTimeout(() => {
       quizRef.value?.setupQuizInteraction();
     }, 100);
@@ -226,8 +275,12 @@ onMounted(() => {
 }
 
 /* 填空题样式 */
-.blank-question {
+.blank-question-container {
   margin: 24px 0;
+}
+
+.blank-question {
+  margin: 0 0 16px 0;
   font-size: 18px;
   line-height: 1.6;
 }

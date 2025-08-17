@@ -12,7 +12,8 @@ export function useNavigation(
   chapterId: any,
   stepId: any,
   navigationInfo: any,
-  resetAnswerState: () => void
+  resetAnswerState: () => void,
+  validateCurrentStep?: () => boolean
 ) {
   const router = useRouter();
   const navManager = getNavigationManager();
@@ -43,6 +44,12 @@ export function useNavigation(
   // 导航到下一步
   const handleNext = () => {
     if (!navigationInfo.value || !navigationInfo.value.hasNext) return;
+
+    // 如果是交互题目（选择题或填空题），先验证答案
+    if (validateCurrentStep && !validateCurrentStep()) {
+      console.log("当前步骤验证失败，无法继续");
+      return;
+    }
 
     // 标记当前步骤完成
     updateLearningProgress(courseId.value, chapterId.value, stepId.value, true);
@@ -75,6 +82,12 @@ export function useNavigation(
   // 完成当前章节
   const completeCurrentChapter = () => {
     if (!navigationInfo.value) return;
+
+    // 如果是交互题目（选择题或填空题），先验证答案
+    if (validateCurrentStep && !validateCurrentStep()) {
+      console.log("当前步骤验证失败，无法完成章节");
+      return;
+    }
 
     // 先标记当前步骤完成
     updateLearningProgress(courseId.value, chapterId.value, stepId.value, true);
