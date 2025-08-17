@@ -25,7 +25,6 @@ interface Step {
 interface Chapter {
   id: number;
   title: string;
-  description?: string;
   steps: Step[];
 }
 
@@ -34,7 +33,6 @@ export interface Course {
   id: string;
   type: LanguageType;
   title: string;
-  description: string;
   icon: string;
   totalSteps: number;
   difficulty: "beginner" | "intermediate" | "advanced";
@@ -60,7 +58,6 @@ function getPython(): Course {
     id: "python-basics",
     type: "python",
     title: "Python 基础入门",
-    description: "从零开始学习Python编程语言，掌握基础语法和概念",
     icon: "/src/assets/images/icon/python-icon.png",
     totalSteps: 4,
     difficulty: "beginner",
@@ -68,8 +65,7 @@ function getPython(): Course {
     chapters: [
       {
         id: 1,
-        title: "Python 简介",
-        description: "了解Python语言的特点和优势",
+        title: "初识Python",
         steps: [
           {
             id: 1,
@@ -86,9 +82,8 @@ function getPython(): Course {
             },
             // 选择题答案配置（前端存储，用户看不到源码）
             answer: {
-              correct: "A", // 正确答案
-              explanation:
-                "print_double(3) 执行时，会计算 2 * 3 = 6，所以输出是 6",
+              correct: "C", // 正确答案
+              explanation: "Python是一种解释型语言",
             },
           },
           {
@@ -109,7 +104,6 @@ function getJavaScript(): Course {
     id: "javascript-basics",
     type: "javascript",
     title: "JavaScript 基础",
-    description: "学习JavaScript编程语言，掌握前端开发基础",
     icon: "/src/assets/images/icon/js-icon.png",
     totalSteps: 4,
     difficulty: "beginner",
@@ -118,7 +112,6 @@ function getJavaScript(): Course {
       {
         id: 1,
         title: "JavaScript 基础语法",
-        description: "学习JavaScript的基本语法和概念",
         steps: [
           {
             id: 1,
@@ -132,7 +125,6 @@ function getJavaScript(): Course {
       {
         id: 2,
         title: "JavaScript 数据类型",
-        description: "了解JavaScript的数据类型系统",
         steps: [
           {
             id: 3,

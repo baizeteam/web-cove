@@ -15,7 +15,7 @@
             @click="toggleCourseFavorite"
           />
         </div>
-        <p class="course-description">{{ course.description }}</p>
+
         <div class="course-meta">
           <span class="course-language">{{
             getLanguageText(course.type)
@@ -85,9 +85,6 @@
                   class="expand-icon"
                 />
               </div>
-              <p v-if="chapter.description" class="chapter-description">
-                {{ chapter.description }}
-              </p>
             </div>
             <div class="chapter-status">
               <div class="chapter-progress">
@@ -101,25 +98,6 @@
                   :show-pivot="false"
                   stroke-width="4"
                   color="#52c41a"
-                />
-              </div>
-              <div class="chapter-actions">
-                <van-button
-                  v-if="
-                    !checkChapterCompleted(chapter.id) &&
-                    canCompleteChapter(chapter.id)
-                  "
-                  type="success"
-                  size="small"
-                  @click.stop="completeChapter(chapter.id)"
-                >
-                  结束该章
-                </van-button>
-                <van-icon
-                  v-else-if="checkChapterCompleted(chapter.id)"
-                  name="success"
-                  color="#52c41a"
-                  size="20"
                 />
               </div>
             </div>
@@ -183,7 +161,6 @@ import {
   updateLearningProgress,
   getCurrentLearningPosition,
   getCourseLearningStats,
-  markChapterCompleted,
   isChapterCompleted,
   enrollCourse,
   isEnrolled,
@@ -276,7 +253,6 @@ const toggleCourseFavorite = () => {
       id: `course-${course.value.id}`,
       type: "course",
       title: course.value.title,
-      description: course.value.description,
       language: course.value.type,
       courseId: course.value.id,
     });
@@ -311,23 +287,6 @@ const goToStep = (chapterId: number, stepId: number) => {
   router.push(`/step/${props.language}/${props.stepId}/${chapterId}/${stepId}`);
 };
 
-const completeChapter = (chapterId: number) => {
-  if (markChapterCompleted(props.stepId, chapterId)) {
-    // 章节完成后的处理
-    console.log(`第${chapterId}章已完成`);
-
-    // 可选：自动展开下一章
-    const nextChapter = course.value?.chapters.find(
-      ch => ch.id === chapterId + 1
-    );
-    if (nextChapter && !expandedChapters.value.includes(nextChapter.id)) {
-      expandedChapters.value.push(nextChapter.id);
-    }
-  } else {
-    console.log(`第${chapterId}章无法完成，请先完成所有步骤`);
-  }
-};
-
 // 检查步骤是否完成
 const isStepCompleted = (chapterId: number, stepId: number): boolean => {
   const stats = getCourseLearningStats(props.stepId);
@@ -356,17 +315,6 @@ const isStepAccessible = (chapterId: number): boolean => {
   }
 
   return false;
-};
-
-// 检查是否可以完成章节
-const canCompleteChapter = (chapterId: number): boolean => {
-  if (!course.value) return false;
-
-  const chapter = course.value.chapters.find(ch => ch.id === chapterId);
-  if (!chapter) return false;
-
-  // 检查是否所有步骤都已完成
-  return chapter.steps.every(step => isStepCompleted(chapterId, step.id));
 };
 
 // 获取章节进度

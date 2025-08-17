@@ -8,7 +8,6 @@ export interface FavoriteItem {
   id: string; // 唯一标识
   type: FavoriteType;
   title: string;
-  description?: string;
   language?: LanguageType;
   courseId?: string;
   chapterId?: number;
@@ -201,9 +200,7 @@ export const searchFavorites = (query: string): FavoriteItem[] => {
   const allFavorites = getAllFavorites();
   const lowerQuery = query.toLowerCase();
 
-  return allFavorites.filter(
-    fav =>
-      fav.title.toLowerCase().includes(lowerQuery) ||
-      (fav.description && fav.description.toLowerCase().includes(lowerQuery))
+  return allFavorites.filter(fav =>
+    fav.title.toLowerCase().includes(lowerQuery)
   );
 };

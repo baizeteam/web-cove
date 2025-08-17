@@ -278,7 +278,6 @@ const addToFavorites = (course: LearningStatus) => {
       id: `course-${course.courseId}`,
       type: "course",
       title: courseInfo.title,
-      description: courseInfo.description,
       language: course.language,
       courseId: course.courseId,
     });

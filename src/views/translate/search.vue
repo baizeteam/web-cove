@@ -149,10 +149,7 @@
                   class="course-title"
                   v-html="highlightKeyword(course.title)"
                 ></h4>
-                <p
-                  class="course-description"
-                  v-html="highlightKeyword(course.description)"
-                ></p>
+
                 <div class="course-meta">
                   <span class="course-language">{{
                     coursesStore.getLanguageText(course.type)
@@ -343,7 +340,6 @@ const toggleCourseFavorite = (course: Course) => {
     id: `course-${course.id}`,
     type: "course",
     title: course.title,
-    description: course.description,
     language: course.type,
     courseId: course.id,
   });
@@ -633,13 +629,6 @@ onMounted(() => {
   color: #333;
   margin: 0 0 8px 0;
   line-height: 1.4;
-}
-
-.course-description {
-  font-size: 14px;
-  color: #666;
-  margin: 0 0 12px 0;
-  line-height: 1.5;
 }
 
 .course-meta {

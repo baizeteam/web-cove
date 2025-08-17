@@ -129,7 +129,6 @@ const toggleArticleFavorite = (article: ArticleItem) => {
     id: `article-${article.id}`,
     type: "article",
     title: article.title,
-    description: article.content.substring(0, 100) + "...",
     articleId: String(article.id),
   });
   // 强制更新收藏状态

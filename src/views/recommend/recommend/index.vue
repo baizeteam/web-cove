@@ -41,7 +41,6 @@
 
             <div class="course-content">
               <h3 class="course-title">{{ course.title }}</h3>
-              <p class="course-description">{{ course.description }}</p>
 
               <div class="course-meta">
                 <span class="course-steps">{{ course.totalSteps }} 步骤</span>
@@ -188,7 +187,6 @@ const toggleCourseFavorite = (course: Course) => {
     id: `course-${course.id}`,
     type: "course",
     title: course.title,
-    description: course.description,
     language: course.type,
     courseId: course.id,
   });

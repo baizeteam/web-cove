@@ -53,7 +53,7 @@ const toggleStepFavorite = () => {
     id: stepFavoriteId.value,
     type: "step",
     title: props.stepTitle || `第${props.chapterId}章 步骤${props.stepId}`,
-    description: `学习步骤：${props.stepTitle || "步骤内容"}`,
+
     language: language as any,
     courseId: courseId,
     chapterId: props.chapterId,

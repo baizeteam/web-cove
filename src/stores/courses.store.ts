@@ -81,7 +81,6 @@ export const useCoursesStore = defineStore("courses", () => {
       result = result.filter(
         course =>
           course.title.toLowerCase().includes(query) ||
-          course.description.toLowerCase().includes(query) ||
           course.tags.some(tag => tag.toLowerCase().includes(query))
       );
     }

@@ -67,9 +67,6 @@
 
           <div class="favorite-content">
             <h4 class="favorite-title">{{ favorite.title }}</h4>
-            <p v-if="favorite.description" class="favorite-description">
-              {{ favorite.description }}
-            </p>
 
             <!-- 课程相关信息 -->
             <div
@@ -161,11 +158,7 @@ const filteredFavorites = computed(() => {
   // 按搜索关键字筛选
   if (searchQuery.value.trim()) {
     const lowerQuery = searchQuery.value.toLowerCase();
-    result = result.filter(
-      fav =>
-        fav.title.toLowerCase().includes(lowerQuery) ||
-        (fav.description && fav.description.toLowerCase().includes(lowerQuery))
-    );
+    result = result.filter(fav => fav.title.toLowerCase().includes(lowerQuery));
   }
 
   return result;
@@ -380,13 +373,6 @@ window.addEventListener("favorites-updated", () => {
   color: #2d3748;
   margin: 0 0 8px 0;
   line-height: 1.4;
-}
-
-.favorite-description {
-  font-size: 14px;
-  color: #718096;
-  margin: 8px 0;
-  line-height: 1.5;
 }
 
 .course-info,
