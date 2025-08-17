@@ -15,10 +15,7 @@ const createStep = (title: string, answer?: QuizAnswer): Step => ({
   id: extractIdFromTitle(title),
   title,
   content: {
-    src:
-      title === "JavaScript简介"
-        ? "/Markdown/Python/Python基础入门/001-Python特点.md?raw" // 临时使用Python的MD
-        : "/Markdown/Python/Python基础入门/js-data-types-quiz.md", // 需要创建对应的MD文件
+    src: "/Markdown/JavaScript/JavaScript基础入门/" + title + ".md",
   },
   ...(answer && { answer }),
 });

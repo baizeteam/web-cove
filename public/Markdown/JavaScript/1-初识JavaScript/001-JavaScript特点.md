@@ -1,0 +1,1 @@
+JavaScript是一种解释型语言
