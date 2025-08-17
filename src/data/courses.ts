@@ -95,6 +95,19 @@ function getPython(): Course {
           },
         ],
       },
+      {
+        id: 2,
+        title: "第一个Python程序",
+        steps: [
+          {
+            id: 1,
+            title: "第一个程序",
+            content: {
+              src: urlMd().Python + "/003-第一个程序.md?raw",
+            },
+          },
+        ],
+      },
     ],
   };
 }
