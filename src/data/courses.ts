@@ -112,7 +112,7 @@ function getPython(): Course {
   return {
     id: "python-basics",
     type: "python",
-    title: "Python 基础入门",
+    title: "Python基础入门",
     icon: "/src/assets/images/icon/python-icon.png",
     totalSteps,
     difficulty: "beginner",
