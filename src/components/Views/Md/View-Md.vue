@@ -11,12 +11,13 @@
       @error="onMarkdownError"
     />
 
-    <!-- 选择题组件 -->
+    <!-- 交互题目组件 -->
     <QuizRenderer
       v-if="isQuiz"
       ref="quizRef"
       :quiz-answer="quizAnswer"
       :enabled="isQuiz"
+      :is-blank="isBlank"
       @quiz-answered="onQuizAnswered"
     />
 
@@ -40,9 +41,10 @@ interface Props {
   src?: string;
   content?: string;
   refreshKey?: string;
-  // 选择题相关props
+  // 交互题目相关props
   isQuiz?: boolean;
   quizAnswer?: QuizAnswer;
+  isBlank?: boolean; // 是否为填空题
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -51,6 +53,7 @@ const props = withDefaults(defineProps<Props>(), {
   refreshKey: undefined,
   isQuiz: false,
   quizAnswer: undefined,
+  isBlank: false,
 });
 
 // 定义事件
@@ -220,5 +223,48 @@ onMounted(() => {
   border: 1px solid #fc8181;
   padding: 12px 16px;
   border-radius: 8px;
+}
+
+/* 填空题样式 */
+.blank-question {
+  margin: 24px 0;
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.blank-input {
+  display: inline-block;
+  min-width: 120px;
+  padding: 8px 12px;
+  border: 2px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  background: white;
+  transition: all 0.3s ease;
+  margin: 0 4px;
+
+  &:focus {
+    outline: none;
+    border-color: #3182ce;
+    box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+  }
+
+  &.correct {
+    border-color: #68d391;
+    background: #f0fff4;
+    color: #22543d;
+  }
+
+  &.wrong {
+    border-color: #fc8181;
+    background: #fef2f2;
+    color: #c53030;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.8;
+  }
 }
 </style>

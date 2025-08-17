@@ -125,7 +125,7 @@
                 <span class="step-title">{{
                   step.title || `步骤 ${step.id}`
                 }}</span>
-                <span class="step-type">{{ getStepTypeText(step.type) }}</span>
+                <span class="step-type">{{ getStepTypeText(step) }}</span>
               </div>
               <div class="step-status">
                 <van-icon
@@ -343,12 +343,14 @@ const getChapterCompletedSteps = (chapterId: number): number => {
 };
 
 // 获取步骤类型文本
-const getStepTypeText = (type: string): string => {
-  const typeMap = {
-    md: "文档",
-    choice: "练习",
-  };
-  return typeMap[type as keyof typeof typeMap] || type;
+const getStepTypeText = (step: any): string => {
+  if (step.title.endsWith("-选择题")) {
+    return "选择题";
+  } else if (step.title.endsWith("-填空题")) {
+    return "填空题";
+  } else {
+    return "文档";
+  }
 };
 
 // 使用 store 中的方法，避免重复定义

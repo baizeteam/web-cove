@@ -37,17 +37,20 @@ const contentProps = computed(() => {
 
   const step = props.stepInfo;
 
-  // 检查是否是选择题（根据title判断）
-  const isQuiz = step.title.endsWith("-选择题");
+  // 检查是否是选择题或填空题（根据title判断）
+  const isChoice = step.title.endsWith("-选择题");
+  const isBlank = step.title.endsWith("-填空题");
+  const isQuiz = isChoice || isBlank;
 
   return {
     src: step.content.src,
     isQuiz,
+    isBlank,
     quizAnswer: isQuiz ? step.answer : undefined,
   };
 });
 
-// 处理选择题答题事件
+// 处理答题事件（选择题或填空题）
 const handleQuizAnswered = (isCorrect: boolean, selectedAnswer: string) => {
   emit("quizAnswered", isCorrect, selectedAnswer);
 };

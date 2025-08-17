@@ -10,15 +10,16 @@ interface StepContent {
 
 // 选择题答案配置
 export interface QuizAnswer {
-  correct: string; // 正确答案 (A, B, C, D)
+  correct: string; // 正确答案 (选择题: A, B, C, D; 填空题: 实际答案字符串)
   explanation?: string; // 答案解析
+  type?: "choice" | "blank"; // 题目类型，默认为选择题
 }
 
 interface Step {
   id: number;
-  title: string; // 必须的标题，用于判断是否为选择题
+  title: string; // 必须的标题，用于判断是否为选择题或填空题
   content: StepContent;
-  answer?: QuizAnswer; // 选择题答案配置（当title以'-选择题'结尾时使用）
+  answer?: QuizAnswer; // 答案配置（选择题：title以'-选择题'结尾；填空题：title以'-填空题'结尾）
 }
 
 // 章节
@@ -59,7 +60,7 @@ function getPython(): Course {
     type: "python",
     title: "Python 基础入门",
     icon: "/src/assets/images/icon/python-icon.png",
-    totalSteps: 4,
+    totalSteps: 5,
     difficulty: "beginner",
     tags: ["编程", "Python", "入门"],
     chapters: [
@@ -91,6 +92,32 @@ function getPython(): Course {
             title: "代码高亮测试",
             content: {
               src: urlMd().Python + "/test-prism-highlight.md",
+            },
+          },
+          {
+            id: 4,
+            title: "基础语法-填空题",
+            content: {
+              src: urlMd().Python + "/004-填空题.md",
+            },
+            // 填空题答案配置
+            answer: {
+              correct: "print", // 正确答案：print
+              explanation: "print函数用于输出内容到控制台",
+              type: "blank",
+            },
+          },
+        ],
+      },
+      {
+        id: 2,
+        title: "第一个Python程序",
+        steps: [
+          {
+            id: 1,
+            title: "第一个程序",
+            content: {
+              src: urlMd().Python + "/003-第一个程序.md?raw",
             },
           },
         ],
@@ -216,4 +243,14 @@ export const getTotalSteps = (course: Course): number => {
 // 判断步骤是否为选择题（根据title是否以'-选择题'结尾）
 export const isChoiceStep = (step: Step): boolean => {
   return step.title.endsWith("-选择题");
+};
+
+// 判断步骤是否为填空题（根据title是否以'-填空题'结尾）
+export const isBlankStep = (step: Step): boolean => {
+  return step.title.endsWith("-填空题");
+};
+
+// 判断步骤是否为互动题目（选择题或填空题）
+export const isInteractiveStep = (step: Step): boolean => {
+  return isChoiceStep(step) || isBlankStep(step);
 };
