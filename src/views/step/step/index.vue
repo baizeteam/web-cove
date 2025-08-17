@@ -177,7 +177,8 @@
 <script lang="ts" setup>
 import { computed, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { getCourseByLanguageAndId, getTotalSteps } from "@/data/courses";
+import { getTotalSteps } from "@/data/courses";
+import { useCoursesStore } from "@/stores/courses.store";
 import {
   updateLearningProgress,
   getCurrentLearningPosition,
@@ -204,6 +205,7 @@ const props = defineProps({
   },
 });
 const router = useRouter();
+const coursesStore = useCoursesStore();
 
 // 响应式数据
 const expandedChapters = ref<number[]>([]);
@@ -211,7 +213,10 @@ const favoritesUpdate = ref(0); // 用于强制更新收藏状态的响应式变
 
 // 获取课程数据
 const course = computed(() => {
-  return getCourseByLanguageAndId(props.language as any, props.stepId);
+  return coursesStore.getCourseByLanguageAndId(
+    props.language as any,
+    props.stepId
+  );
 });
 
 // 检查是否有学习进度
@@ -398,25 +403,8 @@ const getStepTypeText = (type: string): string => {
   return typeMap[type as keyof typeof typeMap] || type;
 };
 
-// 获取语言文本
-const getLanguageText = (language: string): string => {
-  const languageMap = {
-    python: "Python",
-    javascript: "JavaScript",
-    html: "HTML & CSS",
-  };
-  return languageMap[language as keyof typeof languageMap] || language;
-};
-
-// 获取难度文本
-const getDifficultyText = (difficulty: string): string => {
-  const difficultyMap = {
-    beginner: "初级",
-    intermediate: "中级",
-    advanced: "高级",
-  };
-  return difficultyMap[difficulty as keyof typeof difficultyMap] || difficulty;
-};
+// 使用 store 中的方法，避免重复定义
+const { getLanguageText, getDifficultyText } = coursesStore;
 
 // 生命周期
 onMounted(() => {

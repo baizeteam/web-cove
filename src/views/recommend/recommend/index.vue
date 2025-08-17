@@ -113,7 +113,8 @@ import { useRoute, useRouter } from "vue-router";
 import Article from "@/views/recommend/recommend/components/Article/index.vue";
 import { ref, computed, onMounted } from "vue";
 import { useLayoutStore } from "@/stores/layout.store.ts";
-import { coursesData, type LanguageType, type Course } from "@/data/courses";
+import { useCoursesStore } from "@/stores/courses.store";
+import { type LanguageType, type Course } from "@/data/courses";
 import { isEnrolled, enrollCourse } from "@/utils/learning.util";
 import { isFavorited, toggleFavorite } from "@/utils/favorites.util";
 
@@ -124,8 +125,11 @@ const router = useRouter();
 
 const searchValue = ref("");
 const layoutStore = useLayoutStore();
-const activeLanguage = ref<LanguageType>("python");
+const coursesStore = useCoursesStore();
 const favoritesUpdate = ref(0); // 用于强制更新收藏状态的响应式变量
+
+// 本地状态 - 推荐页面自己的筛选状态
+const activeLanguage = ref<LanguageType>("python");
 
 // 可用语言列表
 const availableLanguages = [
@@ -134,9 +138,12 @@ const availableLanguages = [
   { type: "html" as LanguageType, title: "HTML & CSS" },
 ];
 
-// 根据语言筛选课程
+// 使用store中的方法
+const { getDifficultyText, filterCourses } = coursesStore;
+
+// 本地筛选逻辑 - 只按语言筛选
 const filteredCourses = computed(() => {
-  return coursesData.filter(course => course.type === activeLanguage.value);
+  return filterCourses({ language: activeLanguage.value });
 });
 
 // 语言切换处理
@@ -156,15 +163,7 @@ const handleCourseClick = (course: Course) => {
   }
 };
 
-// 获取难度文本
-const getDifficultyText = (difficulty: string) => {
-  const difficultyMap = {
-    beginner: "初级",
-    intermediate: "中级",
-    advanced: "高级",
-  };
-  return difficultyMap[difficulty as keyof typeof difficultyMap] || difficulty;
-};
+// getDifficultyText 现在从 store 中获取，不需要重复定义
 
 // 检查是否已加入学习
 const checkIsEnrolled = (courseId: string): boolean => {

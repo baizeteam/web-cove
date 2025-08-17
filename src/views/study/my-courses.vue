@@ -164,10 +164,11 @@ import {
   unenrollCourse as unenrollCourseUtil,
 } from "@/utils/learning.util";
 import { addToFavorites as addToFavoritesUtil } from "@/utils/favorites.util";
-import { getCourseById } from "@/data/courses";
+import { useCoursesStore } from "@/stores/courses.store";
 import type { LearningStatus, LanguageType } from "@/data/courses";
 
 const router = useRouter();
+const coursesStore = useCoursesStore();
 
 // 响应式数据
 const learningStatus = ref<LearningStatus[]>([]);
@@ -238,20 +239,12 @@ const loadLearningStatus = () => {
 };
 
 const getCourseTitle = (courseId: string): string => {
-  const course = getCourseById(courseId);
+  const course = coursesStore.getCourseById(courseId);
   return course ? course.title : "未知课程";
 };
 
-const getLanguageText = (language: LanguageType): string => {
-  const languageMap = {
-    python: "Python",
-    javascript: "JavaScript",
-    html: "HTML & CSS",
-    java: "Java",
-    css: "CSS",
-  };
-  return languageMap[language] || language;
-};
+// 使用 store 中的方法
+const { getLanguageText } = coursesStore;
 
 const formatTime = (timestamp: number): string => {
   const now = Date.now();
@@ -279,7 +272,7 @@ const continueLearning = (course: LearningStatus) => {
 };
 
 const addToFavorites = (course: LearningStatus) => {
-  const courseInfo = getCourseById(course.courseId);
+  const courseInfo = coursesStore.getCourseById(course.courseId);
   if (courseInfo) {
     const success = addToFavoritesUtil({
       id: `course-${course.courseId}`,
