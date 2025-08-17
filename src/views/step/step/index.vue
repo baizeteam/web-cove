@@ -6,8 +6,10 @@
         <div class="course-title-row">
           <h1 class="course-title">{{ course.title }}</h1>
           <van-icon
-            :name="isFavorited(`course-${course.id}`) ? 'star' : 'star-o'"
-            :color="isFavorited(`course-${course.id}`) ? '#ffd700' : '#ccc'"
+            :name="checkIsFavorited(`course-${course.id}`) ? 'star' : 'star-o'"
+            :color="
+              checkIsFavorited(`course-${course.id}`) ? '#ffd700' : '#ccc'
+            "
             size="24"
             class="course-favorite-icon"
             @click="toggleCourseFavorite"
@@ -205,6 +207,7 @@ const router = useRouter();
 
 // 响应式数据
 const expandedChapters = ref<number[]>([]);
+const favoritesUpdate = ref(0); // 用于强制更新收藏状态的响应式变量
 
 // 获取课程数据
 const course = computed(() => {
@@ -254,6 +257,13 @@ const continueLearning = () => {
   router.push(`/step/${props.language}/${props.stepId}/${chapterId}/${stepId}`);
 };
 
+// 检查收藏状态 - 响应式版本
+const checkIsFavorited = (id: string): boolean => {
+  // 触发响应式更新
+  console.log(favoritesUpdate.value);
+  return isFavorited(id);
+};
+
 // 切换课程收藏状态
 const toggleCourseFavorite = () => {
   if (course.value) {
@@ -265,6 +275,8 @@ const toggleCourseFavorite = () => {
       language: course.value.type,
       courseId: course.value.id,
     });
+    // 强制更新收藏状态
+    favoritesUpdate.value++;
   }
 };
 
@@ -412,6 +424,11 @@ onMounted(() => {
   if (course.value && course.value.chapters.length > 0) {
     expandedChapters.value.push(1);
   }
+
+  // 监听收藏更新事件
+  window.addEventListener("favorites-updated", () => {
+    favoritesUpdate.value++;
+  });
 });
 </script>
 

@@ -4,8 +4,8 @@
       <div class="step-title-row">
         <h2 class="step-title">{{ stepTitle }}</h2>
         <van-icon
-          :name="isFavorited(stepFavoriteId) ? 'star' : 'star-o'"
-          :color="isFavorited(stepFavoriteId) ? '#ffd700' : '#ccc'"
+          :name="checkIsFavorited(stepFavoriteId) ? 'star' : 'star-o'"
+          :color="checkIsFavorited(stepFavoriteId) ? '#ffd700' : '#ccc'"
           size="20"
           class="step-favorite-icon"
           @click="toggleStepFavorite"
@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { isFavorited, toggleFavorite } from "@/utils/favorites.util";
 
@@ -29,12 +29,20 @@ interface Props {
 
 const props = defineProps<Props>();
 const route = useRoute();
+const favoritesUpdate = ref(0); // 用于强制更新收藏状态的响应式变量
 
 // 计算收藏ID
 const stepFavoriteId = computed(() => {
   const courseId = route.params.id as string;
   return `step-${courseId}-${props.chapterId}-${props.stepId}`;
 });
+
+// 检查收藏状态 - 响应式版本
+const checkIsFavorited = (id: string): boolean => {
+  // 触发响应式更新
+  console.log(favoritesUpdate.value);
+  return isFavorited(id);
+};
 
 // 切换步骤收藏状态
 const toggleStepFavorite = () => {
@@ -51,7 +59,16 @@ const toggleStepFavorite = () => {
     chapterId: props.chapterId,
     stepId: props.stepId,
   });
+  // 强制更新收藏状态
+  favoritesUpdate.value++;
 };
+
+// 监听收藏更新事件
+onMounted(() => {
+  window.addEventListener("favorites-updated", () => {
+    favoritesUpdate.value++;
+  });
+});
 </script>
 
 <style scoped>

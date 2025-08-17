@@ -12,7 +12,7 @@
     </template>
     <div class="recommend-content">
       <!-- 语言分类标签 -->
-      <div class="language-tabs">
+      <div class="language-tabs course-card">
         <van-tabs v-model:active="activeLanguage" @change="onLanguageChange">
           <van-tab
             v-for="lang in availableLanguages"
@@ -121,6 +121,7 @@ const router = useRouter();
 const searchValue = ref("");
 const layoutStore = useLayoutStore();
 const activeLanguage = ref<LanguageType>("python");
+// const favoritesUpdate = ref(0); // 用于强制更新收藏状态的响应式变量
 
 // 可用语言列表
 const availableLanguages = [

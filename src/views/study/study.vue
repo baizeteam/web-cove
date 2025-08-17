@@ -209,7 +209,7 @@ onMounted(() => {
 
 <style scoped>
 .study-content {
-  padding: 16px;
+  //padding: 16px;
 }
 
 .study-stats {

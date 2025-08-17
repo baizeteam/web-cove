@@ -1,5 +1,5 @@
 <template>
-  <div class="column-knowledge">
+  <div class="column-knowledge course-card" style="margin-bottom: 16px">
     <div class="section-header">
       <h2 class="section-title">专栏知识</h2>
       <div class="more" @click="handleViewMore">
@@ -22,9 +22,11 @@
             <div class="top">
               {{ article.title }}
               <van-icon
-                :name="isFavorited(`article-${article.id}`) ? 'star' : 'star-o'"
+                :name="
+                  checkIsFavorited(`article-${article.id}`) ? 'star' : 'star-o'
+                "
                 :color="
-                  isFavorited(`article-${article.id}`) ? '#ffd700' : '#ccc'
+                  checkIsFavorited(`article-${article.id}`) ? '#ffd700' : '#ccc'
                 "
                 size="16"
                 class="article-favorite-icon"
@@ -50,7 +52,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, defineEmits } from "vue";
+import { ref, defineEmits, onMounted } from "vue";
 import { isFavorited, toggleFavorite } from "@/utils/favorites.util";
 
 // 定义文章数据类型
@@ -72,6 +74,8 @@ interface Tag {
 const emit = defineEmits<{
   (e: "viewMore"): void;
 }>();
+
+const favoritesUpdate = ref(0); // 用于强制更新收藏状态的响应式变量
 
 const articleList = ref<ArticleItem[]>([
   {
@@ -112,6 +116,13 @@ const handleArticleClick = (id: number) => {
   console.log(`查看文章: ${id}`);
 };
 
+// 检查收藏状态 - 响应式版本
+const checkIsFavorited = (id: string): boolean => {
+  // 触发响应式更新
+  console.log(favoritesUpdate.value);
+  return isFavorited(id);
+};
+
 // 切换文章收藏状态
 const toggleArticleFavorite = (article: ArticleItem) => {
   toggleFavorite({
@@ -121,12 +132,20 @@ const toggleArticleFavorite = (article: ArticleItem) => {
     description: article.content.substring(0, 100) + "...",
     articleId: String(article.id),
   });
+  // 强制更新收藏状态
+  favoritesUpdate.value++;
 };
+
+// 监听收藏更新事件
+onMounted(() => {
+  window.addEventListener("favorites-updated", () => {
+    favoritesUpdate.value++;
+  });
+});
 </script>
 
 <style scoped>
 .list {
-  padding-bottom: 16px;
   .item {
     margin-bottom: 25px;
     .left {
