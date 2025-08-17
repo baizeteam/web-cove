@@ -101,7 +101,7 @@
                 current:
                   step.id === currentStepId && chapter.id === currentChapterId,
                 completed: isStepCompleted(chapter.id, step.id),
-                accessible: isStepAccessible(chapter.id, step.id),
+                accessible: isStepAccessible(chapter.id),
               }"
               @click="goToStep(chapter.id, step.id)"
             >
