@@ -24,7 +24,10 @@
 
       <!-- 我的课程 -->
       <div class="my-courses">
-        <h3 class="section-title">我的课程</h3>
+        <div class="align-center justify-between">
+          <h3 class="section-title">我的课程</h3>
+          <div>更多课程</div>
+        </div>
         <div v-if="enrolledCourses.length === 0" class="empty-state">
           <van-icon name="bookmark-o" size="48" color="#ccc" />
           <p>还没有加入任何课程</p>
@@ -35,7 +38,7 @@
 
         <div v-else class="course-list">
           <div
-            v-for="course in enrolledCourses"
+            v-for="course in enrolledCourses.slice(0, 5)"
             :key="course.courseId"
             class="course-item"
             @click="goToCourse(course)"
