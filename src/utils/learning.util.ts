@@ -17,7 +17,23 @@ export const getAllLearningStatus = (): LearningStatus[] => {
 // 获取指定课程的学习状态
 export const getLearningStatus = (courseId: string): LearningStatus | null => {
   const allStatus = getAllLearningStatus();
-  return allStatus.find(status => status.courseId === courseId) || null;
+  const status = allStatus.find(status => status.courseId === courseId) || null;
+
+  // 数据迁移：清理旧的stepKey格式（小于1000的说明是旧格式）
+  if (
+    status &&
+    status.completedSteps &&
+    status.completedSteps.some(step => step < 1000)
+  ) {
+    console.log("检测到旧的学习进度数据格式，正在清理...");
+    status.completedSteps = [];
+    status.completedChapters = [];
+    status.progress = 0;
+    saveLearningStatus(status);
+    console.log("学习进度数据已重置，请重新学习");
+  }
+
+  return status;
 };
 
 // 保存学习状态
@@ -98,10 +114,10 @@ export const updateLearningProgress = (
     status.currentStep = stepId;
 
     if (isCompleted) {
-      // 使用章节和步骤的组合作为唯一标识
-      const stepKey = `${chapterId}-${stepId}`;
-      if (!status.completedSteps.includes(parseInt(stepKey))) {
-        status.completedSteps.push(parseInt(stepKey));
+      // 使用章节和步骤的组合作为唯一标识：chapterId * 1000 + stepId
+      const stepKey = chapterId * 1000 + stepId;
+      if (!status.completedSteps.includes(stepKey)) {
+        status.completedSteps.push(stepKey);
       }
     }
 
@@ -200,8 +216,8 @@ export const markChapterCompleted = (
 
   // 检查该章节的所有步骤是否都已完成
   const allStepsCompleted = chapter.steps.every(step => {
-    const stepKey = `${chapterId}-${step.id}`;
-    return status.completedSteps.includes(parseInt(stepKey));
+    const stepKey = chapterId * 1000 + step.id;
+    return status.completedSteps.includes(stepKey);
   });
 
   if (!allStepsCompleted) {
@@ -215,10 +231,10 @@ export const markChapterCompleted = (
   status.completedChapters.push(chapterId);
   status.lastStudyTime = Date.now();
 
-  // 重新计算总体进度（基于完成的章节数）
-  const totalChapters = course.chapters.length;
+  // 重新计算总体进度（基于完成的步骤数，保持与updateLearningProgress一致）
+  const totalSteps = getTotalSteps(course);
   status.progress = Math.round(
-    (status.completedChapters.length / totalChapters) * 100
+    (status.completedSteps.length / totalSteps) * 100
   );
 
   console.log(`章节 ${chapterId} 已完成，总体进度: ${status.progress}%`);
@@ -257,8 +273,8 @@ export const getChapterCompletionStatus = (
   if (!chapter) return null;
 
   const completedSteps = chapter.steps.filter(step => {
-    const stepKey = `${chapterId}-${step.id}`;
-    return status.completedSteps.includes(parseInt(stepKey));
+    const stepKey = chapterId * 1000 + step.id;
+    return status.completedSteps.includes(stepKey);
   }).length;
 
   // 确保 completedChapters 数组存在

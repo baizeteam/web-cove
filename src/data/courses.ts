@@ -54,111 +54,127 @@ export interface LearningStatus {
 }
 
 function getPython(): Course {
+  const chapters = [
+    {
+      id: 1,
+      title: "初识Python",
+      steps: [
+        {
+          id: 1,
+          title: "001-Python特点",
+          content: {
+            src: urlMd().Python + "/001-Python特点.md?raw",
+          },
+        },
+        {
+          id: 2,
+          title: "002-选择题",
+          content: {
+            src: urlMd().Python + "/002-选择题.md",
+          },
+          // 选择题答案配置（前端存储，用户看不到源码）
+          answer: {
+            correct: "C", // 正确答案
+            explanation: "Python是一种解释型语言",
+          },
+        },
+      ],
+    },
+    {
+      id: 2,
+      title: "第一个Python程序",
+      steps: [
+        {
+          id: 3,
+          title: "003-第一个程序",
+          content: {
+            src: urlMd().Python + "/003-第一个程序.md",
+          },
+        },
+        {
+          id: 4,
+          title: "004-填空题",
+          content: {
+            src: urlMd().Python + "/004-填空题.md",
+          },
+          // 填空题答案配置
+          answer: {
+            correct: "print", // 正确答案：print
+            explanation: "print函数用于输出内容到控制台",
+          },
+        },
+      ],
+    },
+  ];
+
+  // 自动计算总步骤数
+  const totalSteps = chapters.reduce(
+    (total, chapter) => total + chapter.steps.length,
+    0
+  );
+
   return {
     id: "python-basics",
     type: "python",
     title: "Python 基础入门",
     icon: "/src/assets/images/icon/python-icon.png",
-    totalSteps: 5,
+    totalSteps,
     difficulty: "beginner",
     tags: ["编程", "Python", "入门"],
-    chapters: [
-      {
-        id: 1,
-        title: "初识Python",
-        steps: [
-          {
-            id: 1,
-            title: "001-Python特点",
-            content: {
-              src: urlMd().Python + "/001-Python特点.md?raw",
-            },
-          },
-          {
-            id: 2,
-            title: "002-选择题",
-            content: {
-              src: urlMd().Python + "/002-选择题.md",
-            },
-            // 选择题答案配置（前端存储，用户看不到源码）
-            answer: {
-              correct: "C", // 正确答案
-              explanation: "Python是一种解释型语言",
-            },
-          },
-        ],
-      },
-      {
-        id: 2,
-        title: "第一个Python程序",
-        steps: [
-          {
-            id: 3,
-            title: "003-第一个程序",
-            content: {
-              src: urlMd().Python + "/003-第一个程序.md",
-            },
-          },
-          {
-            id: 4,
-            title: "004-填空题",
-            content: {
-              src: urlMd().Python + "/004-填空题.md",
-            },
-            // 填空题答案配置
-            answer: {
-              correct: "print", // 正确答案：print
-              explanation: "print函数用于输出内容到控制台",
-            },
-          },
-        ],
-      },
-    ],
+    chapters,
   };
 }
 
 function getJavaScript(): Course {
+  const chapters = [
+    {
+      id: 1,
+      title: "JavaScript 基础语法",
+      steps: [
+        {
+          id: 1,
+          title: "JavaScript简介",
+          content: {
+            src: urlMd().Python + "/001-Python特点.md?raw", // 临时使用Python的MD
+          },
+        },
+      ],
+    },
+    {
+      id: 2,
+      title: "JavaScript 数据类型",
+      steps: [
+        {
+          id: 3,
+          title: "数据类型-选择题",
+          content: {
+            src: urlMd().Python + "/js-data-types-quiz.md", // 需要创建对应的MD文件
+          },
+          answer: {
+            correct: "B", // 正确答案
+            explanation:
+              "JavaScript支持string数据类型，而int、float、double是其他语言的类型",
+          },
+        },
+      ],
+    },
+  ];
+
+  // 自动计算总步骤数
+  const totalSteps = chapters.reduce(
+    (total, chapter) => total + chapter.steps.length,
+    0
+  );
+
   return {
     id: "javascript-basics",
     type: "javascript",
     title: "JavaScript 基础",
     icon: "/src/assets/images/icon/js-icon.png",
-    totalSteps: 4,
+    totalSteps,
     difficulty: "beginner",
     tags: ["编程", "JavaScript", "前端"],
-    chapters: [
-      {
-        id: 1,
-        title: "JavaScript 基础语法",
-        steps: [
-          {
-            id: 1,
-            title: "JavaScript简介",
-            content: {
-              src: urlMd().Python + "/001-Python特点.md?raw", // 临时使用Python的MD
-            },
-          },
-        ],
-      },
-      {
-        id: 2,
-        title: "JavaScript 数据类型",
-        steps: [
-          {
-            id: 3,
-            title: "数据类型-选择题",
-            content: {
-              src: urlMd().Python + "/js-data-types-quiz.md", // 需要创建对应的MD文件
-            },
-            answer: {
-              correct: "B", // 正确答案
-              explanation:
-                "JavaScript支持string数据类型，而int、float、double是其他语言的类型",
-            },
-          },
-        ],
-      },
-    ],
+    chapters,
   };
 }
 // 课程数据
@@ -212,10 +228,7 @@ export const getChapterStepsCount = (
 
 // 获取课程的总步骤数
 export const getTotalSteps = (course: Course): number => {
-  return course.chapters.reduce(
-    (total, chapter) => total + chapter.steps.length,
-    0
-  );
+  return course.totalSteps;
 };
 
 // 判断步骤是否为选择题（根据title是否以'-选择题'结尾）
