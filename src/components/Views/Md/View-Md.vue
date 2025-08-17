@@ -149,9 +149,17 @@ onMounted(() => {
       markdownRef.value.setCustomRenderer(quizRef.value.setupQuizRenderer);
     }
 
-    setTimeout(() => {
-      quizRef.value?.setupQuizInteraction();
-    }, 100);
+    // 重新触发markdown渲染以应用选择题渲染器
+    nextTick(() => {
+      if (markdownRef.value) {
+        // 触发重新渲染
+        markdownRef.value.$forceUpdate?.();
+      }
+
+      setTimeout(() => {
+        quizRef.value?.setupQuizInteraction();
+      }, 200);
+    });
   }
 });
 </script>
