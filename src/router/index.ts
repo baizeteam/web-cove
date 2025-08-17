@@ -66,6 +66,30 @@ const routes: RouteRecordRaw[] = [
     component: () => import("@/views/study/study.vue"),
   },
   {
+    path: "/study/wrong-questions",
+    meta: {
+      title: "错题记录",
+      keepAlive: false,
+    },
+    component: () => import("@/views/study/wrong-questions.vue"),
+  },
+  {
+    path: "/study/favorites",
+    meta: {
+      title: "我的收藏",
+      keepAlive: false,
+    },
+    component: () => import("@/views/study/favorites.vue"),
+  },
+  {
+    path: "/study/my-courses",
+    meta: {
+      title: "我的课程",
+      keepAlive: false,
+    },
+    component: () => import("@/views/study/my-courses.vue"),
+  },
+  {
     path: "/login",
     name: "Login",
     meta: {
