@@ -10,7 +10,7 @@ interface StepContent {
 
 // 答案配置（选择题和填空题通用）
 export interface QuizAnswer {
-  correct: string; // 正确答案 (选择题: A, B, C, D; 填空题: 实际答案字符串)
+  correct: string | string[]; // 正确答案 (选择题: A, B, C, D; 填空题: 答案数组)
   explanation?: string; // 答案解析
 }
 
@@ -54,74 +54,49 @@ export interface LearningStatus {
 }
 
 function getPython(): Course {
+  // 辅助函数：从title提取id
+  const extractIdFromTitle = (title: string): number => {
+    const match = title.match(/^(\d+)-/);
+    return match ? parseInt(match[1]) : 0;
+  };
+
+  // 辅助函数：创建步骤，自动提取id
+  const createStep = (title: string, answer?: QuizAnswer): Step => ({
+    id: extractIdFromTitle(title),
+    title,
+    content: {
+      src:
+        urlMd().Python + `/${title}.md${title.includes("特点") ? "?raw" : ""}`,
+    },
+    ...(answer && { answer }),
+  });
+
   const chapters = [
     {
       id: 1,
       title: "初识Python",
       steps: [
-        {
-          id: 1,
-          title: "001-Python特点",
-          content: {
-            src: urlMd().Python + "/001-Python特点.md?raw",
-          },
-        },
-        {
-          id: 2,
-          title: "002-选择题",
-          content: {
-            src: urlMd().Python + "/002-选择题.md",
-          },
-          // 选择题答案配置（前端存储，用户看不到源码）
-          answer: {
-            correct: "C", // 正确答案
-            explanation: "Python是一种解释型语言",
-          },
-        },
+        createStep("001-Python特点"),
+        createStep("002-选择题", {
+          correct: "C", // 正确答案
+          explanation: "Python是一种解释型语言",
+        }),
       ],
     },
     {
       id: 2,
       title: "第一个Python程序",
       steps: [
-        {
-          id: 3,
-          title: "003-第一个程序",
-          content: {
-            src: urlMd().Python + "/003-第一个程序.md",
-          },
-        },
-        {
-          id: 4,
-          title: "004-填空题",
-          content: {
-            src: urlMd().Python + "/004-填空题.md",
-          },
-          // 填空题答案配置
-          answer: {
-            correct: "print", // 正确答案：print
-            explanation: "print函数用于输出内容到控制台",
-          },
-        },
-        {
-          id: 5,
-          title: "005-打印文本",
-          content: {
-            src: urlMd().Python + "/005-打印文本.md",
-          },
-        },
-        {
-          id: 6,
-          title: "006-填空题",
-          content: {
-            src: urlMd().Python + "/006-填空题.md",
-          },
-          // 填空题答案配置
-          answer: {
-            correct: "",
-            explanation: "",
-          },
-        },
+        createStep("003-第一个程序"),
+        createStep("004-填空题", {
+          correct: "print", // 正确答案：print
+          explanation: "print函数用于输出内容到控制台",
+        }),
+        createStep("005-打印文本"),
+        createStep("006-填空题", {
+          correct: ["print", "Kevin"], // 多个填空答案
+          explanation: "第一个空是print函数，第二个空是Kevin",
+        }),
       ],
     },
   ];
@@ -145,36 +120,44 @@ function getPython(): Course {
 }
 
 function getJavaScript(): Course {
+  // 辅助函数：从title提取id（兼容非标准格式）
+  const extractIdFromTitle = (title: string): number => {
+    const match = title.match(/^(\d+)-/);
+    if (match) return parseInt(match[1]);
+    // 对于JavaScript简介和数据类型-选择题，使用序号
+    if (title === "JavaScript简介") return 1;
+    if (title === "数据类型-选择题") return 3;
+    return 0;
+  };
+
+  // 辅助函数：创建步骤，自动提取id
+  const createStep = (title: string, answer?: QuizAnswer): Step => ({
+    id: extractIdFromTitle(title),
+    title,
+    content: {
+      src:
+        title === "JavaScript简介"
+          ? urlMd().Python + "/001-Python特点.md?raw" // 临时使用Python的MD
+          : urlMd().Python + "/js-data-types-quiz.md", // 需要创建对应的MD文件
+    },
+    ...(answer && { answer }),
+  });
+
   const chapters = [
     {
       id: 1,
       title: "JavaScript 基础语法",
-      steps: [
-        {
-          id: 1,
-          title: "JavaScript简介",
-          content: {
-            src: urlMd().Python + "/001-Python特点.md?raw", // 临时使用Python的MD
-          },
-        },
-      ],
+      steps: [createStep("JavaScript简介")],
     },
     {
       id: 2,
       title: "JavaScript 数据类型",
       steps: [
-        {
-          id: 3,
-          title: "数据类型-选择题",
-          content: {
-            src: urlMd().Python + "/js-data-types-quiz.md", // 需要创建对应的MD文件
-          },
-          answer: {
-            correct: "B", // 正确答案
-            explanation:
-              "JavaScript支持string数据类型，而int、float、double是其他语言的类型",
-          },
-        },
+        createStep("数据类型-选择题", {
+          correct: "B", // 正确答案
+          explanation:
+            "JavaScript支持string数据类型，而int、float、double是其他语言的类型",
+        }),
       ],
     },
   ];

@@ -139,42 +139,72 @@ const setupQuizInteraction = () => {
       return false;
     }
 
-    // 如果用户没有输入，返回false
-    if (!userAnswer.value) {
+    const inputs = document.querySelectorAll(".blank-input");
+    const correctAnswers = Array.isArray(props.quizAnswer.correct)
+      ? props.quizAnswer.correct
+      : [props.quizAnswer.correct];
+
+    // 检查输入框数量是否与答案数量匹配
+    if (inputs.length !== correctAnswers.length) {
+      console.warn("填空题输入框数量与答案数量不匹配");
+      return false;
+    }
+
+    // 收集所有用户输入
+    const userInputs: string[] = [];
+    let hasEmptyInput = false;
+
+    inputs.forEach(input => {
+      const inputEl = input as HTMLInputElement;
+      const value = inputEl.value.trim();
+      userInputs.push(value);
+      if (!value) {
+        hasEmptyInput = true;
+      }
+    });
+
+    // 如果有空输入，返回false
+    if (hasEmptyInput) {
       return false;
     }
 
     showResult.value = true;
-    // 不区分大小写比较答案
-    isCorrect.value =
-      userAnswer.value.toLowerCase() === props.quizAnswer.correct.toLowerCase();
 
-    // 更新输入框样式
-    const inputs = document.querySelectorAll(".blank-input");
-    inputs.forEach(input => {
+    // 验证每个输入是否正确
+    let allCorrect = true;
+    const results: boolean[] = [];
+
+    inputs.forEach((input, index) => {
       const inputEl = input as HTMLInputElement;
-      inputEl.classList.remove("correct", "wrong");
+      const userInput = userInputs[index].toLowerCase();
+      const correctAnswer = correctAnswers[index].toLowerCase();
+      const isInputCorrect = userInput === correctAnswer;
 
-      if (isCorrect.value) {
-        inputEl.classList.add("correct");
-      } else {
-        inputEl.classList.add("wrong");
+      results.push(isInputCorrect);
+      if (!isInputCorrect) {
+        allCorrect = false;
       }
 
-      // 禁用输入
+      // 更新输入框样式
+      inputEl.classList.remove("correct", "wrong");
+      inputEl.classList.add(isInputCorrect ? "correct" : "wrong");
       inputEl.disabled = true;
     });
 
+    isCorrect.value = allCorrect;
+
     // 显示结果提示
     if (resultRef.value) {
+      const correctAnswersDisplay = correctAnswers.join("、");
       resultRef.value.innerHTML = isCorrect.value
         ? `<div class="result-correct">✅ 回答正确！${props.quizAnswer.explanation || ""}</div>`
-        : `<div class="result-wrong">❌ 回答错误！正确答案是 ${props.quizAnswer.correct}。${props.quizAnswer.explanation || ""}</div>`;
+        : `<div class="result-wrong">❌ 回答错误！正确答案是：${correctAnswersDisplay}。${props.quizAnswer.explanation || ""}</div>`;
       resultRef.value.style.display = "block";
     }
 
     // 通知父组件
-    emit("quizAnswered", isCorrect.value, userAnswer.value);
+    const userAnswerString = userInputs.join("、");
+    emit("quizAnswered", isCorrect.value, userAnswerString);
     return isCorrect.value;
   };
 };
