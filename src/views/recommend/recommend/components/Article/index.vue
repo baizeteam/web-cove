@@ -21,6 +21,15 @@
           <div class="left flex-column justify-between">
             <div class="top">
               {{ article.title }}
+              <van-icon
+                :name="isFavorited(`article-${article.id}`) ? 'star' : 'star-o'"
+                :color="
+                  isFavorited(`article-${article.id}`) ? '#ffd700' : '#ccc'
+                "
+                size="16"
+                class="article-favorite-icon"
+                @click.stop="toggleArticleFavorite(article)"
+              />
             </div>
             <div class="bottom align-center justify-between">
               <div class="tags">
@@ -42,6 +51,7 @@
 
 <script lang="ts" setup>
 import { ref, defineEmits } from "vue";
+import { isFavorited, toggleFavorite } from "@/utils/favorites.util";
 
 // 定义文章数据类型
 interface ArticleItem {
@@ -101,6 +111,17 @@ const handleArticleClick = (id: number) => {
   // 实际项目中可跳转到文章详情页
   console.log(`查看文章: ${id}`);
 };
+
+// 切换文章收藏状态
+const toggleArticleFavorite = (article: ArticleItem) => {
+  toggleFavorite({
+    id: `article-${article.id}`,
+    type: "article",
+    title: article.title,
+    description: article.content.substring(0, 100) + "...",
+    articleId: String(article.id),
+  });
+};
 </script>
 
 <style scoped>
@@ -111,6 +132,19 @@ const handleArticleClick = (id: number) => {
     .left {
       .top {
         font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .article-favorite-icon {
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-left: 8px;
+      }
+
+      .article-favorite-icon:hover {
+        transform: scale(1.2);
       }
       .bottom {
         font-size: 14px;

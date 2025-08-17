@@ -13,11 +13,29 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
+.course-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
 .course-title {
   font-size: 28px;
   font-weight: 700;
-  margin: 0 0 12px 0;
+  margin: 0;
   color: #262626;
+  flex: 1;
+}
+
+.course-favorite-icon {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-left: 16px;
+}
+
+.course-favorite-icon:hover {
+  transform: scale(1.2);
 }
 
 .course-description {

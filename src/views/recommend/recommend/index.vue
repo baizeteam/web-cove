@@ -73,16 +73,23 @@
                 </div>
               </div>
 
-              <div v-if="checkIsEnrolled(course.id)" class="progress-info">
-                <van-progress
-                  :percentage="getCourseProgress(course.id)"
-                  :show-pivot="false"
-                  stroke-width="4"
-                />
-                <span class="progress-text"
-                  >{{ getCourseProgress(course.id) }}%</span
-                >
-              </div>
+              <!--              <div v-if="checkIsEnrolled(course.id)" class="progress-info">-->
+              <!--                <van-progress-->
+              <!--                  :percentage="getCourseProgress(course.id)"-->
+              <!--                  :show-pivot="false"-->
+              <!--                  stroke-width="4"-->
+              <!--                />-->
+              <!--                <span class="progress-text"-->
+              <!--                  >{{ getCourseProgress(course.id) }}%</span-->
+              <!--                >-->
+              <!--              </div>-->
+              <van-icon
+                :name="isFavorited(`course-${course.id}`) ? 'star' : 'star-o'"
+                :color="isFavorited(`course-${course.id}`) ? '#ffd700' : '#ccc'"
+                size="20"
+                class="favorite-icon"
+                @click.stop="toggleCourseFavorite(course)"
+              />
             </div>
           </div>
         </div>
@@ -103,11 +110,8 @@ import Article from "@/views/recommend/recommend/components/Article/index.vue";
 import { ref, computed } from "vue";
 import { useLayoutStore } from "@/stores/layout.store.ts";
 import { coursesData, type LanguageType, type Course } from "@/data/courses";
-import {
-  isEnrolled,
-  enrollCourse,
-  getLearningProgress,
-} from "@/utils/learning.util";
+import { isEnrolled, enrollCourse } from "@/utils/learning.util";
+import { isFavorited, toggleFavorite } from "@/utils/favorites.util";
 
 const {
   meta: { title },
@@ -162,14 +166,21 @@ const checkIsEnrolled = (courseId: string): boolean => {
   return isEnrolled(courseId);
 };
 
-// 获取学习进度
-const getCourseProgress = (courseId: string): number => {
-  return getLearningProgress(courseId);
-};
-
 // 加入学习处理
 const handleEnrollCourse = (courseId: string, language: LanguageType) => {
   enrollCourse(courseId, language);
+};
+
+// 切换收藏状态
+const toggleCourseFavorite = (course: Course) => {
+  toggleFavorite({
+    id: `course-${course.id}`,
+    type: "course",
+    title: course.title,
+    description: course.description,
+    language: course.type,
+    courseId: course.id,
+  });
 };
 </script>
 

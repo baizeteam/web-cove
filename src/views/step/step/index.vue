@@ -3,7 +3,16 @@
     <!-- 课程头部信息 -->
     <div v-if="course" class="course-header">
       <div class="course-info">
-        <h1 class="course-title">{{ course.title }}</h1>
+        <div class="course-title-row">
+          <h1 class="course-title">{{ course.title }}</h1>
+          <van-icon
+            :name="isFavorited(`course-${course.id}`) ? 'star' : 'star-o'"
+            :color="isFavorited(`course-${course.id}`) ? '#ffd700' : '#ccc'"
+            size="24"
+            class="course-favorite-icon"
+            @click="toggleCourseFavorite"
+          />
+        </div>
         <p class="course-description">{{ course.description }}</p>
         <div class="course-meta">
           <span class="course-language">{{
@@ -176,6 +185,7 @@ import {
   enrollCourse,
   isEnrolled,
 } from "@/utils/learning.util";
+import { isFavorited, toggleFavorite } from "@/utils/favorites.util";
 
 defineOptions({
   name: "StepContainer",
@@ -242,6 +252,20 @@ const continueLearning = () => {
   const chapterId = currentChapterId.value;
   const stepId = currentStepId.value;
   router.push(`/step/${props.language}/${props.stepId}/${chapterId}/${stepId}`);
+};
+
+// 切换课程收藏状态
+const toggleCourseFavorite = () => {
+  if (course.value) {
+    toggleFavorite({
+      id: `course-${course.value.id}`,
+      type: "course",
+      title: course.value.title,
+      description: course.value.description,
+      language: course.value.type,
+      courseId: course.value.id,
+    });
+  }
 };
 
 // 方法

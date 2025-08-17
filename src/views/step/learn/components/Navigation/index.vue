@@ -94,7 +94,7 @@ const completeCurrentChapter = () => {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 12px 20px;
+  //padding: 12px 20px;
   border-radius: 12px;
   font-size: 16px;
   font-weight: 500;
