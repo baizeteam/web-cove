@@ -10,7 +10,7 @@
       <div class="study-stats">
         <div class="stat-card">
           <div class="stat-number">{{ enrolledCourses.length }}</div>
-          <div class="stat-label">进行中的课程</div>
+          <div class="stat-label">进行的课程</div>
         </div>
         <div class="stat-card">
           <div class="stat-number">{{ totalProgress }}%</div>
