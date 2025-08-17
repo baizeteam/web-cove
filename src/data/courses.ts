@@ -70,14 +70,14 @@ function getPython(): Course {
         steps: [
           {
             id: 1,
-            title: "Python特点",
+            title: "001-Python特点",
             content: {
               src: urlMd().Python + "/001-Python特点.md?raw",
             },
           },
           {
             id: 2,
-            title: "基础语法-选择题",
+            title: "002-选择题",
             content: {
               src: urlMd().Python + "/002-选择题.md",
             },
@@ -87,16 +87,22 @@ function getPython(): Course {
               explanation: "Python是一种解释型语言",
             },
           },
+        ],
+      },
+      {
+        id: 2,
+        title: "第一个Python程序",
+        steps: [
           {
             id: 3,
-            title: "代码高亮测试",
+            title: "003-第一个程序",
             content: {
-              src: urlMd().Python + "/test-prism-highlight.md",
+              src: urlMd().Python + "/003-第一个程序.md",
             },
           },
           {
             id: 4,
-            title: "基础语法-填空题",
+            title: "004-填空题",
             content: {
               src: urlMd().Python + "/004-填空题.md",
             },
@@ -105,32 +111,6 @@ function getPython(): Course {
               correct: "print", // 正确答案：print
               explanation: "print函数用于输出内容到控制台",
               type: "blank",
-            },
-          },
-        ],
-      },
-      {
-        id: 2,
-        title: "第一个Python程序",
-        steps: [
-          {
-            id: 1,
-            title: "第一个程序",
-            content: {
-              src: urlMd().Python + "/003-第一个程序.md?raw",
-            },
-          },
-        ],
-      },
-      {
-        id: 2,
-        title: "第一个Python程序",
-        steps: [
-          {
-            id: 1,
-            title: "第一个程序",
-            content: {
-              src: urlMd().Python + "/003-第一个程序.md?raw",
             },
           },
         ],
