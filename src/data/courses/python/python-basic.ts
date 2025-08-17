@@ -45,6 +45,13 @@ export function getPythonBasicCourse(): Course {
           explanation:
             "Python中使用三个单引号'''或三个双引号\"\"\"来进行多行注释",
         }),
+        createStep("008-变量"),
+        createStep("009-选择题", {
+          correct: "A", // 正确答案
+          explanation:
+            'name 是一个变量并且赋值"eggs" 所以输出的是 eggseggseggs',
+        }),
+        createStep("010-变量重新赋值"),
       ],
     },
   ];
