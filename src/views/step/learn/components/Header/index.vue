@@ -40,7 +40,7 @@ const stepFavoriteId = computed(() => {
 // 检查收藏状态 - 响应式版本
 const checkIsFavorited = (id: string): boolean => {
   // 触发响应式更新
-  console.log(favoritesUpdate.value);
+  console.log("步骤收藏检查:", id, favoritesUpdate.value);
   return isFavorited(id);
 };
 

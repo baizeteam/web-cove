@@ -84,8 +84,12 @@
               <!--                >-->
               <!--              </div>-->
               <van-icon
-                :name="isFavorited(`course-${course.id}`) ? 'star' : 'star-o'"
-                :color="isFavorited(`course-${course.id}`) ? '#ffd700' : '#ccc'"
+                :name="
+                  checkIsFavorited(`course-${course.id}`) ? 'star' : 'star-o'
+                "
+                :color="
+                  checkIsFavorited(`course-${course.id}`) ? '#ffd700' : '#ccc'
+                "
                 size="20"
                 class="favorite-icon"
                 @click.stop="toggleCourseFavorite(course)"
@@ -107,7 +111,7 @@ import ViewLayout from "@/components/Views/Layout/View-Layout.vue";
 import ViewHeader from "@/components/Views/Layout/View-Header.vue";
 import { useRoute, useRouter } from "vue-router";
 import Article from "@/views/recommend/recommend/components/Article/index.vue";
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useLayoutStore } from "@/stores/layout.store.ts";
 import { coursesData, type LanguageType, type Course } from "@/data/courses";
 import { isEnrolled, enrollCourse } from "@/utils/learning.util";
@@ -121,7 +125,7 @@ const router = useRouter();
 const searchValue = ref("");
 const layoutStore = useLayoutStore();
 const activeLanguage = ref<LanguageType>("python");
-// const favoritesUpdate = ref(0); // 用于强制更新收藏状态的响应式变量
+const favoritesUpdate = ref(0); // 用于强制更新收藏状态的响应式变量
 
 // 可用语言列表
 const availableLanguages = [
@@ -172,6 +176,13 @@ const handleEnrollCourse = (courseId: string, language: LanguageType) => {
   enrollCourse(courseId, language);
 };
 
+// 检查收藏状态 - 响应式版本
+const checkIsFavorited = (id: string): boolean => {
+  // 触发响应式更新
+  console.log("检查收藏状态:", id, favoritesUpdate.value);
+  return isFavorited(id);
+};
+
 // 切换收藏状态
 const toggleCourseFavorite = (course: Course) => {
   toggleFavorite({
@@ -182,7 +193,16 @@ const toggleCourseFavorite = (course: Course) => {
     language: course.type,
     courseId: course.id,
   });
+  // 强制更新收藏状态
+  favoritesUpdate.value++;
 };
+
+// 监听收藏更新事件
+onMounted(() => {
+  window.addEventListener("favorites-updated", () => {
+    favoritesUpdate.value++;
+  });
+});
 </script>
 
 <style scoped>

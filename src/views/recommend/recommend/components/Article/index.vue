@@ -119,7 +119,7 @@ const handleArticleClick = (id: number) => {
 // 检查收藏状态 - 响应式版本
 const checkIsFavorited = (id: string): boolean => {
   // 触发响应式更新
-  console.log(favoritesUpdate.value);
+  console.log("文章收藏检查:", id, favoritesUpdate.value);
   return isFavorited(id);
 };
 
@@ -134,6 +134,7 @@ const toggleArticleFavorite = (article: ArticleItem) => {
   });
   // 强制更新收藏状态
   favoritesUpdate.value++;
+  console.log("文章收藏状态更新:", favoritesUpdate.value);
 };
 
 // 监听收藏更新事件
