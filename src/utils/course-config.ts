@@ -34,11 +34,20 @@ export const getCoursePath = (courseId: string, fileName: string): string => {
     );
 
     const chapterFolder = chapterMapping?.folder || config.defaultChapter;
-    return `${config.basePath}/${chapterFolder}/${fileName}.md${rawSuffix}`;
+    const finalPath = `${config.basePath}/${chapterFolder}/${fileName}.md${rawSuffix}`;
+
+    // 调试信息
+    if (process.env.NODE_ENV === "development") {
+      console.log(`路径解析: ${courseId}/${fileName} -> ${finalPath}`);
+    }
+
+    return finalPath;
   }
 
   // 兜底：扁平结构
-  return `/Markdown/${courseId}/${fileName}.md${rawSuffix}`;
+  const fallbackPath = `/Markdown/${courseId}/${fileName}.md${rawSuffix}`;
+  console.warn(`未找到课程配置: ${courseId}，使用兜底路径: ${fallbackPath}`);
+  return fallbackPath;
 };
 
 // 添加新课程配置的函数 - 方便扩展
@@ -51,6 +60,39 @@ export const addCourseConfig = (
   }
 ) => {
   (COURSE_PATH_CONFIGS as any)[courseId] = config;
+  console.log(`已添加课程配置: ${courseId}`);
+};
+
+// 验证路径配置的函数
+export const validatePathConfig = (courseId: string): boolean => {
+  const config =
+    COURSE_PATH_CONFIGS[courseId as keyof typeof COURSE_PATH_CONFIGS];
+  if (!config) {
+    console.error(`课程 ${courseId} 缺少路径配置`);
+    return false;
+  }
+
+  // 检查是否有重叠的范围
+  const ranges = config.chapterMappings.map(m => m.range);
+  for (let i = 0; i < ranges.length; i++) {
+    for (let j = i + 1; j < ranges.length; j++) {
+      const [start1, end1] = ranges[i];
+      const [start2, end2] = ranges[j];
+      if (start1 <= end2 && start2 <= end1) {
+        console.error(
+          `课程 ${courseId} 的章节范围有重叠: [${start1},${end1}] 和 [${start2},${end2}]`
+        );
+        return false;
+      }
+    }
+  }
+
+  return true;
+};
+
+// 获取所有已配置的课程
+export const getConfiguredCourses = (): string[] => {
+  return Object.keys(COURSE_PATH_CONFIGS);
 };
 
 // 从文件名提取ID
