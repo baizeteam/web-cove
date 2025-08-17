@@ -1,4 +1,5 @@
 import type { Course, Step, QuizAnswer } from "../types";
+import { PYTHON_BASIC_PATH_CONFIG, resolveStepPath } from "../path-config";
 
 // 辅助函数：从title提取id
 const extractIdFromTitle = (title: string): number => {
@@ -11,7 +12,7 @@ const createStep = (title: string, answer?: QuizAnswer): Step => ({
   id: extractIdFromTitle(title),
   title,
   content: {
-    src: `/Markdown/Python/Python基础入门/${title}.md${title.includes("特点") ? "?raw" : ""}`,
+    src: resolveStepPath(PYTHON_BASIC_PATH_CONFIG, title),
   },
   ...(answer && { answer }),
 });
@@ -20,7 +21,7 @@ export function getPythonBasicCourse(): Course {
   const chapters = [
     {
       id: 1,
-      title: "初识Python",
+      title: "1-初识Python",
       steps: [
         createStep("001-Python特点"),
         createStep("002-选择题", {
@@ -31,7 +32,7 @@ export function getPythonBasicCourse(): Course {
     },
     {
       id: 2,
-      title: "第一个Python程序",
+      title: "2-第一个Python程序",
       steps: [
         createStep("003-第一个程序"),
         createStep("004-填空题", {
@@ -45,6 +46,12 @@ export function getPythonBasicCourse(): Course {
           explanation:
             "Python中使用三个单引号'''或三个双引号\"\"\"来进行多行注释",
         }),
+      ],
+    },
+    {
+      id: 3,
+      title: "3-变量和命名规则",
+      steps: [
         createStep("008-变量"),
         createStep("009-选择题", {
           correct: "A", // 正确答案
