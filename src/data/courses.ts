@@ -103,6 +103,25 @@ function getPython(): Course {
             explanation: "print函数用于输出内容到控制台",
           },
         },
+        {
+          id: 5,
+          title: "005-打印文本",
+          content: {
+            src: urlMd().Python + "/005-打印文本.md",
+          },
+        },
+        {
+          id: 6,
+          title: "006-填空题",
+          content: {
+            src: urlMd().Python + "/006-填空题.md",
+          },
+          // 填空题答案配置
+          answer: {
+            correct: "",
+            explanation: "",
+          },
+        },
       ],
     },
   ];
