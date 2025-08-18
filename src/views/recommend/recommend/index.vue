@@ -62,13 +62,24 @@
                   v-if="!checkIsEnrolled(course.id)"
                   type="primary"
                   size="small"
+                  class="enroll-button"
                   @click.stop="handleEnrollCourse(course.id, course.type)"
                 >
                   加入学习
                 </van-button>
-                <div v-else class="enrolled-status">
-                  <van-icon name="success" color="#07c160" />
-                  <span>已加入</span>
+                <div v-else class="enrolled-actions">
+                  <div class="enrolled-status">
+                    <van-icon name="success" color="#07c160" />
+                    <span>已加入</span>
+                  </div>
+                  <van-button
+                    type="primary"
+                    size="small"
+                    class="study-button"
+                    @click.stop="handleStartLearning(course)"
+                  >
+                    开始学习
+                  </van-button>
                 </div>
               </div>
 
@@ -110,12 +121,13 @@ import ViewLayout from "@/components/Views/Layout/View-Layout.vue";
 import ViewHeader from "@/components/Views/Layout/View-Header.vue";
 import { useRoute, useRouter } from "vue-router";
 import Article from "@/views/recommend/recommend/components/Article/index.vue";
-import { ref, computed, onMounted } from "vue";
+import { ref, computed } from "vue";
 import { useLayoutStore } from "@/stores/layout.store.ts";
 import { useCoursesStore } from "@/stores/courses.store";
+import { useLearningStore } from "@/stores/learning.store";
+import { useFavoritesStore } from "@/stores/favorites.store";
 import { type LanguageType, type Course } from "@/data/courses";
-import { isEnrolled, enrollCourse } from "@/utils/learning.util";
-import { isFavorited, toggleFavorite } from "@/utils/favorites.util";
+import { showToast } from "vant";
 
 const {
   meta: { title },
@@ -125,7 +137,8 @@ const router = useRouter();
 const searchValue = ref("");
 const layoutStore = useLayoutStore();
 const coursesStore = useCoursesStore();
-const favoritesUpdate = ref(0); // 用于强制更新收藏状态的响应式变量
+const learningStore = useLearningStore();
+const favoritesStore = useFavoritesStore();
 
 // 本地状态 - 推荐页面自己的筛选状态
 const activeLanguage = ref<LanguageType>("python");
@@ -167,42 +180,60 @@ const handleCourseClick = (course: Course) => {
 
 // getDifficultyText 现在从 store 中获取，不需要重复定义
 
-// 检查是否已加入学习
+// 检查是否已加入学习 - 使用Pinia store
 const checkIsEnrolled = (courseId: string): boolean => {
-  return isEnrolled(courseId);
+  return learningStore.isEnrolled(courseId);
 };
 
 // 加入学习处理
 const handleEnrollCourse = (courseId: string, language: LanguageType) => {
-  enrollCourse(courseId, language);
+  learningStore.enrollCourse(courseId, language);
+
+  // 添加成功提示
+  showToast({
+    message: "已加入学习",
+    type: "success",
+    duration: 1500,
+  });
 };
 
-// 检查收藏状态 - 响应式版本
+// 开始学习处理
+const handleStartLearning = (course: Course) => {
+  // 添加点击反馈效果
+  console.log("开始学习课程:", course.title);
+
+  // 添加加载提示
+  showToast({
+    message: "正在进入学习...",
+    type: "loading",
+    duration: 800,
+    forbidClick: true,
+  });
+
+  // 延迟跳转以显示加载效果
+  setTimeout(() => {
+    const encodedCourseId = encodeURIComponent(course.id);
+    router.push(`/step/${course.type}/${encodedCourseId}`);
+  }, 300);
+};
+
+// 检查收藏状态 - 使用Pinia store
 const checkIsFavorited = (id: string): boolean => {
-  // 触发响应式更新
-  console.log("检查收藏状态:", id, favoritesUpdate.value);
-  return isFavorited(id);
+  return favoritesStore.isFavorited(id);
 };
 
 // 切换收藏状态
 const toggleCourseFavorite = (course: Course) => {
-  toggleFavorite({
+  favoritesStore.toggleFavorite({
     id: `course-${course.id}`,
     type: "course",
     title: course.title,
     language: course.type,
     courseId: course.id,
   });
-  // 强制更新收藏状态
-  favoritesUpdate.value++;
 };
 
-// 监听收藏更新事件
-onMounted(() => {
-  window.addEventListener("favorites-updated", () => {
-    favoritesUpdate.value++;
-  });
-});
+// 不再需要手动监听事件，Pinia提供了响应式支持
 </script>
 
 <style scoped>

@@ -1,4 +1,4 @@
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted, onUnmounted } from "vue";
 
 export function useQuizState(
   courseId: any,
@@ -142,6 +142,20 @@ export function useQuizState(
     },
     { immediate: false }
   );
+
+  // 监听导航重置事件（手势返回后触发）
+  const handleNavigationReset = () => {
+    console.log("收到导航重置事件，重置答题状态");
+    resetAnswerState();
+  };
+
+  onMounted(() => {
+    window.addEventListener("navigation-reset", handleNavigationReset);
+  });
+
+  onUnmounted(() => {
+    window.removeEventListener("navigation-reset", handleNavigationReset);
+  });
 
   return {
     hasAnswered,

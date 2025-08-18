@@ -150,7 +150,7 @@ import {
   enrollCourse,
   isEnrolled,
 } from "@/utils/learning.util";
-import { isFavorited, toggleFavorite } from "@/utils/favorites.util";
+import { useFavoritesStore } from "@/stores/favorites.store";
 
 defineOptions({
   name: "StepContainer",
@@ -171,7 +171,7 @@ const coursesStore = useCoursesStore();
 
 // 响应式数据
 const expandedChapters = ref<number[]>([]);
-const favoritesUpdate = ref(0); // 用于强制更新收藏状态的响应式变量
+const favoritesStore = useFavoritesStore();
 
 // 获取课程数据
 const course = computed(() => {
@@ -224,25 +224,21 @@ const continueLearning = () => {
   router.push(`/step/${props.language}/${props.stepId}/${chapterId}/${stepId}`);
 };
 
-// 检查收藏状态 - 响应式版本
+// 检查收藏状态 - 使用Pinia store
 const checkIsFavorited = (id: string): boolean => {
-  // 触发响应式更新
-  console.log("课程详情收藏检查:", id, favoritesUpdate.value);
-  return isFavorited(id);
+  return favoritesStore.isFavorited(id);
 };
 
 // 切换课程收藏状态
 const toggleCourseFavorite = () => {
   if (course.value) {
-    toggleFavorite({
+    favoritesStore.toggleFavorite({
       id: `course-${course.value.id}`,
       type: "course",
       title: course.value.title,
       language: course.value.type,
       courseId: course.value.id,
     });
-    // 强制更新收藏状态
-    favoritesUpdate.value++;
   }
 };
 
@@ -325,7 +321,7 @@ onMounted(() => {
 
   // 监听收藏更新事件
   window.addEventListener("favorites-updated", () => {
-    favoritesUpdate.value++;
+    // favoritesUpdate.value++;
   });
 });
 </script>

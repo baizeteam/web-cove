@@ -25,10 +25,23 @@ export function useNavigation(
   // 记录当前章节学习路由
   navManager.enterChapterStudy(chapterId.value, stepId.value);
 
-  // 是否可以完成章节
+  // 是否可以完成章节 - 修改逻辑：在章节最后一步时显示
   const canCompleteChapter = computed(() => {
     if (!navigationInfo.value) return false;
-    return !navigationInfo.value.hasNext;
+
+    // 检查是否是当前章节的最后一步
+    const currentChapter = navigationInfo.value.currentChapter;
+    const currentStep = navigationInfo.value.currentStep;
+
+    if (!currentChapter || !currentStep) return false;
+
+    // 找到当前步骤在章节中的索引
+    const currentStepIndex = currentChapter.steps.findIndex(
+      step => step.id === currentStep.id
+    );
+
+    // 如果是章节的最后一步，则显示完成按钮
+    return currentStepIndex === currentChapter.steps.length - 1;
   });
 
   // 返回目录

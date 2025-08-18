@@ -52,8 +52,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, defineEmits, onMounted } from "vue";
-import { isFavorited, toggleFavorite } from "@/utils/favorites.util";
+import { ref, defineEmits } from "vue";
+import { useFavoritesStore } from "@/stores/favorites.store";
 
 // 定义文章数据类型
 interface ArticleItem {
@@ -75,7 +75,7 @@ const emit = defineEmits<{
   (e: "viewMore"): void;
 }>();
 
-const favoritesUpdate = ref(0); // 用于强制更新收藏状态的响应式变量
+const favoritesStore = useFavoritesStore();
 
 const articleList = ref<ArticleItem[]>([
   {
@@ -116,32 +116,22 @@ const handleArticleClick = (id: number) => {
   console.log(`查看文章: ${id}`);
 };
 
-// 检查收藏状态 - 响应式版本
+// 检查收藏状态 - 使用Pinia store
 const checkIsFavorited = (id: string): boolean => {
-  // 触发响应式更新
-  console.log("文章收藏检查:", id, favoritesUpdate.value);
-  return isFavorited(id);
+  return favoritesStore.isFavorited(id);
 };
 
 // 切换文章收藏状态
 const toggleArticleFavorite = (article: ArticleItem) => {
-  toggleFavorite({
+  favoritesStore.toggleFavorite({
     id: `article-${article.id}`,
     type: "article",
     title: article.title,
     articleId: String(article.id),
   });
-  // 强制更新收藏状态
-  favoritesUpdate.value++;
-  console.log("文章收藏状态更新:", favoritesUpdate.value);
 };
 
-// 监听收藏更新事件
-onMounted(() => {
-  window.addEventListener("favorites-updated", () => {
-    favoritesUpdate.value++;
-  });
-});
+// 不再需要手动监听事件，Pinia提供了响应式支持
 </script>
 
 <style scoped>

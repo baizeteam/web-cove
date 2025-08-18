@@ -46,7 +46,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch, nextTick } from "vue";
 import { useRoute } from "vue-router";
 import { getNavigationInfo } from "../step/stepConfig";
 import { updateLearningProgress } from "@/utils/learning.util";
@@ -116,6 +116,20 @@ const {
   validateCurrentStep
 );
 
+// 处理手势返回后状态重置
+const handleBackNavigation = () => {
+  console.log("检测到手势返回，重置答题状态");
+  // 重置答题状态
+  resetAnswerState();
+
+  // 强制更新DOM
+  nextTick(() => {
+    // 触发响应式更新
+    const event = new CustomEvent("navigation-reset");
+    window.dispatchEvent(event);
+  });
+};
+
 // 生命周期
 onMounted(() => {
   // 重置答题状态
@@ -126,7 +140,25 @@ onMounted(() => {
 
   // 触发存储事件，让其他组件知道学习状态变化
   window.dispatchEvent(new Event("storage"));
+
+  // 监听浏览器返回事件（包括手势返回）
+  window.addEventListener("popstate", handleBackNavigation);
 });
+
+// 组件卸载时清理事件监听
+onUnmounted(() => {
+  window.removeEventListener("popstate", handleBackNavigation);
+});
+
+// 监听路由变化，重置状态
+watch(
+  [chapterId, stepId],
+  () => {
+    console.log("路由变化，重置答题状态");
+    resetAnswerState();
+  },
+  { immediate: false }
+);
 
 // 监听完成弹窗状态
 watch(showCompleteDialog, newValue => {

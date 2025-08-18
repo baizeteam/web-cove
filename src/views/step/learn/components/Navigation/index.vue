@@ -31,13 +31,13 @@
     </van-button>
 
     <van-button
-      v-else-if="canCompleteChapter"
+      v-if="canCompleteChapter"
       type="success"
       size="large"
       class="nav-button"
       @click="completeCurrentChapter"
     >
-      结束该章
+      完成该章
     </van-button>
   </div>
 </template>
@@ -105,8 +105,24 @@ const completeCurrentChapter = () => {
   transform: scale(0.98);
 }
 
-.nav-button:hover {
+.nav-button:hover:not(:disabled) {
   background-color: #f0f0f0;
+  transform: translateY(-1px);
+}
+
+.nav-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* 确保主要按钮的hover效果 */
+.nav-button[type="primary"]:hover:not(:disabled) {
+  background-color: #1976d2 !important;
+}
+
+.nav-button[type="success"]:hover:not(:disabled) {
+  background-color: #388e3c !important;
 }
 
 .catalog-button {

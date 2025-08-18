@@ -29,6 +29,7 @@
     "marked": "^16.1.1",
     "pdfjs-dist": "^5.3.93",
     "pinia": "^3.0.3",
+    "pinia-plugin-persistedstate": "^4.5.0",
     "prismjs": "^1.30.0",
     "vant": "^4.9.21",
     "vue": "^3.4.0",
