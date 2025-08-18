@@ -98,6 +98,7 @@ import {
   getTotalSteps as getTotalStepsFromCourse,
 } from "@/data/courses";
 import type { LearningStatus, LanguageType } from "@/data/courses";
+import logoIcon from "@/assets/images/icon/logo.png";
 
 const router = useRouter();
 
@@ -116,7 +117,7 @@ const getCourseTitle = (courseId: string): string => {
 
 const getCourseIcon = (courseId: string): string => {
   const course = getCourseById(courseId);
-  return course ? course.icon : "/src/assets/images/icon/logo.png";
+  return course ? course.icon : logoIcon;
 };
 
 const getLanguageText = (language: LanguageType): string => {

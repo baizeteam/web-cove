@@ -1,4 +1,5 @@
 import type { Course, Step, QuizAnswer } from "../types";
+import jsIcon from "@/assets/images/icon/js-icon.png";
 
 // 辅助函数：从title提取id（兼容非标准格式）
 const extractIdFromTitle = (title: string): number => {
@@ -50,7 +51,7 @@ export function getJavaScriptBasicCourse(): Course {
     id: "JavaScript基础", // 使用中文ID
     type: "javascript",
     title: "JavaScript基础",
-    icon: "/src/assets/images/icon/js-icon.png",
+    icon: jsIcon,
     totalSteps,
     difficulty: "beginner",
     tags: ["编程", "JavaScript", "前端"],

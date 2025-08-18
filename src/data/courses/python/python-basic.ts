@@ -1,5 +1,6 @@
 import type { Course, Step, QuizAnswer } from "../types";
 import { PYTHON_BASIC_PATH_CONFIG, resolveStepPath } from "../path-config";
+import pythonIcon from "@/assets/images/icon/python-icon.png";
 
 // 辅助函数：从title提取id
 const extractIdFromTitle = (title: string): number => {
@@ -103,7 +104,7 @@ export function getPythonBasicCourse(): Course {
     id: "Python基础入门", // 使用中文ID
     type: "python",
     title: "Python基础入门",
-    icon: "/src/assets/images/icon/python-icon.png",
+    icon: pythonIcon,
     totalSteps,
     difficulty: "beginner",
     tags: ["编程", "Python", "入门"],
